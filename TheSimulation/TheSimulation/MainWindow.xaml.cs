@@ -222,10 +222,7 @@ public partial class MainWindow : Window
             }
         }
 
-        if (activeTrees.Contains(cell))
-        {
-            activeTrees.Remove(cell);
-        }
+        activeTrees.Remove(cell);
 
         UpdateTreeCount();
     }
