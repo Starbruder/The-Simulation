@@ -14,7 +14,10 @@ namespace TheSimulation;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private readonly DispatcherTimer growTimer = new();
+	private DispatcherTimer simulationTimer;
+	private DateTime simulationStartTime;
+
+	private readonly DispatcherTimer growTimer = new();
     private readonly DispatcherTimer igniteTimer = new();
     private readonly DispatcherTimer fireTimer = new();
 
@@ -38,16 +41,17 @@ public partial class MainWindow : Window
     private readonly Dictionary<Cell, Ellipse> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
 
-    public MainWindow()
+	public MainWindow()
     {
         InitializeComponent();
 
         var iconUri = new Uri("pack://application:,,,/Assets/Images/burning-tree-in-circle.ico");
         Icon = BitmapFrame.Create(iconUri);
 
-        Loaded += (_, _) =>
+		Loaded += (_, _) =>
         {
-            InitializeGrid();
+            StartSimulationTimer();
+			InitializeGrid();
             InitializeGrowTimer();
             InitializeIgniteTimer();
             InitializeFireTimer();
@@ -67,7 +71,23 @@ public partial class MainWindow : Window
         };
     }
 
-    private void InitializeGrid()
+	private void StartSimulationTimer()
+	{
+		simulationStartTime = DateTime.Now;
+
+		simulationTimer = new DispatcherTimer
+		{
+			Interval = TimeSpan.FromSeconds(1)
+		};
+		simulationTimer.Tick += (s, e) =>
+		{
+			var elapsed = DateTime.Now - simulationStartTime;
+			SimulationTimeText.Text = $"Runtime in seconds: {elapsed:hh\\:mm\\:ss}";
+		};
+		simulationTimer.Start();
+	}
+
+	private void InitializeGrid()
     {
         cols = (int)(ForestCanvas.ActualWidth / TreeSize);
         rows = (int)(ForestCanvas.ActualHeight / TreeSize);
@@ -158,7 +178,7 @@ public partial class MainWindow : Window
         treeElements[cell] = tree;
         activeTrees.Add(cell);
 
-        UpdateTreeCount();
+        UpdateTreeUI();
     }
 
     private void FireStep()
@@ -224,7 +244,7 @@ public partial class MainWindow : Window
 
         activeTrees.Remove(cell);
 
-        UpdateTreeCount();
+        UpdateTreeUI();
     }
 
     private IEnumerable<Cell> GetNeighbors(Cell cell)
@@ -297,10 +317,25 @@ public partial class MainWindow : Window
         removeTimer.Start();
     }
 
-    private void UpdateTreeCount()
+    private void UpdateTreeUI()
     {
         TreeCountText.Text = activeTrees.Count.ToString();
+
+        var (maxTreesPossible, currentDensity) = CalculateTreeDensity();
+        var hübscheDichte = Math.Round(currentDensity * 100, 0);
+        TreeDensityText.Text = $"{activeTrees.Count} / {maxTreesPossible}  ({hübscheDichte}%)";
     }
 
     private Cell GetRandomCell() => new(random.Next(cols), random.Next(rows));
+
+	/// <summary>
+	/// Returns the density; a value between 0.0 and 1.0 representing the current tree density of the forest.
+	/// </summary>
+	/// <returns>density</returns>
+	private (int maxTrees, float currentDensity) CalculateTreeDensity()
+    {
+        var maxTreesPossible = (int)(cols * rows * treeDensity);
+        var density = activeTrees.Count / (float)maxTreesPossible;
+        return (maxTreesPossible, density);
+    }
 }

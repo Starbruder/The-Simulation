@@ -17,10 +17,12 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
+		<!-- Steuerleiste oben -->
 		<StackPanel Orientation="Horizontal"
                     Background="#222"
                     Grid.Row="0">
 
+			<!-- Geschwindigkeit -->
 			<TextBlock Text="Speed"
                        Foreground="White"
                        VerticalAlignment="Center"
@@ -32,6 +34,10 @@
                     Width="120"
                     ValueChanged="SpeedChanged"/>
 
+			<!-- Abstand -->
+			<Rectangle Width="20"/>
+
+			<!-- Baum-Status -->
 			<TextBlock Text="Trees:"
                Foreground="White"
                VerticalAlignment="Center"
@@ -41,11 +47,34 @@
                VerticalAlignment="Center"
                Margin="5,0,0,0"
                x:Name="TreeCountText"/>
+
+			<!-- Abstand -->
+			<Rectangle Width="20"/>
+
+			<TextBlock Text="Density:"
+               Foreground="White"
+               VerticalAlignment="Center"
+               Margin="16,0,0,0"/>
+			<TextBlock x:Name="TreeDensityText"
+                       Text="0 / 0  (0%)"
+                       Foreground="White"
+                       VerticalAlignment="Center"
+                       Margin="16,0,0,0"/>
 		</StackPanel>
 
+		<!-- Canvas (Wald - Anzeige) -->
 		<Canvas x:Name="ForestCanvas"
             Grid.Row="1"
             Background="Black"/>
+
+		<!-- Rechte Seite (Timer) -->
+		<TextBlock x:Name="SimulationTimeText"
+               Text="Runtime in seconds: 0:00:00"
+               Foreground="White"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Right"
+               Margin="0,0,16,0"
+               Grid.Column="1"/>
 
 	</Grid>
 
