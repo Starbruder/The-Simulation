@@ -35,6 +35,9 @@ public partial class MainWindow : Window
     private const bool PauseDuringFire = true;
     private bool IsAnyBurningThenPause = false;
 
+    private readonly Dictionary<Cell, Ellipse> treeElements = [];
+    private readonly HashSet<Cell> activeTrees = [];
+
     public MainWindow()
     {
         InitializeComponent();
@@ -75,13 +78,13 @@ public partial class MainWindow : Window
     private void InitializeGrowTimer()
     {
         growTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value);
-        growTimer.Tick += (s, e) => GrowStep();
+        growTimer.Tick += (_, _) => GrowStep();
         growTimer.Start();
     }
 
     private void InitializeIgniteTimer()
     {
-        igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 750); // Faktor anpassen, damit es langsamer als grow/fire ist
+        igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 750);
         igniteTimer.Tick += (_, _) => IgniteRandomTree(showLightning);
         igniteTimer.Start();
     }
@@ -95,10 +98,10 @@ public partial class MainWindow : Window
 
     private void InitializeSliders()
     {
-        SpeedSlider.Minimum = 1;   // schnellster Intervall (ms)
-        SpeedSlider.Maximum = 300; // langsamster Intervall (ms)
-        SpeedSlider.Value = 1;     // Startwert
-        SpeedSlider.IsDirectionReversed = true; // links = langsam, rechts = schnell
+        SpeedSlider.Minimum = 1;
+        SpeedSlider.Maximum = 300;
+        SpeedSlider.Value = 1;
+        SpeedSlider.IsDirectionReversed = true;
     }
 
     private void SpeedChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -119,8 +122,7 @@ public partial class MainWindow : Window
         // Zielanzahl anhand der Dichte oder Maximalanzahl
         var targetTrees = (int)(cols * rows * treeDensity);
 
-        if (ForestCanvas.Children.Count >= targetTrees
-            || ForestCanvas.Children.Count >= maxTrees)
+        if (activeTrees.Count >= targetTrees || activeTrees.Count >= maxTrees)
         {
             return;
         }
@@ -135,7 +137,6 @@ public partial class MainWindow : Window
 
         // Baum wächst
         AddTree(cell);
-        UpdateTreeCount();
     }
 
     private void AddTree(Cell cell)
@@ -153,39 +154,42 @@ public partial class MainWindow : Window
         Canvas.SetLeft(tree, cell.X * TreeSize);
         Canvas.SetTop(tree, cell.Y * TreeSize);
         ForestCanvas.Children.Add(tree);
+
+        treeElements[cell] = tree;
+        activeTrees.Add(cell);
+
+        UpdateTreeCount();
     }
 
     private void FireStep()
     {
-        var toIgnite = new List<Cell>();
+        var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
 
         var isFireStepActive = false;
 
-        for (var x = 0; x < cols; x++)
+        foreach (var burningCell in treeElements.Keys)
         {
-            for (var y = 0; y < rows; y++)
+            if (forestGrid[burningCell.X, burningCell.Y] != ForestCellState.Burning)
             {
-                if (forestGrid[x, y] != ForestCellState.Burning)
-                {
-                    continue;
-                }
-
-                foreach (var neighbor in GetNeighbors(new(x, y)))
-                {
-                    isFireStepActive = true;
-                    if (forestGrid[neighbor.X, neighbor.Y] == ForestCellState.Tree)
-                    {
-                        toIgnite.Add(neighbor);
-                    }
-                }
-
-                toBurnDown.Add(new(x, y));
+                continue;
             }
+
+            isFireStepActive = true;
+
+            foreach (var neighbor in GetNeighbors(burningCell))
+            {
+                if (forestGrid[neighbor.X, neighbor.Y] == ForestCellState.Tree)
+                {
+                    toIgnite.Add(neighbor);
+                }
+            }
+
+            toBurnDown.Add(burningCell);
         }
 
         // Feuer ausbreiten mit neuen Bränden
-        foreach (var cell in toIgnite.Distinct())
+        foreach (var cell in toIgnite)
         {
             forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
             UpdateTreeColor(cell, Brushes.Red);
@@ -195,11 +199,9 @@ public partial class MainWindow : Window
         foreach (var cell in toBurnDown)
         {
             BurnDownTree(cell, replaceWithBurnedDownTree);
-            UpdateTreeCount();
         }
 
         IsAnyBurningThenPause = isFireStepActive;
-        UpdateTreeCount();
     }
 
     private void BurnDownTree(Cell cell, bool replaceWithBurnedDownTree = false)
@@ -207,20 +209,25 @@ public partial class MainWindow : Window
         // Grid aktualisieren
         forestGrid[cell.X, cell.Y] = ForestCellState.Empty;
 
-        if (replaceWithBurnedDownTree)
+        if (treeElements.TryGetValue(cell, out var tree))
         {
-            UpdateTreeColor(cell, Brushes.Gray);
-            return;
-        }
-
-        foreach (Ellipse tree in ForestCanvas.Children)
-        {
-            if (tree.Tag is Cell tag && tag == cell)
+            if (replaceWithBurnedDownTree)
+            {
+                tree.Fill = Brushes.Gray;
+            }
+            else
             {
                 ForestCanvas.Children.Remove(tree);
-                break;
+                treeElements.Remove(cell);
             }
         }
+
+        if (activeTrees.Contains(cell))
+        {
+            activeTrees.Remove(cell);
+        }
+
+        UpdateTreeCount();
     }
 
     private List<Cell> GetNeighbors(Cell cell)
@@ -251,13 +258,9 @@ public partial class MainWindow : Window
 
     private void UpdateTreeColor(Cell cell, Brush color)
     {
-        foreach (Ellipse tree in ForestCanvas.Children)
+        if (treeElements.TryGetValue(cell, out var tree))
         {
-            if (tree.Tag is Cell tag && tag == cell)
-            {
-                tree.Fill = color;
-                return;
-            }
+            tree.Fill = color;
         }
     }
 
@@ -303,21 +306,7 @@ public partial class MainWindow : Window
 
     private void UpdateTreeCount()
     {
-        var treeCount = 0;
-
-        // alle Zellen durchgehen und Bäume zählen
-        for (var x = 0; x < cols; x++)
-        {
-            for (var y = 0; y < rows; y++)
-            {
-                if (forestGrid[x, y] == ForestCellState.Tree)
-                {
-                    treeCount++;
-                }
-            }
-        }
-
-        TreeCountText.Text = treeCount.ToString();
+        TreeCountText.Text = activeTrees.Count.ToString();
     }
 
     private Cell GetRandomCell() => new(random.Next(cols), random.Next(rows));
