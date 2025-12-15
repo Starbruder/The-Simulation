@@ -20,7 +20,7 @@ public partial class MainWindow : Window
     private readonly int maxTrees = 1_000_000_000;
     private readonly double treeDensity = 0.6; // 0.0 = leer, 1.0 = voll
 
-    private const int TreeSize = 8;
+    private const int TreeSize = 7;
 
     private ForestCellState[,] forestGrid;
 
@@ -71,7 +71,7 @@ public partial class MainWindow : Window
 
     private void InitializeIgniteTimer()
     {
-        igniteTimer.Interval = TimeSpan.FromSeconds(1);
+        igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 50); // Faktor anpassen, damit es langsamer als grow/fire ist
         igniteTimer.Tick += (_, _) => IgniteRandomTree();
         igniteTimer.Start();
     }
@@ -95,6 +95,7 @@ public partial class MainWindow : Window
     {
         growTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
         fireTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
+        igniteTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue * 50);
     }
 
     private void GrowStep()
@@ -282,9 +283,9 @@ public partial class MainWindow : Window
         var treeCount = 0;
 
         // alle Zellen durchgehen und Bäume zählen
-        for (int x = 0; x < cols; x++)
+        for (var x = 0; x < cols; x++)
         {
-            for (int y = 0; y < rows; y++)
+            for (var y = 0; y < rows; y++)
             {
                 if (forestGrid[x, y] == ForestCellState.Tree)
                 {
@@ -293,6 +294,6 @@ public partial class MainWindow : Window
             }
         }
 
-        TreeCountTextBlock.Text = $"Trees: {treeCount}";
+        TreeCountText.Text = treeCount.ToString();
     }
 }

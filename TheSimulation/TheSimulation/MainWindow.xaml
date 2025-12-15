@@ -20,6 +20,7 @@
 		<StackPanel Orientation="Horizontal"
                     Background="#222"
                     Grid.Row="0">
+
 			<TextBlock Text="Speed"
                        Foreground="White"
                        VerticalAlignment="Center"
@@ -31,12 +32,15 @@
                     Width="120"
                     ValueChanged="SpeedChanged"/>
 
-			<!-- Baumanzahl anzeigen -->
-			<TextBlock Text="Trees: 0"
+			<TextBlock Text="Trees:"
                Foreground="White"
                VerticalAlignment="Center"
-               Margin="16,0,0,0"
-               x:Name="TreeCountTextBlock"/>
+               Margin="16,0,0,0"/>
+			<TextBlock Text="0"
+               Foreground="White"
+               VerticalAlignment="Center"
+               Margin="5,0,0,0"
+               x:Name="TreeCountText"/>
 		</StackPanel>
 
 		<Canvas x:Name="ForestCanvas"
