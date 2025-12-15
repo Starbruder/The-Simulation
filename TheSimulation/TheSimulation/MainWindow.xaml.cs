@@ -227,10 +227,8 @@ public partial class MainWindow : Window
         UpdateTreeCount();
     }
 
-    private List<Cell> GetNeighbors(Cell cell)
+    private IEnumerable<Cell> GetNeighbors(Cell cell)
     {
-        var neighbors = new List<Cell>();
-
         for (var dx = -1; dx <= 1; dx++)
         {
             for (var dy = -1; dy <= 1; dy++)
@@ -245,12 +243,10 @@ public partial class MainWindow : Window
 
                 if (nx >= 0 && ny >= 0 && nx < cols && ny < rows)
                 {
-                    neighbors.Add(new(nx, ny));
+                    yield return new(nx, ny);
                 }
             }
         }
-
-        return neighbors;
     }
 
     private void UpdateTreeColor(Cell cell, Brush color)
