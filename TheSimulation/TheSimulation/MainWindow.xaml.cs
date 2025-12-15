@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using TheSimulation.Enums;
@@ -30,6 +31,9 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        var iconUri = new Uri("pack://application:,,,/Assets/Images/burning-tree-in-circle.ico");
+        Icon = BitmapFrame.Create(iconUri);
 
         Loaded += (_, _) =>
         {
@@ -228,7 +232,7 @@ public partial class MainWindow : Window
 
     private void UpdateTreeColor(int x, int y, Brush color)
     {
-        // 2) Fallback: Suche durch Children (kompatibel zu vorherigem Verhalten)
+        // Suche durch Children (kompatibel zu vorherigem Verhalten)
         foreach (Ellipse tree in ForestCanvas.Children)
         {
             if (tree.Tag is ValueTuple<int, int> tag && tag == (x, y))
@@ -245,29 +249,9 @@ public partial class MainWindow : Window
         var x = random.Next(cols);
         var y = random.Next(rows);
 
-        // Blitz nur anzeigen, wenn showLightning = true
         if (showLightning)
         {
-            var lightning = new Ellipse
-            {
-                Width = TreeSize,
-                Height = TreeSize,
-                Fill = Brushes.LightBlue,
-                Opacity = 0.9
-            };
-
-            Canvas.SetLeft(lightning, x * TreeSize);
-            Canvas.SetTop(lightning, y * TreeSize);
-            ForestCanvas.Children.Add(lightning);
-
-            // Blitz nach kurzer Zeit entfernen
-            var removeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
-            removeTimer.Tick += (_, _) =>
-            {
-                ForestCanvas.Children.Remove(lightning);
-                removeTimer.Stop();
-            };
-            removeTimer.Start();
+            ShowLightning(x, y);
         }
 
         // Baum in dieser Zelle entzünden
@@ -276,6 +260,30 @@ public partial class MainWindow : Window
             forestGrid[x, y] = ForestCellState.Burning;
             UpdateTreeColor(x, y, Brushes.Red);
         }
+    }
+
+    private void ShowLightning(int x, int y)
+    {
+        var lightning = new Ellipse
+        {
+            Width = TreeSize,
+            Height = TreeSize,
+            Fill = Brushes.LightBlue,
+            Opacity = 0.9
+        };
+
+        Canvas.SetLeft(lightning, x * TreeSize);
+        Canvas.SetTop(lightning, y * TreeSize);
+        ForestCanvas.Children.Add(lightning);
+
+        // Blitz nach kurzer Zeit entfernen
+        var removeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
+        removeTimer.Tick += (_, _) =>
+        {
+            ForestCanvas.Children.Remove(lightning);
+            removeTimer.Stop();
+        };
+        removeTimer.Start();
     }
 
     private void UpdateTreeCount()

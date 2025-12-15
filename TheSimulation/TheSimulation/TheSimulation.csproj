@@ -9,7 +9,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Images\burning-tree-in-circle.ico" />
+    <None Remove="Assets\Images\burning-tree-in-circle.jpeg" />
+    <None Remove="Assets\Images\burning-tree.ico" />
+    <None Remove="Assets\Images\burning-tree.jpeg" />
+    <None Remove="Assets\Images\completely-burning-tree.ico" />
+    <None Remove="Assets\Images\completely-burning-tree.jpeg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Images\burning-tree-in-circle.ico" />
+    <Resource Include="Assets\Images\burning-tree-in-circle.jpeg" />
+    <Resource Include="Assets\Images\burning-tree.ico" />
+    <Resource Include="Assets\Images\burning-tree.jpeg" />
+    <Resource Include="Assets\Images\completely-burning-tree.ico" />
+    <Resource Include="Assets\Images\completely-burning-tree.jpeg" />
   </ItemGroup>
 
 </Project>
