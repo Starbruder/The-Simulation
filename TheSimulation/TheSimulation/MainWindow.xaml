@@ -30,6 +30,13 @@
                     Value="50"
                     Width="120"
                     ValueChanged="SpeedChanged"/>
+
+			<!-- Baumanzahl anzeigen -->
+			<TextBlock Text="Trees: 0"
+               Foreground="White"
+               VerticalAlignment="Center"
+               Margin="16,0,0,0"
+               x:Name="TreeCountTextBlock"/>
 		</StackPanel>
 
 		<Canvas x:Name="ForestCanvas"
