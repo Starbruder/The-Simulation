@@ -17,17 +17,23 @@ public partial class MainWindow : Window
     private readonly DispatcherTimer growTimer = new();
     private readonly DispatcherTimer igniteTimer = new();
     private readonly DispatcherTimer fireTimer = new();
+
     private readonly Random random = new();
 
-    private readonly uint maxTrees = 1_000_000;
-    private readonly double treeDensity = 0.6; // 0.0 = leer, 1.0 = voll
-
-    private const int TreeSize = 7;
+    private const uint maxTrees = 50_000;
+    private const float treeDensity = 0.6f; // 0.0 = leer, 1.0 = voll
+    private const uint TreeSize = 7;
 
     private ForestCellState[,] forestGrid;
 
     private int cols;
     private int rows;
+
+    private const bool replaceWithBurnedDownTree = false;
+    private const bool showLightning = false;
+
+    private const bool PauseDuringFire = true;
+    private bool IsAnyBurningThenPause = false;
 
     public MainWindow()
     {
@@ -45,18 +51,18 @@ public partial class MainWindow : Window
             InitializeSliders();
         };
 
-		ForestCanvas.MouseLeftButtonDown += (_, e) =>
-		{
-			var pos = e.GetPosition(ForestCanvas);
-			var cell = new Cell((int)(pos.X / TreeSize), (int)(pos.Y / TreeSize));
+        ForestCanvas.MouseLeftButtonDown += (_, e) =>
+        {
+            var pos = e.GetPosition(ForestCanvas);
+            var cell = new Cell((int)(pos.X / TreeSize), (int)(pos.Y / TreeSize));
 
-			if (forestGrid![cell.X, cell.Y] == ForestCellState.Tree)
-			{
-				forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
-				UpdateTreeColor(cell, Brushes.Red);
-			}
-		};
-	}
+            if (forestGrid![cell.X, cell.Y] == ForestCellState.Tree)
+            {
+                forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
+                UpdateTreeColor(cell, Brushes.Red);
+            }
+        };
+    }
 
     private void InitializeGrid()
     {
@@ -75,8 +81,8 @@ public partial class MainWindow : Window
 
     private void InitializeIgniteTimer()
     {
-        igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 500); // Faktor anpassen, damit es langsamer als grow/fire ist
-        igniteTimer.Tick += (_, _) => IgniteRandomTree();
+        igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 750); // Faktor anpassen, damit es langsamer als grow/fire ist
+        igniteTimer.Tick += (_, _) => IgniteRandomTree(showLightning);
         igniteTimer.Start();
     }
 
@@ -99,11 +105,17 @@ public partial class MainWindow : Window
     {
         growTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
         fireTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
-        igniteTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue * 50);
+        igniteTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue * 750);
     }
 
     private void GrowStep()
     {
+        // Wenn irgendwo Feuer brennt → überspringen
+        if (PauseDuringFire && IsAnyBurningThenPause)
+        {
+            return;
+        }
+
         // Zielanzahl anhand der Dichte oder Maximalanzahl
         var targetTrees = (int)(cols * rows * treeDensity);
 
@@ -148,6 +160,8 @@ public partial class MainWindow : Window
         var toIgnite = new List<Cell>();
         var toBurnDown = new List<Cell>();
 
+        var isFireStepActive = false;
+
         for (var x = 0; x < cols; x++)
         {
             for (var y = 0; y < rows; y++)
@@ -159,6 +173,7 @@ public partial class MainWindow : Window
 
                 foreach (var neighbor in GetNeighbors(new(x, y)))
                 {
+                    isFireStepActive = true;
                     if (forestGrid[neighbor.X, neighbor.Y] == ForestCellState.Tree)
                     {
                         toIgnite.Add(neighbor);
@@ -176,12 +191,15 @@ public partial class MainWindow : Window
             UpdateTreeColor(cell, Brushes.Red);
         }
 
-        // 2️⃣ alte Brände abbrennen lassen
+        // alte Brände abbrennen lassen
         foreach (var cell in toBurnDown)
         {
-            BurnDownTree(cell); // replaceWithBurnedDownTree = true → Baum verschwindet und wird durch verbrannten Baum ersetzt
+            BurnDownTree(cell, replaceWithBurnedDownTree);
             UpdateTreeCount();
         }
+
+        IsAnyBurningThenPause = isFireStepActive;
+        UpdateTreeCount();
     }
 
     private void BurnDownTree(Cell cell, bool replaceWithBurnedDownTree = false)
@@ -205,15 +223,17 @@ public partial class MainWindow : Window
         }
     }
 
-    private IEnumerable<Cell> GetNeighbors(Cell cell)
+    private List<Cell> GetNeighbors(Cell cell)
     {
+        var neighbors = new List<Cell>();
+
         for (var dx = -1; dx <= 1; dx++)
         {
             for (var dy = -1; dy <= 1; dy++)
             {
                 if (dx == 0 && dy == 0)
                 {
-                    continue;
+                    continue; // die Zelle selbst überspringen
                 }
 
                 var nx = cell.X + dx;
@@ -221,10 +241,12 @@ public partial class MainWindow : Window
 
                 if (nx >= 0 && ny >= 0 && nx < cols && ny < rows)
                 {
-                    yield return new(nx, ny);
+                    neighbors.Add(new(nx, ny));
                 }
             }
         }
+
+        return neighbors;
     }
 
     private void UpdateTreeColor(Cell cell, Brush color)
