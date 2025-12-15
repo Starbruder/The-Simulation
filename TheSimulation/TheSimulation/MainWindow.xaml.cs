@@ -75,7 +75,7 @@ public partial class MainWindow : Window
 
     private void InitializeIgniteTimer()
     {
-        igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 50); // Faktor anpassen, damit es langsamer als grow/fire ist
+        igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 500); // Faktor anpassen, damit es langsamer als grow/fire ist
         igniteTimer.Tick += (_, _) => IgniteRandomTree();
         igniteTimer.Start();
     }
