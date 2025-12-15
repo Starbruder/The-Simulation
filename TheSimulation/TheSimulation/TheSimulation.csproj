@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Assets\Images\burning-tree-in-circle.ico" />
     <Resource Include="Assets\Images\burning-tree-in-circle.jpeg" />
     <Resource Include="Assets\Images\burning-tree.ico" />
