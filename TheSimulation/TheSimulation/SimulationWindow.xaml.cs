@@ -71,13 +71,14 @@ public sealed partial class SimulationWindow : Window
     {
         SetAndCalculateStartTime();
 
-        UpdateTimerUI();
+        UIHelper.UpdateTimerUI(SimulationTimeText, simulationStartTime);
 
         simulationTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromSeconds(1)
         };
-        simulationTimer.Tick += (_, _) => UpdateTimerUI();
+        simulationTimer.Tick += (_, _)
+            => UIHelper.UpdateTimerUI(SimulationTimeText, simulationStartTime);
         simulationTimer.Start();
     }
 
@@ -323,12 +324,6 @@ public sealed partial class SimulationWindow : Window
 
     private int CalculateMaxTreesPossible()
         => Math.Max(1, (int)(cols * rows * simulationConfig.TreeDensity));
-
-    private void UpdateTimerUI()
-    {
-        var elapsed = DateTime.Now - simulationStartTime;
-        SimulationTimeText.Text = $"Runtime: {elapsed:hh\\:mm\\:ss}";
-    }
 
     private string FormatTreeDensityText(int activeTreeCount)
     {
