@@ -35,7 +35,7 @@
                 ValueChanged="SpeedChanged"/>
 
 			<!-- Abstand -->
-			<Rectangle Width="20"/>
+			<Rectangle Width="10"/>
 
 			<TextBlock Text="Total Grown:"
                Foreground="White"
@@ -45,7 +45,7 @@
                Text="0"
                Foreground="White"
                VerticalAlignment="Center"
-               Margin="5,0,0,0"/>
+               Margin="5,0,0,0" MinWidth="32"/>
 
 			<TextBlock Text="Total Burned:"
                Foreground="White"
@@ -55,17 +55,14 @@
                Text="0"
                Foreground="White"
                VerticalAlignment="Center"
-               Margin="5,0,0,0"/>
-
-			<!-- Abstand -->
-			<Rectangle Width="20"/>
+               Margin="5,0,0,0" MinWidth="32"/>
 
 			<TextBlock Text="Tree-Density:"
                Foreground="White"
                VerticalAlignment="Center"
                Margin="16,0,0,0"/>
 			<TextBlock x:Name="TreeDensityText"
-                Text="0 / 0  (0%)"
+                Text="0 / 0 (0%)"
                 Foreground="White"
                 VerticalAlignment="Center"
                 Margin="16,0,0,0"/>

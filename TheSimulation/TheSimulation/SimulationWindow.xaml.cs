@@ -15,14 +15,14 @@ public sealed partial class SimulationWindow : Window
 
     private readonly RandomHelper randomHelper = new();
 
-    private DispatcherTimer simulationTimer;
+    private DispatcherTimer simulationTimer = new();
     private DateTime simulationStartTime;
 
     private readonly DispatcherTimer growTimer = new();
     private readonly DispatcherTimer igniteTimer = new();
     private readonly DispatcherTimer fireTimer = new();
 
-    private ForestCellState[,] forestGrid;
+    private ForestCellState[,] forestGrid = new ForestCellState[0,0];
 
     private int cols;
     private int rows;
@@ -313,7 +313,10 @@ public sealed partial class SimulationWindow : Window
         Canvas.SetTop(lightning, cell.Y * simulationConfig.TreeSize);
         ForestCanvas.Children.Add(lightning);
 
-        var removeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
+        var removeTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(150)
+        };
         removeTimer.Tick += (_, _) =>
         {
             ForestCanvas.Children.Remove(lightning);
