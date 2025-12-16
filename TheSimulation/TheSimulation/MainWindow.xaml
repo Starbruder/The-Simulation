@@ -10,11 +10,25 @@
     Width="800"
     ResizeMode="NoResize">
 
-	<Grid>
+	<Grid Margin="20">
+
 		<Button Content="Simulate"
             Height="40"
             Width="120"
             Click="StartSimulation_Click"/>
+
+		<TextBlock
+            Text="{Binding ElementName=FireIntensitySlider, Path=Value, StringFormat=Fire spread chance: {0:F0}}"
+            FontSize="14"/>
+
+		<Slider
+            x:Name="FireIntensitySlider"
+            Grid.Row="1"
+            Maximum="100"
+            Value="75"
+            IsSnapToTickEnabled="True"
+            Width="300"/>
+
 	</Grid>
 
 </Window>

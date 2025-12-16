@@ -15,12 +15,14 @@ public sealed partial class MainWindow : Window
 
     private void StartSimulation_Click(object sender, RoutedEventArgs e)
     {
+        var fireIntensity = (float)FireIntensitySlider.Value;
+
         var config = new SimulationConfig
         (
             50000,
             0.6f,
             7,
-            75f,
+            fireIntensity,
             false,
             false,
             true
