@@ -19,7 +19,9 @@
 
 		<TextBlock
             Text="{Binding ElementName=FireIntensitySlider, Path=Value, StringFormat=Fire spread chance: {0:F0}}"
-            FontSize="14"/>
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            FontSize="14" Height="20" Width="150"/>
 
 		<Slider
             x:Name="FireIntensitySlider"
@@ -27,7 +29,8 @@
             Maximum="100"
             Value="75"
             IsSnapToTickEnabled="True"
-            Width="300"/>
+            VerticalAlignment="Top"
+            Width="300" Height="20"/>
 
 	</Grid>
 
