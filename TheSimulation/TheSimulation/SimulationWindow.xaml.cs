@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -15,14 +15,14 @@ public sealed partial class SimulationWindow : Window
 
     private readonly RandomHelper randomHelper = new();
 
-    private DispatcherTimer simulationTimer = new();
+    private DispatcherTimer simulationTimer;
     private DateTime simulationStartTime;
 
     private readonly DispatcherTimer growTimer = new();
     private readonly DispatcherTimer igniteTimer = new();
     private readonly DispatcherTimer fireTimer = new();
 
-    private ForestCellState[,] forestGrid = new ForestCellState[0,0];
+    private ForestCellState[,] forestGrid;
 
     private int cols;
     private int rows;
@@ -37,6 +37,10 @@ public sealed partial class SimulationWindow : Window
 
     public SimulationWindow(SimulationConfig simulationConfig)
     {
+        // To get rid of the warning CS8618
+        forestGrid = new ForestCellState[0, 0];
+        simulationTimer = new();
+
         InitializeComponent();
         UIHelper.InitializeWindowIcon(this);
 
