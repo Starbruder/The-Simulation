@@ -206,7 +206,15 @@ public sealed partial class SimulationWindow : Window
 
             foreach (var neighbor in GetNeighbors(burningCell))
             {
-                if (forestGrid[neighbor.X, neighbor.Y] == ForestCellState.Tree)
+                if (forestGrid[neighbor.X, neighbor.Y] != ForestCellState.Tree)
+                {
+                    continue;
+                }
+
+                // Zufallschance für Feuerweitergabe
+                var chance = simulationConfig.FireSpreadChancePercent / 100f;
+
+                if (randomHelper.NextDouble() < chance)
                 {
                     toIgnite.Add(neighbor);
                 }

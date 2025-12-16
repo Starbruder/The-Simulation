@@ -20,6 +20,7 @@ public sealed partial class MainWindow : Window
             50000,
             0.6f,
             7,
+            75f,
             false,
             false,
             true
