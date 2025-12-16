@@ -1,5 +1,4 @@
-using System.Windows;
-using TheSimulation.UI;
+﻿using System.Windows;
 
 namespace TheSimulation;
 
@@ -16,7 +15,16 @@ public sealed partial class MainWindow : Window
 
     private void StartSimulation_Click(object sender, RoutedEventArgs e)
     {
-		var simulationWindow = new SimulationWindow();
-		simulationWindow.Show();
-	}
+        var config = new SimulationConfig
+        (
+            50000,
+            0.6f,
+            7,
+            false,
+            false,
+            true
+        );
+
+        new SimulationWindow(config).Show();
+    }
 }

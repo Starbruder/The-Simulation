@@ -1,4 +1,4 @@
-﻿namespace TheSimulation.Enums;
+﻿namespace TheSimulation;
 
 public enum ForestCellState
 {

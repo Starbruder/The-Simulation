@@ -1,4 +1,4 @@
-﻿namespace TheSimulation.Models;
+﻿namespace TheSimulation;
 
 public readonly record struct Cell(int X, int Y)
 {
