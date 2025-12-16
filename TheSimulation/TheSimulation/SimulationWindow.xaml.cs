@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -6,6 +6,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using TheSimulation.Enums;
 using TheSimulation.Models;
+using TheSimulation.UI;
 
 namespace TheSimulation;
 
@@ -44,7 +45,7 @@ public sealed partial class SimulationWindow : Window
     public SimulationWindow()
     {
         InitializeComponent();
-		InitializeWindowIcon();
+		UIHelper.InitializeWindowIcon(this);
 
         Loaded += (_, _) =>
         {
@@ -68,12 +69,6 @@ public sealed partial class SimulationWindow : Window
             }
         };
     }
-
-	private void InitializeWindowIcon()
-	{
-		var iconUri = new Uri("pack://application:,,,/Assets/Images/burning-tree-in-circle.ico");
-		Icon = BitmapFrame.Create(iconUri);
-	}
 
 	private void StartSimulationTimer()
     {

@@ -11,7 +11,7 @@
     ResizeMode="NoResize">
 
 	<Grid>
-		<Button Content="Start Simulation"
+		<Button Content="Simulate"
             Height="40"
             Width="120"
             Click="StartSimulation_Click"/>
