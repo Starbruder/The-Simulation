@@ -29,6 +29,9 @@ public sealed partial class SimulationWindow : Window
 
     private bool IsAnyBurningThenPause = false;
 
+    private uint totalGrownTrees = 0;
+    private uint totalBurnedTrees = 0;
+
     private readonly Dictionary<Cell, Ellipse> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
 
@@ -66,18 +69,23 @@ public sealed partial class SimulationWindow : Window
 
     private void StartSimulationTimer()
     {
-        simulationStartTime = DateTime.Now;
+        SetAndCalculateStartTime();
+
+        UpdateTimerUI();
 
         simulationTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromSeconds(1)
         };
-        simulationTimer.Tick += (s, e) =>
-        {
-            var elapsed = DateTime.Now - simulationStartTime;
-            SimulationTimeText.Text = $"Runtime in seconds: {elapsed:hh\\:mm\\:ss}";
-        };
+        simulationTimer.Tick += (_, _) => UpdateTimerUI();
         simulationTimer.Start();
+    }
+
+    private void SetAndCalculateStartTime()
+    {
+        // Damit bei erstem Tick 1 Sekunden angezeigt werden.
+        var time = DateTime.Now - TimeSpan.FromSeconds(1);
+        simulationStartTime = time;
     }
 
     private void InitializeGrid()
@@ -171,6 +179,7 @@ public sealed partial class SimulationWindow : Window
         treeElements[cell] = tree;
         activeTrees.Add(cell);
 
+        totalGrownTrees++;
         UpdateTreeUI();
     }
 
@@ -224,6 +233,8 @@ public sealed partial class SimulationWindow : Window
 
         if (treeElements.TryGetValue(cell, out var tree))
         {
+            totalBurnedTrees++;
+
             if (replaceWithBurnedDownTree)
             {
                 tree.Fill = Brushes.Gray;
@@ -313,6 +324,12 @@ public sealed partial class SimulationWindow : Window
     private int CalculateMaxTreesPossible()
         => Math.Max(1, (int)(cols * rows * simulationConfig.TreeDensity));
 
+    private void UpdateTimerUI()
+    {
+        var elapsed = DateTime.Now - simulationStartTime;
+        SimulationTimeText.Text = $"Runtime: {elapsed:hh\\:mm\\:ss}";
+    }
+
     private string FormatTreeDensityText(int activeTreeCount)
     {
         var maxTreesPossible = CalculateMaxTreesPossible();
@@ -326,7 +343,9 @@ public sealed partial class SimulationWindow : Window
     {
         var activeTreeCount = activeTrees.Count;
 
-        TreeCountText.Text = activeTreeCount.ToString();
         TreeDensityText.Text = FormatTreeDensityText(activeTreeCount);
+
+        TotalGrownTrees.Text = totalGrownTrees.ToString();
+        TotalBurnedTrees.Text = totalBurnedTrees.ToString();
     }
 }
