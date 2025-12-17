@@ -16,7 +16,7 @@ public sealed partial class SimulationWindow : Window
     private readonly RandomHelper randomHelper = new();
     private readonly WindHelper windHelper;
     private readonly WindArrowVisualizer windVisualizer;
-
+    private readonly ParticleGenerator particleGenerator;
     private DispatcherTimer simulationTimer;
     private DateTime simulationStartTime;
 
@@ -49,6 +49,8 @@ public sealed partial class SimulationWindow : Window
         this.simulationConfig = simulationConfig;
         windHelper = new(simulationConfig);
         windVisualizer = new(ForestCanvas, simulationConfig);
+
+        particleGenerator = new ParticleGenerator(ForestCanvas);
 
         Loaded += async (_, _) =>
         {
@@ -172,7 +174,7 @@ public sealed partial class SimulationWindow : Window
     private void InitializeFireTimer()
     {
         fireTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value);
-        fireTimer.Tick += (_, _) => FireStep();
+        fireTimer.Tick += async (_, _) => await FireStep();
         fireTimer.Start();
     }
 
@@ -259,7 +261,7 @@ public sealed partial class SimulationWindow : Window
         return colors[index];
     }
 
-    private void FireStep()
+    private async Task FireStep()
     {
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
@@ -298,6 +300,8 @@ public sealed partial class SimulationWindow : Window
         {
             forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
             UpdateTreeColor(cell, Brushes.Red);
+
+            await AddFireParticle(cell);
         }
 
         // alte Brände abbrennen lassen
@@ -307,6 +311,23 @@ public sealed partial class SimulationWindow : Window
         }
 
         IsAnyBurningThenPause = isFireStepActive;
+    }
+
+    private async Task AddFireParticle(Cell cell)
+    {
+        var pos = new Point(
+        cell.X * simulationConfig.TreeConfig.Size,
+        cell.Y * simulationConfig.TreeConfig.Size);
+
+        var fireColors = ParticleGenerator.FireColors;
+        var color = fireColors[randomHelper.NextInt(0, fireColors.Length)];
+
+        particleGenerator.SpawnParticle(
+            pos,
+            color,
+            size: 2 + randomHelper.NextInt(0, 3),
+            lifetime: 0.6 + randomHelper.NextDouble() * 0.5
+        );
     }
 
     private double CalculateChances(Cell burningCell, Cell neighbor)
