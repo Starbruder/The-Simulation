@@ -16,7 +16,7 @@ public sealed partial class SimulationWindow : Window
 
     private readonly RandomHelper randomHelper = new();
     private readonly WindHelper windHelper;
-    private readonly WindVisualizer windVisualizer;
+    private readonly WindArrowVisualizer windVisualizer;
 
     private DispatcherTimer simulationTimer;
     private DateTime simulationStartTime;
