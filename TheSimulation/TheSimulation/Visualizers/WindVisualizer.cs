@@ -18,6 +18,8 @@ public sealed class WindVisualizer(Canvas canvas, SimulationConfig config)
     private Line? arrow;
     private Polygon? arrowHead;
 
+    public const int OverlayZIndex = 1_000;
+
     public void Draw()
     {
         const double margin = 40;
@@ -26,57 +28,65 @@ public sealed class WindVisualizer(Canvas canvas, SimulationConfig config)
         var centerX = canvas.ActualWidth - margin;
         var centerY = margin;
 
-        var windDir = config.WindDirection;
-        var windVector = WindMapper.GetWindVector(windDir);
+        var windVector = WindMapper.GetWindVector(config.WindDirection);
         if (windVector.Length == 0)
         {
             return;
         }
 
         windVector.Normalize();
-
         var length = baseLength * config.WindStrength;
 
         var endX = centerX + windVector.X * length;
         var endY = centerY + windVector.Y * length;
 
-        arrow ??= new Line
-        {
-            Stroke = Brushes.LightSkyBlue,
-            StrokeThickness = 3,
-            IsHitTestVisible = false
-        };
-
+        arrow ??= CreateLine();
         arrow.X1 = centerX;
         arrow.Y1 = centerY;
         arrow.X2 = endX;
         arrow.Y2 = endY;
 
-        var normal = new Vector(-windVector.Y, windVector.X);
+        arrowHead ??= CreateArrowHead();
+        UpdateArrowHeadPoints(arrowHead, endX, endY, windVector);
 
-        arrowHead ??= new Polygon
-        {
-            Fill = Brushes.LightSkyBlue,
-            IsHitTestVisible = false
-        };
+        AddOrUpdateCanvasChild(arrow);
+        AddOrUpdateCanvasChild(arrowHead);
+    }
 
-        arrowHead.Points =
+    private static Line CreateLine() => new()
+    {
+        Stroke = Brushes.LightSkyBlue,
+        StrokeThickness = 3,
+        IsHitTestVisible = false
+    };
+
+    private static Polygon CreateArrowHead() => new()
+    {
+        Fill = Brushes.LightSkyBlue,
+        IsHitTestVisible = false
+    };
+
+    private static void UpdateArrowHeadPoints(Polygon polygon, double endX, double endY, Vector direction)
+    {
+        var normal = new Vector(-direction.Y, direction.X);
+
+        polygon.Points =
         [
             new(endX, endY),
-            new(endX - windVector.X * 8 + normal.X * 4,
-                endY - windVector.Y * 8 + normal.Y * 4),
-            new(endX - windVector.X * 8 - normal.X * 4,
-                endY - windVector.Y * 8 - normal.Y * 4),
+            new(endX - direction.X * 8 + normal.X * 4,
+                endY - direction.Y * 8 + normal.Y * 4),
+            new(endX - direction.X * 8 - normal.X * 4,
+                endY - direction.Y * 8 - normal.Y * 4),
         ];
+    }
 
-        if (!canvas.Children.Contains(arrow))
+    private void AddOrUpdateCanvasChild(UIElement element)
+    {
+        if (!canvas.Children.Contains(element))
         {
-            canvas.Children.Add(arrow);
+            canvas.Children.Add(element);
         }
 
-        if (!canvas.Children.Contains(arrowHead))
-        {
-            canvas.Children.Add(arrowHead);
-        }
+        Canvas.SetZIndex(element, OverlayZIndex);
     }
 }
