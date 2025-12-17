@@ -19,6 +19,7 @@ public sealed partial class MainWindow : Window
         var fireIntensity = (float)FireIntensitySlider.Value; /// (Fire spread chance percent)
 
         var windDiriction = GetWindDirection();
+        var windStrength = (float)WindStrengthSlider.Value;
 
         var config = new SimulationConfig
         (
@@ -30,7 +31,7 @@ public sealed partial class MainWindow : Window
             false,
             true,
             windDiriction,
-            0.8f
+            windStrength
         );
 
         new SimulationWindow(config).Show();
