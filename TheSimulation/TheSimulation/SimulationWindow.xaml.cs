@@ -176,11 +176,13 @@ public sealed partial class SimulationWindow : Window
     {
         forestGrid[cell.X, cell.Y] = ForestCellState.Tree;
 
+        var color = GetRandomTreeColor();
+
         var tree = new Ellipse
         {
             Width = simulationConfig.TreeSize,
             Height = simulationConfig.TreeSize,
-            Fill = Brushes.Green,
+            Fill = color,
             Tag = cell
         };
 
@@ -193,6 +195,19 @@ public sealed partial class SimulationWindow : Window
 
         totalGrownTrees++;
         UpdateTreeUI();
+    }
+
+    private Brush GetRandomTreeColor()
+    {
+        Brush[] colors = [
+            Brushes.Green,       // Kiefer
+            Brushes.DarkGreen,   // Eiche
+            //Brushes.YellowGreen, // Buche
+            Brushes.ForestGreen  // Tanne
+        ];
+
+        var index = randomHelper.NextInt(0, colors.Length);
+        return colors[index];
     }
 
     private void FireStep()
