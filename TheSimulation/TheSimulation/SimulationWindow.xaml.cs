@@ -336,7 +336,7 @@ public sealed partial class SimulationWindow : Window
             pos,
             color,
             size: 2 + randomHelper.NextInt(0, 3),
-            lifetime: 0.6 + randomHelper.NextDouble() * 0.5
+            lifetime: 0.6f + (float)randomHelper.NextDouble() * 0.5f
         );
     }
 
@@ -350,7 +350,7 @@ public sealed partial class SimulationWindow : Window
             pos,
             Brushes.Gray,
             size: 5 + randomHelper.NextInt(0, 4),
-            lifetime: 1.2 + randomHelper.NextDouble()
+            lifetime: 1.2f + (float)randomHelper.NextDouble()
         );
     }
 

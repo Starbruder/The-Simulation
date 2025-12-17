@@ -33,7 +33,7 @@ public sealed class ParticleGenerator
 		updateTimer.Start();
 	}
 
-	public void SpawnParticle(Point position, Brush color, double size = 3, double lifetime = 1.0)
+	public void SpawnParticle(Point position, Brush color, double size = 3, float lifetime = 1f)
 	{
 		var ellipse = new Ellipse
 		{
@@ -58,7 +58,7 @@ public sealed class ParticleGenerator
 		for (int i = particles.Count - 1; i >= 0; i--)
 		{
 			var p = particles[i];
-			p.DecreaseLifetime(0.05);
+			p.DecreaseLifetime(0.05f);
 			if (p.Lifetime <= 0)
 			{
 				canvas.Children.Remove(p.Visual);
