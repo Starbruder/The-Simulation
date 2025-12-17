@@ -6,6 +6,6 @@ public sealed record SimulationConfig
     FireConfig FireConfig,
     WindConfig WindConfig,
     PrefillConfig PrefillConfig,
-    bool ReplaceWithBurnedDownTree,
-    bool ShowLightning
+    VisualEffectsConfig VisualEffectsConfig,
+    bool ReplaceWithBurnedDownTree
 );

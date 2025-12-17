@@ -167,7 +167,7 @@ public sealed partial class SimulationWindow : Window
     private void InitializeIgniteTimer()
     {
         igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 750);
-        igniteTimer.Tick += (_, _) => IgniteRandomTree(simulationConfig.ShowLightning);
+        igniteTimer.Tick += (_, _) => IgniteRandomTree();
         igniteTimer.Start();
     }
 
@@ -301,13 +301,17 @@ public sealed partial class SimulationWindow : Window
             forestGrid[burningCell.X, burningCell.Y] = ForestCellState.Burning;
             UpdateTreeColor(burningCell, Brushes.Red);
 
-            if (randomHelper.NextDouble() < 0.7)
+            if (simulationConfig.VisualEffectsConfig.ShowFireParticles
+                && randomHelper.NextDouble() < 0.7)
             {
                 AddFireParticle(burningCell);
                 continue;
             }
 
-            AddSmokeParticle(burningCell);
+            if (simulationConfig.VisualEffectsConfig.ShowSmokeParticles)
+            {
+                AddSmokeParticle(burningCell);
+            }
         }
 
         // alte Brände abbrennen lassen
@@ -415,11 +419,11 @@ public sealed partial class SimulationWindow : Window
         }
     }
 
-    private void IgniteRandomTree(bool showLightning = false)
+    private void IgniteRandomTree()
     {
         var cell = randomHelper.GetRandomCell(cols, rows);
 
-        if (showLightning)
+        if (simulationConfig.VisualEffectsConfig.ShowLightning)
         {
             ShowLightning(cell);
         }

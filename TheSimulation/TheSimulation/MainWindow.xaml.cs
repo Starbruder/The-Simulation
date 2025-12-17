@@ -55,13 +55,20 @@ public sealed partial class MainWindow : Window
             prefillDensity // Z.b: 0.5 = 50 %
         );
 
+        var effectsConfig = new VisualEffectsConfig
+        (
+            false,
+            true,
+            false
+        );
+
         return new SimulationConfig
         (
             treeConfig,
             fireConfig,
             windConfig,
             prefillConfig,
-            false,
+            effectsConfig,
             false
         );
     }
