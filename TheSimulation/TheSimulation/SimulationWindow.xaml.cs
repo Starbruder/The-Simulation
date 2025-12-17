@@ -356,18 +356,10 @@ public sealed partial class SimulationWindow : Window
     private int CalculateMaxTreesPossible()
         => Math.Max(1, (int)(cols * rows * simulationConfig.TreeDensity));
 
-    private string FormatTreeDensityText(int activeTreeCount)
-    {
-        var maxTreesPossible = CalculateMaxTreesPossible();
-        var density = activeTreeCount / (float)maxTreesPossible;
-        var densityPercent = (int)Math.Round(density * 100);
-
-        return $"{activeTreeCount} / {maxTreesPossible} ({densityPercent}%)";
-    }
-
     private void UpdateTreeUI()
     {
-        TreeDensityText.Text = FormatTreeDensityText(activeTrees.Count);
+        var maxTreesPossible = CalculateMaxTreesPossible();
+        TreeDensityText.Text = FormatHelper.FormatTreeDensityText(activeTrees.Count, maxTreesPossible);
 
         TotalGrownTrees.Text = totalGrownTrees.ToString();
         TotalBurnedTrees.Text = totalBurnedTrees.ToString();
