@@ -174,7 +174,7 @@ public sealed partial class SimulationWindow : Window
     private void InitializeFireTimer()
     {
         fireTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value);
-        fireTimer.Tick += async (_, _) => await FireStep();
+        fireTimer.Tick += (_, _) => FireStep();
         fireTimer.Start();
     }
 
@@ -261,7 +261,7 @@ public sealed partial class SimulationWindow : Window
         return colors[index];
     }
 
-    private async Task FireStep()
+    private void FireStep()
     {
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
@@ -296,24 +296,30 @@ public sealed partial class SimulationWindow : Window
         }
 
         // Feuer ausbreiten mit neuen Bränden
-        foreach (var cell in toIgnite)
+        foreach (var burningCell in toIgnite)
         {
-            forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
-            UpdateTreeColor(cell, Brushes.Red);
+            forestGrid[burningCell.X, burningCell.Y] = ForestCellState.Burning;
+            UpdateTreeColor(burningCell, Brushes.Red);
 
-            await AddFireParticle(cell);
+            if (randomHelper.NextDouble() < 0.7)
+            {
+                AddFireParticle(burningCell);
+                continue;
+            }
+
+            AddSmokeParticle(burningCell);
         }
 
         // alte Brände abbrennen lassen
-        foreach (var cell in toBurnDown)
+        foreach (var burnedDownCell in toBurnDown)
         {
-            BurnDownTree(cell, simulationConfig.ReplaceWithBurnedDownTree);
+            BurnDownTree(burnedDownCell, simulationConfig.ReplaceWithBurnedDownTree);
         }
 
         IsAnyBurningThenPause = isFireStepActive;
     }
 
-    private async Task AddFireParticle(Cell cell)
+    private void AddFireParticle(Cell cell)
     {
         var pos = new Point(
         cell.X * simulationConfig.TreeConfig.Size,
@@ -327,6 +333,20 @@ public sealed partial class SimulationWindow : Window
             color,
             size: 2 + randomHelper.NextInt(0, 3),
             lifetime: 0.6 + randomHelper.NextDouble() * 0.5
+        );
+    }
+
+    private void AddSmokeParticle(Cell cell)
+    {
+        var pos = new Point(
+            cell.X * simulationConfig.TreeConfig.Size,
+            cell.Y * simulationConfig.TreeConfig.Size);
+
+        particleGenerator.SpawnParticle(
+            pos,
+            Brushes.Gray,
+            size: 5 + randomHelper.NextInt(0, 4),
+            lifetime: 1.2 + randomHelper.NextDouble()
         );
     }
 
