@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace TheSimulation;
+﻿namespace TheSimulation;
 
 public sealed record SimulationConfig
 (
