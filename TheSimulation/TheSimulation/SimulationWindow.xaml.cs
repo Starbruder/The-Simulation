@@ -367,9 +367,7 @@ public sealed partial class SimulationWindow : Window
 
     private void UpdateTreeUI()
     {
-        var activeTreeCount = activeTrees.Count;
-
-        TreeDensityText.Text = FormatTreeDensityText(activeTreeCount);
+        TreeDensityText.Text = FormatTreeDensityText(activeTrees.Count);
 
         TotalGrownTrees.Text = totalGrownTrees.ToString();
         TotalBurnedTrees.Text = totalBurnedTrees.ToString();
