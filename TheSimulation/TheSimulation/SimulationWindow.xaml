@@ -8,7 +8,8 @@
         Title="SimulationWindow"
         Height="600"
         Width="800"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
 
 	<Grid>
 
