@@ -176,6 +176,7 @@ public sealed partial class SimulationWindow : Window
     {
         forestGrid[cell.X, cell.Y] = ForestCellState.Tree;
 
+        // Simulate different tree types by using different colors
         var color = GetRandomTreeColor();
 
         var tree = new Ellipse
