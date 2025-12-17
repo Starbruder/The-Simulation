@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace TheSimulation;
 
@@ -17,7 +18,9 @@ public sealed partial class MainWindow : Window
     {
         var fireIntensity = (float)FireIntensitySlider.Value; /// (Fire spread chance percent)
 
-		var config = new SimulationConfig
+        var windDiriction = GetWindDirection();
+
+        var config = new SimulationConfig
         (
             50000,
             0.6f,
@@ -26,10 +29,19 @@ public sealed partial class MainWindow : Window
             false,
             false,
             true,
-            WindDirection.East,
+            windDiriction,
             0.8f
         );
 
         new SimulationWindow(config).Show();
+    }
+
+    private WindDirection GetWindDirection()
+    {
+        var selectedString = ((ComboBoxItem)WindDirectionBox.SelectedItem).Content.ToString();
+
+        return Enum.TryParse<WindDirection>(selectedString, out var windDir)
+            ? windDir
+            : WindDirection.North;
     }
 }
