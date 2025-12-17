@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using TheSimulation.Visualizers;
 
 namespace TheSimulation;
 
@@ -14,6 +15,8 @@ public sealed partial class SimulationWindow : Window
     private readonly SimulationConfig simulationConfig;
 
     private readonly RandomHelper randomHelper = new();
+    private readonly WindHelper windHelper;
+    private readonly WindVisualizer windVisualizer;
 
     private DispatcherTimer simulationTimer;
     private DateTime simulationStartTime;
@@ -42,7 +45,11 @@ public sealed partial class SimulationWindow : Window
         simulationTimer = new();
 
         InitializeComponent();
-        UIHelper.InitializeWindowIcon(this);
+        IconVisualizer.InitializeWindowIcon(this);
+
+        this.simulationConfig = simulationConfig;
+        windHelper = new(simulationConfig);
+        windVisualizer = new(ForestCanvas, simulationConfig);
 
         Loaded += (_, _) =>
         {
@@ -52,6 +59,7 @@ public sealed partial class SimulationWindow : Window
             InitializeIgniteTimer();
             InitializeFireTimer();
             InitializeSliders();
+            windVisualizer.Draw();
         };
 
         ForestCanvas.MouseLeftButtonDown += (_, e) =>
@@ -68,21 +76,20 @@ public sealed partial class SimulationWindow : Window
                 UpdateTreeColor(cell, Brushes.Red);
             }
         };
-        this.simulationConfig = simulationConfig;
     }
 
     private void StartSimulationTimer()
     {
         SetAndCalculateStartTime();
 
-        UIHelper.UpdateTimerUI(SimulationTimeText, simulationStartTime);
+        TimerVisualizer.UpdateTimerUI(SimulationTimeText, simulationStartTime);
 
         simulationTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromSeconds(1)
         };
         simulationTimer.Tick += (_, _)
-            => UIHelper.UpdateTimerUI(SimulationTimeText, simulationStartTime);
+            => TimerVisualizer.UpdateTimerUI(SimulationTimeText, simulationStartTime);
         simulationTimer.Start();
     }
 
@@ -135,6 +142,7 @@ public sealed partial class SimulationWindow : Window
         growTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
         fireTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
         igniteTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue * 750);
+        windVisualizer?.Draw();
     }
 
     private void GrowStep()
@@ -211,8 +219,7 @@ public sealed partial class SimulationWindow : Window
                     continue;
                 }
 
-                // Zufallschance für Feuerweitergabe
-                var chance = simulationConfig.FireSpreadChancePercent / 100f;
+                var chance = CalculateChances(burningCell, neighbor);
 
                 if (randomHelper.NextDouble() < chance)
                 {
@@ -237,6 +244,16 @@ public sealed partial class SimulationWindow : Window
         }
 
         IsAnyBurningThenPause = isFireStepActive;
+    }
+
+    private double CalculateChances(Cell burningCell, Cell neighbor)
+    {
+        // Zufallschance für Feuerweitergabe berechnen
+        var baseChance = simulationConfig.FireSpreadChancePercent / 100f;
+        // Zufallschance für Wind-Einfluss berechnen
+        var windEffect = windHelper.CalculateWindEffect(burningCell, neighbor);
+        var chance = baseChance * windEffect;
+        return chance;
     }
 
     private void BurnDownTree(Cell cell, bool replaceWithBurnedDownTree = false)

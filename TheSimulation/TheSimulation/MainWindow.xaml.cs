@@ -10,14 +10,14 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        UIHelper.InitializeWindowIcon(this);
+        IconVisualizer.InitializeWindowIcon(this);
     }
 
     private void StartSimulation_Click(object sender, RoutedEventArgs e)
     {
-        var fireIntensity = (float)FireIntensitySlider.Value;
+        var fireIntensity = (float)FireIntensitySlider.Value; /// (Fire spread chance percent)
 
-        var config = new SimulationConfig
+		var config = new SimulationConfig
         (
             50000,
             0.6f,
@@ -25,7 +25,9 @@ public sealed partial class MainWindow : Window
             fireIntensity,
             false,
             false,
-            true
+            true,
+            WindDirection.East,
+            0.8f
         );
 
         new SimulationWindow(config).Show();
