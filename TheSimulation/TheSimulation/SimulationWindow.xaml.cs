@@ -50,10 +50,16 @@ public sealed partial class SimulationWindow : Window
         windHelper = new(simulationConfig);
         windVisualizer = new(ForestCanvas, simulationConfig);
 
-        Loaded += (_, _) =>
+        Loaded += async (_, _) =>
         {
             StartSimulationTimer();
             InitializeGrid();
+
+            if (simulationConfig.PrefillConfig.ShouldPrefillMap)
+            {
+                await PrefillForest();
+            }
+
             InitializeGrowTimer();
             InitializeIgniteTimer();
             InitializeFireTimer();
@@ -105,6 +111,48 @@ public sealed partial class SimulationWindow : Window
         rows = (int)(ForestCanvas.ActualHeight / simulationConfig.TreeConfig.Size);
 
         forestGrid = new ForestCellState[cols, rows];
+    }
+
+    private async Task PrefillForest()
+    {
+        var maxPossibleTrees = CalculateMaxTreesPossible();
+        var maxTrees = (int)(maxPossibleTrees * simulationConfig.PrefillConfig.Density);
+
+        // Alle Zellen vorbereiten
+        var allCells = new List<Cell>(cols * rows);
+        for (var x = 0; x < cols; x++)
+        {
+            for (var y = 0; y < rows; y++)
+            {
+                allCells.Add(new(x, y));
+            }
+        }
+
+        // Shuffle
+        for (var i = allCells.Count - 1; i > 0; i--)
+        {
+            var j = randomHelper.NextInt(0, i + 1);
+            (allCells[j], allCells[i]) = (allCells[i], allCells[j]);
+        }
+
+        const int batchSize = 200; // optional: Bäume in Paketen laden
+        var loaded = 0;
+
+        while (loaded < maxTrees)
+        {
+            var count = Math.Min(batchSize, maxTrees - loaded);
+            var batch = allCells.GetRange(loaded, count);
+            loaded += count;
+
+            // UI-Thread zum Hinzufügen der Ellipsen nutzen
+            await Dispatcher.InvokeAsync(() =>
+            {
+                foreach (var cell in batch)
+                {
+                    AddTree(cell);
+                }
+            });
+        }
     }
 
     private void InitializeGrowTimer()

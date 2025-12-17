@@ -16,6 +16,12 @@ public sealed partial class MainWindow : Window
 
     private void StartSimulation_Click(object sender, RoutedEventArgs e)
     {
+        var config = GetSimulationConfigFromUI();
+        new SimulationWindow(config).Show();
+    }
+
+    private SimulationConfig GetSimulationConfigFromUI()
+    {
         var fireIntensity = (float)FireIntensitySlider.Value; /// (Fire spread chance percent)
 
         var windDiriction = GetWindDirection();
@@ -40,16 +46,24 @@ public sealed partial class MainWindow : Window
             windStrength
         );
 
-        var config = new SimulationConfig
+        var prefill = PrefillCheckBox.IsChecked ?? false;
+        var prefillDensity = (float)PrefillDensitySlider.Value / 100f; // 0..1
+
+        var prefillConfig = new PrefillConfig
+        (
+            prefill,
+            prefillDensity // Z.b: 0.5 = 50 %
+        );
+
+        return new SimulationConfig
         (
             treeConfig,
             fireConfig,
             windConfig,
+            prefillConfig,
             false,
             false
         );
-
-        new SimulationWindow(config).Show();
     }
 
     private WindDirection GetWindDirection()
@@ -59,5 +73,11 @@ public sealed partial class MainWindow : Window
         return Enum.TryParse<WindDirection>(selectedString, out var windDir)
             ? windDir
             : WindDirection.North;
+    }
+
+    private void PrefillCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        // Slider aktivieren, wenn Checkbox tickt, sonst deaktivieren
+        PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? false;
     }
 }
