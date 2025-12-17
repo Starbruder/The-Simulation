@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace TheSimulation.Visualizers;
+namespace TheSimulation;
 
 /// <summary>
 /// WindHelper       → Logik
@@ -19,32 +19,31 @@ public sealed class WindArrowVisualizer
     private readonly Polygon arrowHead;
     private readonly PointCollection arrowHeadPoints = new(3);
 
-    public const int OverlayZIndex = 1_000;
+    private readonly static Brush arrowColor = Brushes.LightSkyBlue;
+
+	public const int OverlayZIndex = 1_000;
+
+    private const double Margin = 40;
+    private const double BaseLength = 30;
+    private const double ArrowHeadLength = 8;
+    private const double ArrowHeadWidth = 4;
 
     public WindArrowVisualizer(Canvas canvas, SimulationConfig config)
     {
         this.canvas = canvas;
         this.config = config;
 
-        // Shapes einmal erstellen
         arrow = CreateLine();
         arrowHead = CreateArrowHead();
         arrowHead.Points = arrowHeadPoints;
 
-        canvas.Children.Add(arrow);
-        canvas.Children.Add(arrowHead);
-
-        Canvas.SetZIndex(arrow, OverlayZIndex);
-        Canvas.SetZIndex(arrowHead, OverlayZIndex);
+        AddToCanvas(arrow);
+        AddToCanvas(arrowHead);
     }
 
     public void Draw()
     {
-        const double margin = 40;
-        const double baseLength = 30;
-
-        var centerX = canvas.ActualWidth - margin;
-        var centerY = margin;
+        var (centerX, centerY) = GetCanvasCenter();
 
         var windVector = WindMapper.GetWindVector(config.WindDirection);
         if (windVector.Length == 0)
@@ -53,54 +52,71 @@ public sealed class WindArrowVisualizer
         }
 
         windVector.Normalize();
-        var length = baseLength * config.WindStrength;
+        var length = BaseLength * config.WindStrength;
 
         var endX = centerX + windVector.X * length;
         var endY = centerY + windVector.Y * length;
 
-        // Line aktualisieren
-        arrow.X1 = centerX;
-        arrow.Y1 = centerY;
+        DrawArrow(centerX, centerY, endX, endY);
+        DrawArrowHead(endX, endY, windVector);
+    }
+
+    private void DrawArrow(double startX, double startY, double endX, double endY)
+    {
+        arrow.X1 = startX;
+        arrow.Y1 = startY;
         arrow.X2 = endX;
         arrow.Y2 = endY;
+    }
 
-        // Pfeilspitze aktualisieren
-        UpdateArrowHeadPoints(endX, endY, windVector);
+    private void DrawArrowHead(double endX, double endY, Vector direction)
+    {
+        var points = CalculateArrowHeadPoints(endX, endY, direction);
+
+        arrowHeadPoints.Clear();
+        foreach (var p in points)
+        {
+            arrowHeadPoints.Add(p);
+        }
+    }
+
+    private static Point[] CalculateArrowHeadPoints(double endX, double endY, Vector direction)
+    {
+        var normal = new Vector(-direction.Y, direction.X);
+
+        return
+        [
+            new(endX, endY),
+            new(endX - direction.X * ArrowHeadLength + normal.X * ArrowHeadWidth,
+                      endY - direction.Y * ArrowHeadLength + normal.Y * ArrowHeadWidth),
+            new(endX - direction.X * ArrowHeadLength - normal.X * ArrowHeadWidth,
+                      endY - direction.Y * ArrowHeadLength - normal.Y * ArrowHeadWidth)
+        ];
+    }
+
+    private (double x, double y) GetCanvasCenter()
+        => (canvas.ActualWidth - Margin, Margin);
+
+	private void AddToCanvas(UIElement element)
+    {
+        if (!canvas.Children.Contains(element))
+        {
+            canvas.Children.Add(element);
+        }
+
+        Canvas.SetZIndex(element, OverlayZIndex);
     }
 
     private static Line CreateLine() => new()
     {
-        Stroke = Brushes.LightSkyBlue,
+        Stroke = arrowColor,
         StrokeThickness = 3,
         IsHitTestVisible = false
     };
 
     private static Polygon CreateArrowHead() => new()
     {
-        Fill = Brushes.LightSkyBlue,
+        Fill = arrowColor,
         IsHitTestVisible = false
     };
-
-    private void UpdateArrowHeadPoints(double endX, double endY, Vector direction)
-    {
-        var normal = new Vector(-direction.Y, direction.X);
-
-        if (arrowHeadPoints.Count != 3)
-        {
-            arrowHeadPoints.Clear();
-            arrowHeadPoints.Add(new Point(endX, endY));
-            arrowHeadPoints.Add(new Point(endX - direction.X * 8 + normal.X * 4,
-                                          endY - direction.Y * 8 + normal.Y * 4));
-            arrowHeadPoints.Add(new Point(endX - direction.X * 8 - normal.X * 4,
-                                          endY - direction.Y * 8 - normal.Y * 4));
-        }
-        else
-        {
-            arrowHeadPoints[0] = new Point(endX, endY);
-            arrowHeadPoints[1] = new Point(endX - direction.X * 8 + normal.X * 4,
-                                           endY - direction.Y * 8 + normal.Y * 4);
-            arrowHeadPoints[2] = new Point(endX - direction.X * 8 - normal.X * 4,
-                                           endY - direction.Y * 8 - normal.Y * 4);
-        }
-    }
 }
