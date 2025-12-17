@@ -25,83 +25,93 @@
 			<GroupBox Header="Fire" Margin="0,0,0,10">
 				<StackPanel>
 					<TextBlock
-                    Text="{Binding ElementName=FireIntensitySlider,
-                                   Path=Value,
-                                   StringFormat=Fire spread chance: {0:F0}%}"
-                    FontSize="14"/>
+                        Text="{Binding ElementName=FireIntensitySlider,
+                                       Path=Value,
+                                       StringFormat=Fire spread chance: {0:F0}%}"
+                        FontSize="14" Margin="10,5,0,0"/>
 					<Slider x:Name="FireIntensitySlider"
-                        Maximum="100"
-                        Value="70"
-                        IsSnapToTickEnabled="True"
-                        TickFrequency="5"
-                        AutomationProperties.Name="Fire spread chance"/>
+                            Maximum="100"
+                            Value="70"
+                            IsSnapToTickEnabled="True"
+                            TickFrequency="5"
+                            AutomationProperties.Name="Fire spread chance"/>
 				</StackPanel>
 			</GroupBox>
 
 			<!-- Wind -->
 			<GroupBox Header="Wind">
 				<StackPanel>
-					<TextBlock Text="Wind direction"
-                           AutomationProperties.Name="Wind direction label"/>
-					<ComboBox x:Name="WindDirectionBox"
-                          SelectedIndex="2"
-                          MinWidth="150"
-                          AutomationProperties.Name="Wind direction"
-                          AutomationProperties.HelpText="Selects the direction of the wind">
+					<TextBlock Margin="10,5,0,0"
+                               Text="Wind direction"
+                               AutomationProperties.Name="Wind direction label"/>
+					<ComboBox Margin="4,5,4,0"
+                              x:Name="WindDirectionBox"
+                              SelectedIndex="2"
+                              MinWidth="150"
+                              AutomationProperties.Name="Wind direction"
+                              AutomationProperties.HelpText="Selects the direction of the wind">
 						<ComboBoxItem Content="North"/>
 						<ComboBoxItem Content="East"/>
 						<ComboBoxItem Content="South"/>
 						<ComboBoxItem Content="West"/>
 					</ComboBox>
 
-					<TextBlock Text="Wind strength"
-                           Margin="0,10,0,0"
-                           AutomationProperties.Name="Wind strength label"/>
+					<!-- TextBlock für Wind strength Wert -->
+					<TextBlock Margin="10,5,0,0"
+                               FontSize="14"
+                               Text="{Binding ElementName=WindStrengthSlider,
+                                              Path=Value,
+                                              StringFormat=Wind strength: {0:P0}}"/>
 					<Slider x:Name="WindStrengthSlider"
-                        Minimum="0"
-                        Maximum="1"
-                        Value="0.65"
-                        SmallChange="0.05"
-                        LargeChange="0.1"
-                        TickFrequency="0.1"
-                        IsSnapToTickEnabled="True"
-                        AutomationProperties.Name="Wind strength"
-                        AutomationProperties.HelpText="0 is no wind, 1 is strong wind"/>
+                            Minimum="0"
+                            Maximum="1"
+                            Value="0.65"
+                            SmallChange="0.05"
+                            LargeChange="0.1"
+                            TickFrequency="0.1"
+                            IsSnapToTickEnabled="True"
+                            AutomationProperties.Name="Wind strength"
+                            AutomationProperties.HelpText="0 is no wind, 1 is strong wind"/>
 				</StackPanel>
 			</GroupBox>
 
 			<!-- Prefill -->
 			<GroupBox Header="Prefill" Margin="0,10,0,0">
 				<StackPanel>
-					<CheckBox x:Name="PrefillCheckBox"
-                        Content="Prefill forest"
-                        IsChecked="False"
-                        AutomationProperties.Name="Prefill forest"
-                        Checked="PrefillCheckBox_Changed"
-          Unchecked="PrefillCheckBox_Changed"/>
+					<CheckBox Margin="5,5,0,0"
+                              x:Name="PrefillCheckBox"
+                              Content="Prefill forest"
+                              IsChecked="False"
+                              AutomationProperties.Name="Prefill forest"
+                              Checked="PrefillCheckBox_Changed"
+                              Unchecked="PrefillCheckBox_Changed"/>
 
-		            <TextBlock Text="Prefill density"
-                        Margin="0,5,0,0"/>
+					<!-- TextBlock für Prefill density Wert -->
+					<TextBlock Margin="10,5,0,5"
+                               FontSize="14"
+                               Text="{Binding ElementName=PrefillDensitySlider,
+                                              Path=Value,
+                                              StringFormat=Prefill density: {0:F0}%}"/>
 					<Slider x:Name="PrefillDensitySlider"
-                        Minimum="0"
-                        Maximum="100"
-                        Value="60"
-                        TickFrequency="5"
-                        IsSnapToTickEnabled="True"
-                        AutomationProperties.Name="Prefill density"
-                        IsEnabled="False"/>
+                            Minimum="0"
+                            Maximum="100"
+                            Value="60"
+                            TickFrequency="5"
+                            IsSnapToTickEnabled="True"
+                            AutomationProperties.Name="Prefill density"
+                            IsEnabled="False"/>
 				</StackPanel>
 			</GroupBox>
 		</StackPanel>
 
 		<!-- Simulate-Button -->
 		<Button Grid.Row="1"
-            Content="Simulate"
-            Height="40"
-            Width="120"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            Click="StartSimulation_Click"/>
+                Content="Simulate"
+                Height="40"
+                Width="120"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Click="StartSimulation_Click"/>
 	</Grid>
 
 </Window>
