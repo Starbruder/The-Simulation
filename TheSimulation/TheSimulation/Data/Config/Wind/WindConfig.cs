@@ -2,6 +2,6 @@
 
 public sealed record WindConfig
 (
-    WindDirection WindDirection,
-    float WindStrength
+    WindDirection Direction,
+    float Strength
 );
