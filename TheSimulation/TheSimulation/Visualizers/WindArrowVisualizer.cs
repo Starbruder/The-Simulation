@@ -21,7 +21,7 @@ public sealed class WindArrowVisualizer
 
     private readonly static Brush arrowColor = Brushes.LightSkyBlue;
 
-	public const int OverlayZIndex = 1_000;
+    public const int OverlayZIndex = 1_000;
 
     private const double Margin = 40;
     private const double BaseLength = 30;
@@ -45,14 +45,14 @@ public sealed class WindArrowVisualizer
     {
         var (centerX, centerY) = GetCanvasCenter();
 
-        var windVector = WindMapper.GetWindVector(config.WindDirection);
+        var windVector = WindMapper.GetWindVector(config.WindConfig.Direction);
         if (windVector.Length == 0)
         {
             return;
         }
 
         windVector.Normalize();
-        var length = BaseLength * config.WindStrength;
+        var length = BaseLength * config.WindConfig.Strength;
 
         var endX = centerX + windVector.X * length;
         var endY = centerY + windVector.Y * length;
@@ -97,7 +97,7 @@ public sealed class WindArrowVisualizer
     private (double x, double y) GetCanvasCenter()
         => (canvas.ActualWidth - Margin, Margin);
 
-	private void AddToCanvas(UIElement element)
+    private void AddToCanvas(UIElement element)
     {
         if (!canvas.Children.Contains(element))
         {

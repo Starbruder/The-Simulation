@@ -2,13 +2,9 @@
 
 public sealed record SimulationConfig
 (
-    uint MaxTrees,
-    float TreeDensity,
-    uint TreeSize,
-    float FireSpreadChancePercent,
+    TreeConfig TreeConfig,
+    FireConfig FireConfig,
+    WindConfig WindConfig,
     bool ReplaceWithBurnedDownTree,
-    bool ShowLightning,
-    bool PauseDuringFire,
-    WindDirection WindDirection,
-    float WindStrength
+    bool ShowLightning
 );

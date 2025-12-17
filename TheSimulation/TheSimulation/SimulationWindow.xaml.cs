@@ -65,8 +65,8 @@ public sealed partial class SimulationWindow : Window
         {
             var pos = e.GetPosition(ForestCanvas);
 
-            var x = (int)(pos.X / simulationConfig.TreeSize);
-            var y = (int)(pos.Y / simulationConfig.TreeSize);
+            var x = (int)(pos.X / simulationConfig.TreeConfig.Size);
+            var y = (int)(pos.Y / simulationConfig.TreeConfig.Size);
             var cell = new Cell(x, y);
 
             if (forestGrid![x, y] == ForestCellState.Tree)
@@ -101,8 +101,8 @@ public sealed partial class SimulationWindow : Window
 
     private void InitializeGrid()
     {
-        cols = (int)(ForestCanvas.ActualWidth / simulationConfig.TreeSize);
-        rows = (int)(ForestCanvas.ActualHeight / simulationConfig.TreeSize);
+        cols = (int)(ForestCanvas.ActualWidth / simulationConfig.TreeConfig.Size);
+        rows = (int)(ForestCanvas.ActualHeight / simulationConfig.TreeConfig.Size);
 
         forestGrid = new ForestCellState[cols, rows];
     }
@@ -147,15 +147,15 @@ public sealed partial class SimulationWindow : Window
     private void GrowStep()
     {
         // Wenn irgendwo Feuer brennt → überspringen
-        if (simulationConfig.PauseDuringFire && IsAnyBurningThenPause)
+        if (simulationConfig.FireConfig.PauseDuringFire && IsAnyBurningThenPause)
         {
             return;
         }
 
         // Zielanzahl anhand der Dichte oder Maximalanzahl
-        var targetTrees = (int)(cols * rows * simulationConfig.TreeDensity);
+        var targetTrees = (int)(cols * rows * simulationConfig.TreeConfig.ForestDensity);
 
-        if (activeTrees.Count >= targetTrees || activeTrees.Count >= simulationConfig.MaxTrees)
+        if (activeTrees.Count >= targetTrees || activeTrees.Count >= simulationConfig.TreeConfig.MaxCount)
         {
             return;
         }
@@ -181,14 +181,14 @@ public sealed partial class SimulationWindow : Window
 
         var tree = new Ellipse
         {
-            Width = simulationConfig.TreeSize,
-            Height = simulationConfig.TreeSize,
+            Width = simulationConfig.TreeConfig.Size,
+            Height = simulationConfig.TreeConfig.Size,
             Fill = color,
             Tag = cell
         };
 
-        Canvas.SetLeft(tree, cell.X * simulationConfig.TreeSize);
-        Canvas.SetTop(tree, cell.Y * simulationConfig.TreeSize);
+        Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
+        Canvas.SetTop(tree, cell.Y * simulationConfig.TreeConfig.Size);
         ForestCanvas.Children.Add(tree);
 
         treeElements[cell] = tree;
@@ -203,7 +203,7 @@ public sealed partial class SimulationWindow : Window
         Brush[] colors = [
             Brushes.Green,       // Kiefer
             Brushes.DarkGreen,   // Eiche
-            //Brushes.YellowGreen, // Buche
+            Brushes.YellowGreen, // Buche
             Brushes.ForestGreen  // Tanne
         ];
 
@@ -264,7 +264,7 @@ public sealed partial class SimulationWindow : Window
     private double CalculateChances(Cell burningCell, Cell neighbor)
     {
         // Zufallschance für Feuerweitergabe berechnen
-        var baseChance = simulationConfig.FireSpreadChancePercent / 100f;
+        var baseChance = simulationConfig.FireConfig.SpreadChancePercent / 100f;
         // Zufallschance für Wind-Einfluss berechnen
         var windEffect = windHelper.CalculateWindEffect(burningCell, neighbor);
         var chance = baseChance * windEffect;
@@ -346,15 +346,15 @@ public sealed partial class SimulationWindow : Window
     {
         var lightning = new Ellipse
         {
-            Width = simulationConfig.TreeSize,
-            Height = simulationConfig.TreeSize,
+            Width = simulationConfig.TreeConfig.Size,
+            Height = simulationConfig.TreeConfig.Size,
             Fill = Brushes.LightBlue,
             Opacity = 1,
             Tag = cell
         };
 
-        Canvas.SetLeft(lightning, cell.X * simulationConfig.TreeSize);
-        Canvas.SetTop(lightning, cell.Y * simulationConfig.TreeSize);
+        Canvas.SetLeft(lightning, cell.X * simulationConfig.TreeConfig.Size);
+        Canvas.SetTop(lightning, cell.Y * simulationConfig.TreeConfig.Size);
         ForestCanvas.Children.Add(lightning);
 
         var removeTimer = new DispatcherTimer
@@ -370,7 +370,7 @@ public sealed partial class SimulationWindow : Window
     }
 
     private int CalculateMaxTreesPossible()
-        => Math.Max(1, (int)(cols * rows * simulationConfig.TreeDensity));
+        => Math.Max(1, (int)(cols * rows * simulationConfig.TreeConfig.ForestDensity));
 
     private void UpdateTreeUI()
     {

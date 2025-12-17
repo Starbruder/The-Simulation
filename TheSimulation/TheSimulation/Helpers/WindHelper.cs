@@ -14,20 +14,20 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
         spreadDir.Normalize();
 
         // Wind normalisieren
-        var windDir = simulationConfig.WindDirection;
+        var windDir = simulationConfig.WindConfig.Direction;
         var windVector = WindMapper.GetWindVector(windDir);
-		if (windVector.Length == 0)
+        if (windVector.Length == 0)
         {
             return 1.0;
         }
 
-		windVector.Normalize();
+        windVector.Normalize();
 
         // Skalarprodukt: -1 .. 1
         var alignment = Vector.Multiply(spreadDir, windVector);
 
         // Gegenwind soll stark bremsen
-        var effect = 1 + simulationConfig.WindStrength * alignment;
+        var effect = 1 + simulationConfig.WindConfig.Strength * alignment;
 
         // Keine negativen Wahrscheinlichkeiten
         return Math.Max(0.1, effect);

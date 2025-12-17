@@ -21,17 +21,32 @@ public sealed partial class MainWindow : Window
         var windDiriction = GetWindDirection();
         var windStrength = (float)WindStrengthSlider.Value;
 
-        var config = new SimulationConfig
+        var treeConfig = new TreeConfig
         (
-            50000,
+            50_000,
             0.6f,
-            7,
+            7
+        );
+
+        var fireConfig = new FireConfig
+        (
             fireIntensity,
-            false,
-            false,
-            true,
+            true
+        );
+
+        var windConfig = new WindConfig
+        (
             windDiriction,
             windStrength
+        );
+
+        var config = new SimulationConfig
+        (
+            treeConfig,
+            fireConfig,
+            windConfig,
+            false,
+            false
         );
 
         new SimulationWindow(config).Show();
