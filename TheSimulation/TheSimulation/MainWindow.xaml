@@ -41,7 +41,15 @@
 			<!-- Wind -->
 			<GroupBox Header="Wind">
 				<StackPanel>
-					<TextBlock Margin="10,5,0,0"
+					<CheckBox Margin="5,5,0,0"
+                      x:Name="RandomWindDirectionCheckBox"
+                      Content="Random wind direction"
+                      IsChecked="False"
+                      AutomationProperties.Name="Random wind direction"
+                      Checked="RandomWindDirectionCheckBox_Changed"
+                      Unchecked="RandomWindDirectionCheckBox_Changed"/>
+
+                    <TextBlock Margin="10,5,0,0"
                                Text="Wind direction"
                                AutomationProperties.Name="Wind direction label"/>
 					<ComboBox Margin="4,5,4,0"

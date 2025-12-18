@@ -24,7 +24,7 @@ public sealed partial class MainWindow : Window
     {
         var fireIntensity = (float)FireIntensitySlider.Value; /// (Fire spread chance percent)
 
-        var windDiriction = GetWindDirection();
+        var windDirection = GetParsedWindDirection();
         var windStrength = (float)WindStrengthSlider.Value;
 
         var treeConfig = new TreeConfig
@@ -42,7 +42,8 @@ public sealed partial class MainWindow : Window
 
         var windConfig = new WindConfig
         (
-            windDiriction,
+            RandomWindDirectionCheckBox.IsChecked ?? false,
+            windDirection,
             windStrength
         );
 
@@ -73,7 +74,7 @@ public sealed partial class MainWindow : Window
         );
     }
 
-    private WindDirection GetWindDirection()
+    private WindDirection GetParsedWindDirection()
     {
         var selectedString = ((ComboBoxItem)WindDirectionBox.SelectedItem).Content.ToString();
 
@@ -86,5 +87,10 @@ public sealed partial class MainWindow : Window
     {
         // Slider aktivieren, wenn Checkbox tickt, sonst deaktivieren
         PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? false;
+    }
+
+    private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        WindDirectionBox.IsEnabled = !(RandomWindDirectionCheckBox.IsChecked ?? false);
     }
 }
