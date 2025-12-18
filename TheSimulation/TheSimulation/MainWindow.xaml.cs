@@ -24,7 +24,7 @@ public sealed partial class MainWindow : Window
     {
         var fireIntensity = (float)FireIntensitySlider.Value; /// (Fire spread chance percent)
 
-        var windDirection = GetParsedWindDirection();
+        var windDirection = GetWindDirection();
         var windStrength = (float)WindStrengthSlider.Value;
 
         var treeConfig = new TreeConfig
@@ -74,13 +74,30 @@ public sealed partial class MainWindow : Window
         );
     }
 
-    private WindDirection GetParsedWindDirection()
+    private WindDirection GetWindDirection()
+    {
+        if (RandomWindDirectionCheckBox.IsChecked == true)
+        {
+            return GetRandomWindDirection();
+        }
+
+        return GetParsedWindDirectionFromUI();
+    }
+
+    private WindDirection GetParsedWindDirectionFromUI()
     {
         var selectedString = ((ComboBoxItem)WindDirectionBox.SelectedItem).Content.ToString();
 
         return Enum.TryParse<WindDirection>(selectedString, out var windDir)
             ? windDir
             : WindDirection.North;
+    }
+
+    private static WindDirection GetRandomWindDirection()
+    {
+        var values = Enum.GetValues(typeof(WindDirection));
+        var randomIndex = new RandomHelper().NextInt(0, values.Length);
+        return (WindDirection)values.GetValue(randomIndex)!;
     }
 
     private void PrefillCheckBox_Changed(object sender, RoutedEventArgs e)
