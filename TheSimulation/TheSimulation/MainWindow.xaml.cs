@@ -106,8 +106,31 @@ public sealed partial class MainWindow : Window
         PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? false;
     }
 
-    private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
+	private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
     {
-        WindDirectionBox.IsEnabled = !(RandomWindDirectionCheckBox.IsChecked ?? false);
+        var isRandom = RandomWindDirectionCheckBox.IsChecked ?? false;
+        WindDirectionBox.IsEnabled = !isRandom;
+
+        if (!isRandom)
+        {
+            return;
+        }
+
+        var randomDirection = GetRandomWindDirection();
+
+        ShowRandomsetWinddirection(randomDirection);
+    }
+
+    private void ShowRandomsetWinddirection(WindDirection randomDirection)
+    {
+        foreach (ComboBoxItem item in WindDirectionBox.Items)
+        {
+            if (Enum.TryParse<WindDirection>(item.Content.ToString(), out var dir) &&
+                dir == randomDirection)
+            {
+                WindDirectionBox.SelectedItem = item;
+                break;
+            }
+        }
     }
 }
