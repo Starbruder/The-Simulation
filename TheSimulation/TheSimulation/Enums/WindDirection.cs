@@ -1,5 +1,6 @@
-﻿namespace TheSimulation;
+namespace TheSimulation;
 
+// Compass directions in degrees (clockwise, 0° = North)
 public enum WindDirection
 {
     // Compass directions in degrees (clockwise, 0° = North)
