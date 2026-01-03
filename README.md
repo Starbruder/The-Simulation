@@ -85,5 +85,3 @@ This project demonstrates:
 - How randomness and probability affect outcomes  
 
 It was created as part of a school assignment focusing on simulation, GUI development, and clean code principles.
-
-```md
