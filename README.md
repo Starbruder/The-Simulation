@@ -70,7 +70,7 @@ These distributions help create more realistic and varied simulation outcomes.
 
 - **C#**
 - **.NET**
-- **WPF** (or WinForms, depending on implementation)
+- **WPF**
 - Object‑oriented simulation architecture
 
 ---
