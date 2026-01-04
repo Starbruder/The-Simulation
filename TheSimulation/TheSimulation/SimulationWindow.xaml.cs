@@ -232,7 +232,7 @@ public sealed partial class SimulationWindow : Window
             return;
         }
 
-        var cell = randomHelper.GetRandomCell(cols, rows);
+        var cell = randomHelper.NextCell(cols, rows);
 
         // schon belegt → nichts tun
         if (forestGrid[cell.X, cell.Y] != ForestCellState.Empty)
@@ -249,7 +249,7 @@ public sealed partial class SimulationWindow : Window
         forestGrid[cell.X, cell.Y] = ForestCellState.Tree;
 
         // Simulate different tree types by using different colors
-        var color = GetRandomTreeColor();
+        var color = randomHelper.NextTreeColor();
 
         var tree = new Ellipse
         {
@@ -268,19 +268,6 @@ public sealed partial class SimulationWindow : Window
 
         totalGrownTrees++;
         UpdateTreeUI();
-    }
-
-    private Brush GetRandomTreeColor()
-    {
-        Brush[] colors = [
-            Brushes.Green,       // Kiefer
-            Brushes.DarkGreen,   // Eiche
-            Brushes.YellowGreen, // Buche
-            Brushes.ForestGreen  // Tanne
-        ];
-
-        var index = randomHelper.NextInt(0, colors.Length);
-        return colors[index];
     }
 
     private void FireStep()
@@ -448,7 +435,7 @@ public sealed partial class SimulationWindow : Window
 
     private void IgniteRandomTree()
     {
-        var cell = randomHelper.GetRandomCell(cols, rows);
+        var cell = randomHelper.NextCell(cols, rows);
 
         if (simulationConfig.VisualEffectsConfig.ShowLightning)
         {
