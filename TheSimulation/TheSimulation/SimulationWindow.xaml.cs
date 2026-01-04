@@ -315,26 +315,35 @@ public sealed partial class SimulationWindow : Window
             forestGrid[burningCell.X, burningCell.Y] = ForestCellState.Burning;
             UpdateTreeColor(burningCell, Brushes.Red);
 
-            if (simulationConfig.VisualEffectsConfig.ShowFireParticles
-                && randomHelper.NextDouble() < 0.7)
-            {
-                AddFireParticle(burningCell);
-                continue;
-            }
-
-            if (simulationConfig.VisualEffectsConfig.ShowSmokeParticles)
-            {
-                AddSmokeParticle(burningCell);
-            }
+            SpawnFireEffect(burningCell);
         }
 
-        // alte Brände abbrennen lassen
+        BurnDownTrees(toBurnDown);
+
+        IsAnyBurningThenPause = isFireStepActive;
+    }
+
+    private void SpawnFireEffect(Cell burningCell)
+    {
+        if (simulationConfig.VisualEffectsConfig.ShowFireParticles
+             && randomHelper.NextDouble() < 0.7)
+        {
+            AddFireParticle(burningCell);
+            return;
+        }
+
+        if (simulationConfig.VisualEffectsConfig.ShowSmokeParticles)
+        {
+            AddSmokeParticle(burningCell);
+        }
+    }
+
+    private void BurnDownTrees(List<Cell> toBurnDown)
+    {
         foreach (var burnedDownCell in toBurnDown)
         {
             BurnDownTree(burnedDownCell);
         }
-
-        IsAnyBurningThenPause = isFireStepActive;
     }
 
     private void AddFireParticle(Cell cell)
