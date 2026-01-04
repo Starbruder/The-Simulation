@@ -3,13 +3,11 @@ using System.Windows.Shapes;
 
 namespace TheSimulation;
 
-public sealed class Particle(Ellipse visual, Vector velocity, float lifetime)
+public sealed record Particle(Ellipse Visual, Vector Velocity, double Lifetime)
 {
-    public Ellipse Visual { get; } = visual;
-    public Vector Velocity { get; } = velocity;
-    public float Lifetime { get; private set; } = lifetime;
+    public double Lifetime { get; private set; } = Lifetime;
 
-    public void DecreaseLifetime(float amount)
+    public void DecreaseLifetime(double amount)
     {
         Lifetime -= amount;
     }

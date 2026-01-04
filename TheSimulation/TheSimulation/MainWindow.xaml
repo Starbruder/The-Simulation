@@ -66,20 +66,20 @@
 
 					<!-- TextBlock für Wind strength Wert -->
 					<TextBlock Margin="10,5,0,0"
-                               FontSize="14"
-                               Text="{Binding ElementName=WindStrengthSlider,
-                                              Path=Value,
-                                              StringFormat=Wind strength: {0:P0}}"/>
+           FontSize="14"
+           Text="{Binding ElementName=WindStrengthSlider,
+                          Path=Value,
+                          StringFormat=Wind strength: {0:P0}}"/>
 					<Slider x:Name="WindStrengthSlider"
-                            Minimum="0"
-                            Maximum="1"
-                            Value="0.65"
-                            SmallChange="0.05"
-                            LargeChange="0.1"
-                            TickFrequency="0.1"
-                            IsSnapToTickEnabled="True"
-                            AutomationProperties.Name="Wind strength"
-                            AutomationProperties.HelpText="0 is no wind, 1 is strong wind"/>
+                        Minimum="0"
+                        Maximum="1"
+                        Value="0.65"
+                        TickFrequency="0.05"
+		                IsSnapToTickEnabled="True"
+                        SmallChange="0.05"
+                        LargeChange="0.1"
+                        AutomationProperties.Name="Wind strength"
+                        AutomationProperties.HelpText="0 is no wind, 1 is strong wind"/>
 				</StackPanel>
 			</GroupBox>
 

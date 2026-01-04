@@ -3,6 +3,6 @@
 public sealed record WindConfig
 (
     bool RandomDirection,
-    WindDirection Direction,
-    float Strength
+    WindDirection Direction, // Wird beachtet, wenn RandomDirection == false
+	double Strength
 );

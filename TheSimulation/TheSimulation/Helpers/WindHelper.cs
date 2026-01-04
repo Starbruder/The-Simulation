@@ -4,18 +4,20 @@ namespace TheSimulation;
 
 public sealed class WindHelper(SimulationConfig simulationConfig)
 {
+    private readonly SimulationConfig config = simulationConfig;
+    private readonly RandomHelper randomHelper = new();
+
+    public double CurrentWindAngleDegrees { get; private set; } = (int)simulationConfig.WindConfig.Direction;
+
     public double CalculateWindEffect(Cell from, Cell to)
     {
         var dx = to.X - from.X;
         var dy = to.Y - from.Y;
 
-        // Richtungsvektor der Feuerausbreitung
         var spreadDir = new Vector(dx, dy);
         spreadDir.Normalize();
 
-        // Wind normalisieren
-        var windDir = simulationConfig.WindConfig.Direction;
-        var windVector = WindMapper.GetWindVector(windDir);
+        var windVector = GetWindVector();
         if (windVector.Length == 0)
         {
             return 1.0;
@@ -23,13 +25,31 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 
         windVector.Normalize();
 
-        // Skalarprodukt: -1 .. 1
         var alignment = Vector.Multiply(spreadDir, windVector);
 
-        // Gegenwind soll stark bremsen
-        var effect = 1 + simulationConfig.WindConfig.Strength * alignment;
+        var effect = 1 + alignment; // optional: multipliziere mit Stärke, wenn nicht schon im Vector
 
-        // Keine negativen Wahrscheinlichkeiten
         return Math.Max(0.1, effect);
+    }
+
+    public Vector GetWindVector()
+    {
+        // in Radiant umrechnen
+        var rad = CurrentWindAngleDegrees * Math.PI / 180.0;
+        var x = Math.Cos(rad);
+        var y = Math.Sin(rad);
+
+        var vector = new Vector(x, y);
+        vector.Normalize();
+        vector *= config.WindConfig.Strength;
+
+        return vector;
+    }
+
+    public void RandomizedAndUpdateWindDirection()
+    {
+        // z. B. ±5° pro Tick
+        var delta = (randomHelper.NextDouble() * 2 - 1) * 5.0;
+        CurrentWindAngleDegrees = (CurrentWindAngleDegrees + delta + 360) % 360;
     }
 }

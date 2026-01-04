@@ -22,17 +22,14 @@ public sealed partial class MainWindow : Window
 
     private SimulationConfig GetSimulationConfigFromUI()
     {
-        var fireIntensity = (float)FireIntensitySlider.Value; /// (Fire spread chance percent)
-
-        var windDirection = GetWindDirection();
-        var windStrength = (float)WindStrengthSlider.Value;
-
         var treeConfig = new TreeConfig
         (
             50_000,
-            0.6f,
+            0.6,
             7
         );
+
+        var fireIntensity = FireIntensitySlider.Value; /// (Fire spread chance percent)
 
         var fireConfig = new FireConfig
         (
@@ -40,27 +37,14 @@ public sealed partial class MainWindow : Window
             true
         );
 
-        var windConfig = new WindConfig
-        (
-            RandomWindDirectionCheckBox.IsChecked ?? false,
-            windDirection,
-            windStrength
-        );
-
-        var prefill = PrefillCheckBox.IsChecked ?? false;
-        var prefillDensity = (float)PrefillDensitySlider.Value / 100f; // 0..1
-
-        var prefillConfig = new PrefillConfig
-        (
-            prefill,
-            prefillDensity // Z.b: 0.5 = 50 %
-        );
+        var windConfig = GetWindConfigFromUI();
+        var prefillConfig = GetPrefillConfigFromUI();
 
         var effectsConfig = new VisualEffectsConfig
         (
-            false,
             true,
-            false
+            true,
+            true
         );
 
         return new SimulationConfig
@@ -70,7 +54,33 @@ public sealed partial class MainWindow : Window
             windConfig,
             prefillConfig,
             effectsConfig,
-            false
+            false // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
+        );
+    }
+
+    private WindConfig GetWindConfigFromUI()
+    {
+        var randomWindDirection = RandomWindDirectionCheckBox.IsChecked ?? false;
+        var windDirection = GetWindDirection();
+        var windStrength = WindStrengthSlider.Value;
+
+		return new WindConfig
+        (
+            randomWindDirection,
+            windDirection,
+            windStrength
+        );
+    }
+
+    private PrefillConfig GetPrefillConfigFromUI()
+    {
+        var prefill = PrefillCheckBox.IsChecked ?? false;
+        var prefillDensity = PrefillDensitySlider.Value / 100; // 0..1
+
+        return new PrefillConfig
+        (
+            prefill,
+            prefillDensity // Z.b: 0.5 = 50 %
         );
     }
 
@@ -106,7 +116,7 @@ public sealed partial class MainWindow : Window
         PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? false;
     }
 
-	private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
+    private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
     {
         var isRandom = RandomWindDirectionCheckBox.IsChecked ?? false;
         WindDirectionBox.IsEnabled = !isRandom;

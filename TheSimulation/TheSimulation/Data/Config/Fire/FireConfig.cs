@@ -2,6 +2,6 @@
 
 public sealed record FireConfig
 (
-    float SpreadChancePercent,
+    double SpreadChancePercent,
     bool PauseDuringFire
 );

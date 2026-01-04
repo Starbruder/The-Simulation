@@ -23,6 +23,7 @@ public sealed partial class SimulationWindow : Window
     private readonly DispatcherTimer growTimer = new();
     private readonly DispatcherTimer igniteTimer = new();
     private readonly DispatcherTimer fireTimer = new();
+    private readonly DispatcherTimer windTimer = new();
 
     private ForestCellState[,] forestGrid;
 
@@ -66,8 +67,16 @@ public sealed partial class SimulationWindow : Window
             InitializeIgniteTimer();
             InitializeFireTimer();
             InitializeSliders();
-            windVisualizer.Draw();
-        };
+
+			if (simulationConfig.WindConfig.RandomDirection)
+			{
+				InitializeWindTimer();
+                return;
+			}
+
+			var vector = windHelper.GetWindVector();
+			windVisualizer.UpdateWind(vector); // Pfeil aktualisieren
+		};
 
         ForestCanvas.MouseLeftButtonDown += (_, e) =>
         {
@@ -186,6 +195,20 @@ public sealed partial class SimulationWindow : Window
         SpeedSlider.IsDirectionReversed = true;
     }
 
+    private void InitializeWindTimer()
+    {
+        windTimer.Interval = TimeSpan.FromMilliseconds(300); // Aktualisierungsintervall
+
+        windTimer.Tick += (_, _) =>
+        {
+            windHelper.RandomizedAndUpdateWindDirection(); // Windwinkel randomisieren
+            var vector = windHelper.GetWindVector();
+            windVisualizer.UpdateWind(vector); // Pfeil aktualisieren
+        };
+
+        windTimer.Start();
+    }
+
     private void SpeedChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         growTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
@@ -263,6 +286,8 @@ public sealed partial class SimulationWindow : Window
 
     private void FireStep()
     {
+        windHelper.RandomizedAndUpdateWindDirection();
+
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
 
@@ -317,7 +342,7 @@ public sealed partial class SimulationWindow : Window
         // alte Brände abbrennen lassen
         foreach (var burnedDownCell in toBurnDown)
         {
-            BurnDownTree(burnedDownCell, simulationConfig.ReplaceWithBurnedDownTree);
+            BurnDownTree(burnedDownCell);
         }
 
         IsAnyBurningThenPause = isFireStepActive;
@@ -336,7 +361,7 @@ public sealed partial class SimulationWindow : Window
             pos,
             color,
             size: 2 + randomHelper.NextInt(0, 3),
-            lifetime: 0.6f + (float)randomHelper.NextDouble() * 0.5f
+            lifetime: 0.6 + randomHelper.NextDouble() * 0.5
         );
     }
 
@@ -350,21 +375,21 @@ public sealed partial class SimulationWindow : Window
             pos,
             Brushes.Gray,
             size: 5 + randomHelper.NextInt(0, 4),
-            lifetime: 1.2f + (float)randomHelper.NextDouble()
+            lifetime: 1.2 + randomHelper.NextDouble()
         );
     }
 
     private double CalculateChances(Cell burningCell, Cell neighbor)
     {
         // Zufallschance für Feuerweitergabe berechnen
-        var baseChance = simulationConfig.FireConfig.SpreadChancePercent / 100f;
+        var baseChance = simulationConfig.FireConfig.SpreadChancePercent / 100;
         // Zufallschance für Wind-Einfluss berechnen
         var windEffect = windHelper.CalculateWindEffect(burningCell, neighbor);
         var chance = baseChance * windEffect;
         return chance;
     }
 
-    private void BurnDownTree(Cell cell, bool replaceWithBurnedDownTree = false)
+    private void BurnDownTree(Cell cell)
     {
         // Grid aktualisieren
         forestGrid[cell.X, cell.Y] = ForestCellState.Empty;
@@ -373,7 +398,7 @@ public sealed partial class SimulationWindow : Window
         {
             totalBurnedTrees++;
 
-            if (replaceWithBurnedDownTree)
+            if (simulationConfig.ReplaceWithBurnedDownTree)
             {
                 tree.Fill = Brushes.Gray;
             }

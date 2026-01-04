@@ -28,7 +28,9 @@ public sealed class WindArrowVisualizer
     private const double ArrowHeadLength = 8;
     private const double ArrowHeadWidth = 4;
 
-    public WindArrowVisualizer(Canvas canvas, SimulationConfig config)
+	private Vector currentWindVector = new(1, 0); // default nach rechts
+
+	public WindArrowVisualizer(Canvas canvas, SimulationConfig config)
     {
         this.canvas = canvas;
         this.config = config;
@@ -41,27 +43,33 @@ public sealed class WindArrowVisualizer
         AddToCanvas(arrowHead);
     }
 
-    public void Draw()
-    {
-        var (centerX, centerY) = GetCanvasCenter();
+	public void UpdateWind(Vector newVector)
+	{
+		currentWindVector = newVector;
+		Draw();
+	}
 
-        var windVector = WindMapper.GetWindVector(config.WindConfig.Direction);
-        if (windVector.Length == 0)
+	public void Draw()
+	{
+		var (centerX, centerY) = GetCanvasCenter();
+		var windVector = currentWindVector;
+
+		if (windVector.Length == 0)
         {
             return;
         }
 
         windVector.Normalize();
-        var length = BaseLength * config.WindConfig.Strength;
+		var length = BaseLength * config.WindConfig.Strength;
 
-        var endX = centerX + windVector.X * length;
-        var endY = centerY + windVector.Y * length;
+		var endX = centerX + windVector.X * length;
+		var endY = centerY + windVector.Y * length;
 
-        DrawArrow(centerX, centerY, endX, endY);
-        DrawArrowHead(endX, endY, windVector);
-    }
+		DrawArrow(centerX, centerY, endX, endY);
+		DrawArrowHead(endX, endY, windVector);
+	}
 
-    private void DrawArrow(double startX, double startY, double endX, double endY)
+	private void DrawArrow(double startX, double startY, double endX, double endY)
     {
         arrow.X1 = startX;
         arrow.Y1 = startY;
