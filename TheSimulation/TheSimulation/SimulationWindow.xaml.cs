@@ -71,11 +71,11 @@ public sealed partial class SimulationWindow : Window
 			if (simulationConfig.WindConfig.RandomDirection)
 			{
 				InitializeWindTimer();
-                return;
+                //MessageBox.Show("Der Wind ändert seine Richtung zufällig alle paar Sekunden.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+				return;
 			}
 
-			var vector = windHelper.GetWindVector();
-			windVisualizer.UpdateWind(vector); // Pfeil aktualisieren
+			windVisualizer.Draw();
 		};
 
         ForestCanvas.MouseLeftButtonDown += (_, e) =>
@@ -94,7 +94,7 @@ public sealed partial class SimulationWindow : Window
         };
     }
 
-    private void StartSimulationTimer()
+	private void StartSimulationTimer()
     {
         SetAndCalculateStartTime();
 
@@ -286,7 +286,10 @@ public sealed partial class SimulationWindow : Window
 
     private void FireStep()
     {
-        windHelper.RandomizedAndUpdateWindDirection();
+		if (simulationConfig.WindConfig.RandomDirection)
+        {
+            windHelper.RandomizedAndUpdateWindDirection();
+        }
 
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();

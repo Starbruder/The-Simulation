@@ -17,7 +17,7 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
         var spreadDir = new Vector(dx, dy);
         spreadDir.Normalize();
 
-        var windVector = GetWindVector();
+		var windVector = GetWindVector();
         if (windVector.Length == 0)
         {
             return 1.0;
@@ -27,15 +27,21 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 
         var alignment = Vector.Multiply(spreadDir, windVector);
 
-        var effect = 1 + alignment; // optional: multipliziere mit Stärke, wenn nicht schon im Vector
+        // optional: multipliziere mit Stärke, wenn nicht schon im Vector
+        var effect = 1 * config.WindConfig.Strength + alignment;
 
         return Math.Max(0.1, effect);
     }
 
     public Vector GetWindVector()
     {
-        // in Radiant umrechnen
-        var rad = CurrentWindAngleDegrees * Math.PI / 180.0;
+        if (!config.WindConfig.RandomDirection)
+        {
+			return WindMapper.GetWindVector(config.WindConfig.Direction);
+		}
+
+		// in Radiant umrechnen
+		var rad = CurrentWindAngleDegrees * Math.PI / 180.0;
         var x = Math.Cos(rad);
         var y = Math.Sin(rad);
 
