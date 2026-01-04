@@ -25,7 +25,7 @@ public sealed partial class MainWindow : Window
         var treeConfig = new TreeConfig
         (
             50_000,
-            0.6,
+            0.6f,
             7
         );
 

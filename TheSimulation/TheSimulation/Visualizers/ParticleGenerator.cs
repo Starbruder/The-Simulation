@@ -33,7 +33,7 @@ public sealed class ParticleGenerator
         updateTimer.Start();
     }
 
-    public void SpawnParticle(Point position, Brush color, double size = 3, float lifetime = 1)
+    public void SpawnParticle(Point position, Brush color, double size = 3, double lifetime = 1)
     {
         var ellipse = new Ellipse
         {
