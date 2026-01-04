@@ -213,7 +213,7 @@ public sealed partial class SimulationWindow : Window
         growTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
         fireTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
         igniteTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue * 750);
-        windVisualizer?.Draw();
+        windVisualizer.Draw();
     }
 
     private void GrowStep()
