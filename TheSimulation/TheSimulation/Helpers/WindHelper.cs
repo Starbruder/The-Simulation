@@ -20,7 +20,7 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 		var windVector = GetWindVector();
         if (windVector.Length == 0)
         {
-            return 1.0;
+            return 1;
         }
 
         windVector.Normalize();
@@ -41,7 +41,7 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 		}
 
 		// in Radiant umrechnen
-		var rad = CurrentWindAngleDegrees * Math.PI / 180.0;
+		var rad = CurrentWindAngleDegrees * Math.PI / 180;
         var x = Math.Cos(rad);
         var y = Math.Sin(rad);
 
@@ -55,7 +55,7 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
     public void RandomizedAndUpdateWindDirection()
     {
         // z. B. ±5° pro Tick
-        var delta = (randomHelper.NextDouble() * 2 - 1) * 5.0;
+        var delta = (randomHelper.NextDouble() * 2 - 1) * 5;
         CurrentWindAngleDegrees = (CurrentWindAngleDegrees + delta + 360) % 360;
     }
 }

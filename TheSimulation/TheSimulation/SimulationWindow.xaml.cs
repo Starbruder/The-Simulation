@@ -216,6 +216,16 @@ public sealed partial class SimulationWindow : Window
         windVisualizer?.Draw();
     }
 
+    protected override void OnClosed(EventArgs e)
+    {
+        simulationTimer.Stop();
+        growTimer.Stop();
+        igniteTimer.Stop();
+        fireTimer.Stop();
+        windTimer.Stop();
+        base.OnClosed(e);
+    }
+
     private void GrowStep()
     {
         // Wenn irgendwo Feuer brennt → überspringen
