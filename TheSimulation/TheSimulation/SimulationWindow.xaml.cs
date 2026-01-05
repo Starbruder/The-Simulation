@@ -468,7 +468,7 @@ public sealed partial class SimulationWindow : Window
         }
     }
 
-    private void ShowLightning(Cell cell)
+    private async void ShowLightning(Cell cell)
     {
         var lightning = new Ellipse
         {
@@ -483,16 +483,9 @@ public sealed partial class SimulationWindow : Window
         Canvas.SetTop(lightning, cell.Y * simulationConfig.TreeConfig.Size);
         ForestCanvas.Children.Add(lightning);
 
-        var removeTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(150)
-        };
-        removeTimer.Tick += (_, _) =>
-        {
-            ForestCanvas.Children.Remove(lightning);
-            removeTimer.Stop();
-        };
-        removeTimer.Start();
+        await Task.Delay(150);
+
+        ForestCanvas.Children.Remove(lightning);
     }
 
     private int CalculateMaxTreesPossible()
