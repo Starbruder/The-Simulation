@@ -15,7 +15,7 @@ public sealed partial class SimulationWindow : Window
 
     private readonly RandomHelper randomHelper = new();
     private readonly WindHelper windHelper;
-    private readonly WindArrowVisualizer windVisualizer;
+    private readonly WindArrowVisualizer windArrowVisualizer;
     private readonly ParticleGenerator particleGenerator;
     private DispatcherTimer simulationTimer;
     private DateTime simulationStartTime;
@@ -49,7 +49,7 @@ public sealed partial class SimulationWindow : Window
 
         this.simulationConfig = simulationConfig;
         windHelper = new(simulationConfig);
-        windVisualizer = new(ForestCanvas, simulationConfig);
+        windArrowVisualizer = new(ForestCanvas, simulationConfig);
 
         particleGenerator = new ParticleGenerator(ForestCanvas);
 
@@ -73,8 +73,10 @@ public sealed partial class SimulationWindow : Window
                 InitializeWindTimer();
                 return;
             }
-
-            windVisualizer.Draw();
+            var dir = simulationConfig.WindConfig.Direction;
+            var vector = WindMapper.GetWindVector(dir);
+            windArrowVisualizer.Draw(); // Canvas-Pfeil
+            WindDirectionVisualizer.UpdateWindUI(WindDirectionText, vector); // Text oben
         };
 
         ForestCanvas.MouseLeftButtonDown += (_, e) =>
@@ -202,7 +204,9 @@ public sealed partial class SimulationWindow : Window
         {
             windHelper.RandomizedAndUpdateWindDirection(); // Windwinkel randomisieren
             var vector = windHelper.GetWindVector();
-            windVisualizer.UpdateWind(vector); // Pfeil aktualisieren
+
+            windArrowVisualizer.Update(vector); // Canvas-Pfeil
+            WindDirectionVisualizer.UpdateWindUI(WindDirectionText, vector); // Text oben
         };
 
         windTimer.Start();
@@ -213,7 +217,7 @@ public sealed partial class SimulationWindow : Window
         growTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
         fireTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
         igniteTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue * 750);
-        windVisualizer?.Draw();
+        windArrowVisualizer?.Draw();
     }
 
     protected override void OnClosed(EventArgs e)

@@ -43,7 +43,7 @@ public sealed class WindArrowVisualizer
         AddToCanvas(arrowHead);
     }
 
-    public void UpdateWind(Vector newVector)
+    public void Update(Vector newVector)
     {
         currentWindVector = newVector;
 
@@ -53,7 +53,9 @@ public sealed class WindArrowVisualizer
     private Vector GetWindVector()
     {
         if (config.WindConfig.RandomDirection)
+        {
             return currentWindVector;
+        }
 
         return WindMapper.GetWindVector(config.WindConfig.Direction);
     }
