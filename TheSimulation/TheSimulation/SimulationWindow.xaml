@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:TheSimulation"
         mc:Ignorable="d"
         Title="SimulationWindow"
-        Height="600"
-        Width="800"
+        Height="650"
+        Width="1000"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
 
