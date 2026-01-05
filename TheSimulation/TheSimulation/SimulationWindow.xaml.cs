@@ -483,7 +483,7 @@ public sealed partial class SimulationWindow : Window
         Canvas.SetTop(lightning, cell.Y * simulationConfig.TreeConfig.Size);
         ForestCanvas.Children.Add(lightning);
 
-        await Task.Delay(150);
+        await Task.Delay(millisecondsDelay: 150);
 
         ForestCanvas.Children.Remove(lightning);
     }
