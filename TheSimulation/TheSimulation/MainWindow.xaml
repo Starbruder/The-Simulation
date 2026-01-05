@@ -50,7 +50,7 @@
                       Unchecked="RandomWindDirectionCheckBox_Changed"/>
 
                     <TextBlock Margin="10,5,0,0"
-                               Text="Wind direction"
+                               Text="Wind direction (from)"
                                AutomationProperties.Name="Wind direction label"/>
 					<ComboBox Margin="4,5,4,0"
                               x:Name="WindDirectionBox"
