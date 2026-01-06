@@ -53,33 +53,43 @@ public sealed partial class EvaluationWindow : Window
 
     private void DrawSimulationChart()
     {
-        if (data.History.Count < 2) return;
+        if (data.History.Count < 2)
+        {
+            return;
+        }
 
         ChartCanvas.Children.Clear();
 
-        double width = ChartCanvas.ActualWidth;
-        double height = ChartCanvas.ActualHeight;
+        var width = ChartCanvas.ActualWidth;
+        var height = ChartCanvas.ActualHeight;
 
-        if (width == 0) width = 800;
-        if (height == 0) height = 300;
+        if (width == 0)
+        {
+            width = 800;
+        }
+
+        if (height == 0)
+        {
+            height = 300;
+        }
 
         // Ränder für Achsen
-        double marginLeft = 50;
-        double marginBottom = 30;
+        const double marginLeft = 50;
+        const double marginBottom = 30;
 
-        double plotWidth = width - marginLeft - 20;
-        double plotHeight = height - marginBottom - 20;
+        var plotWidth = width - marginLeft - 20;
+        var plotHeight = height - marginBottom - 20;
 
         // Dynamisches Maximum für Y-Achse
-        uint maxY = Math.Max(1, data.History.Max(h => Math.Max(h.Grown, h.Burned)));
+        var maxY = Math.Max(1, data.History.Max(h => Math.Max(h.Grown, h.Burned)));
 
         // Funktion: Koordinaten in Canvas umrechnen
         Point ToCanvasPoint((TimeSpan Time, uint Grown, uint Burned) point, bool forBurned)
         {
-            double x = marginLeft + point.Time.TotalSeconds / data.Runtime.TotalSeconds * plotWidth;
-            double yValue = forBurned ? point.Burned : point.Grown;
-            double y = 10 + plotHeight - (yValue / (double)maxY * plotHeight); // 10 px oben frei
-            return new Point(x, y);
+            var x = marginLeft + point.Time.TotalSeconds / data.Runtime.TotalSeconds * plotWidth;
+            var yValue = forBurned ? point.Burned : point.Grown;
+            var y = 10 + plotHeight - (yValue / maxY * plotHeight); // 10 px oben frei
+            return new(x, y);
         }
 
         // --- Linien zeichnen ---
@@ -118,11 +128,11 @@ public sealed partial class EvaluationWindow : Window
         ChartCanvas.Children.Add(yAxis);
 
         // --- Y-Achse Beschriftung ---
-        int ySteps = 5;
-        for (int i = 0; i <= ySteps; i++)
+        const uint ySteps = 5;
+        for (var i = 0; i <= ySteps; i++)
         {
-            double yVal = i * maxY / ySteps;
-            double y = 10 + plotHeight - (yVal / (double)maxY * plotHeight);
+            var yVal = i * maxY / ySteps;
+            var y = 10 + plotHeight - (yVal / (double)maxY * plotHeight);
 
             // Tick
             var tick = new Line
@@ -148,11 +158,11 @@ public sealed partial class EvaluationWindow : Window
         }
 
         // --- X-Achse Beschriftung (Zeit) ---
-        int xSteps = 5;
-        for (int i = 0; i <= xSteps; i++)
+        const uint xSteps = 5;
+        for (var i = 0; i <= xSteps; i++)
         {
-            double tSec = i * data.Runtime.TotalSeconds / xSteps;
-            double x = marginLeft + tSec / data.Runtime.TotalSeconds * plotWidth;
+            var tSec = i * data.Runtime.TotalSeconds / xSteps;
+            var x = marginLeft + tSec / data.Runtime.TotalSeconds * plotWidth;
 
             var tick = new Line
             {
@@ -181,20 +191,30 @@ public sealed partial class EvaluationWindow : Window
 
     private void DrawActiveTreesChart()
     {
-        if (data.History.Count < 2) return;
+        if (data.History.Count < 2)
+        {
+            return;
+        }
 
         ActiveTreesCanvas.Children.Clear();
 
-        double width = ActiveTreesCanvas.ActualWidth;
-        double height = ActiveTreesCanvas.ActualHeight;
+        var width = ActiveTreesCanvas.ActualWidth;
+        var height = ActiveTreesCanvas.ActualHeight;
 
-        if (width == 0) width = 400;
-        if (height == 0) height = 300;
+        if (width == 0)
+        {
+            width = 400;
+        }
 
-        double marginLeft = 50;
-        double marginBottom = 30;
-        double plotWidth = width - marginLeft - 20;
-        double plotHeight = height - marginBottom - 20;
+        if (height == 0)
+        {
+            height = 300;
+        }
+
+        const double marginLeft = 50;
+        const double marginBottom = 30;
+        var plotWidth = width - marginLeft - 20;
+        var plotHeight = height - marginBottom - 20;
 
         // Maximum für aktive Bäume
         var maxActive = Math.Max(1, data.MaxTreesPossible);
@@ -208,10 +228,10 @@ public sealed partial class EvaluationWindow : Window
 
         foreach (var h in data.History)
         {
-            int active = (int)h.Grown - (int)h.Burned;
-            double x = marginLeft + h.Time.TotalSeconds / data.Runtime.TotalSeconds * plotWidth;
-            double y = 10 + plotHeight - (active / (double)maxActive * plotHeight);
-            activeLine.Points.Add(new Point(x, y));
+            var active = (int)h.Grown - (int)h.Burned;
+            var x = marginLeft + h.Time.TotalSeconds / data.Runtime.TotalSeconds * plotWidth;
+            var y = 10 + plotHeight - (active / (double)maxActive * plotHeight);
+            activeLine.Points.Add(new(x, y));
         }
 
         ActiveTreesCanvas.Children.Add(activeLine);
@@ -239,11 +259,11 @@ public sealed partial class EvaluationWindow : Window
         ActiveTreesCanvas.Children.Add(yAxis);
 
         // Y-Ticks
-        int ySteps = 5;
-        for (int i = 0; i <= ySteps; i++)
+        const uint ySteps = 5;
+        for (var i = 0; i <= ySteps; i++)
         {
-            double yVal = i * maxActive / ySteps;
-            double y = 10 + plotHeight - (yVal / maxActive * plotHeight);
+            var yVal = i * maxActive / ySteps;
+            var y = 10 + plotHeight - (yVal / maxActive * plotHeight);
 
             var tick = new Line
             {
@@ -267,11 +287,11 @@ public sealed partial class EvaluationWindow : Window
         }
 
         // X-Ticks
-        int xSteps = 5;
-        for (int i = 0; i <= xSteps; i++)
+        const uint xSteps = 5;
+        for (var i = 0; i <= xSteps; i++)
         {
-            double tSec = i * data.Runtime.TotalSeconds / xSteps;
-            double x = marginLeft + tSec / data.Runtime.TotalSeconds * plotWidth;
+            var tSec = i * data.Runtime.TotalSeconds / xSteps;
+            var x = marginLeft + tSec / data.Runtime.TotalSeconds * plotWidth;
 
             var tick = new Line
             {
