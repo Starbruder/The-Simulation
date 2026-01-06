@@ -48,8 +48,9 @@
                            Margin="16,0,8,0"/>
 
 				<!-- Button rechts neben Runtime -->
-				<Button Content="Show Evaluation"
+				<Button Content="Finish and Evaluate"
                         Grid.Column="2"
+						Padding="2,0"
                         Margin="8,0,16,0"
                         VerticalAlignment="Center"
                         Click="ShowEvaluation_Click"/>
@@ -65,10 +66,10 @@
               Visibility="Collapsed">
 			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
 				<TextBlock Text="Simulation Auswertung" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
-				<TextBlock x:Name="EvalTotalGrown" FontSize="16" Margin="0,5,0,0" Text="Total Grown: 42"/>
-				<TextBlock x:Name="EvalTotalBurned" FontSize="16" Margin="0,5,0,0" Text="Total Burned: 17"/>
-				<TextBlock x:Name="EvalTreeDensity" FontSize="16" Margin="0,5,0,0" Text="Tree Density: 50%"/>
-				<TextBlock x:Name="EvalRuntime" FontSize="16" Margin="0,5,0,0" Text="Runtime: 00:10:23"/>
+				<TextBlock x:Name="EvalTotalGrown" FontSize="16" Margin="0,5,0,0" Text="Total Grown: 0"/>
+				<TextBlock x:Name="EvalTotalBurned" FontSize="16" Margin="0,5,0,0" Text="Total Burned: 0"/>
+				<TextBlock x:Name="EvalTreeDensity" FontSize="16" Margin="0,5,0,0" Text="Tree Density: 0 / 0 (0%)"/>
+				<TextBlock x:Name="EvalRuntime" FontSize="16" Margin="0,5,0,0" Text="Runtime: 00:00:00"/>
 			</StackPanel>
 		</Grid>
 
