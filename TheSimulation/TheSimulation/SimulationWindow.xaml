@@ -13,65 +13,82 @@
 
 	<Grid>
 
-		<!-- Simulation Layer -->
-		<Grid x:Name="SimulationLayer">
-			<!-- Toolbar -->
-			<Grid Background="#222" Height="20" VerticalAlignment="Top">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<!-- Linke Controls -->
-					<ColumnDefinition Width="Auto"/>
-					<!-- Runtime -->
-					<ColumnDefinition Width="Auto"/>
-					<!-- Button rechts -->
-				</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 
-				<!-- Linke Controls -->
-				<StackPanel Orientation="Horizontal" Grid.Column="0">
-					<TextBlock Text="Speed" Foreground="White" VerticalAlignment="Center" Margin="16,0,4,0"/>
-					<Slider x:Name="SpeedSlider" Minimum="10" Maximum="500" Value="50" Width="120"/>
-					<TextBlock Text="Total Grown:" Foreground="White" VerticalAlignment="Center" Margin="16,0,0,0"/>
-					<TextBlock x:Name="TotalGrownTrees" Text="0" Foreground="White" VerticalAlignment="Center" Margin="5,0,0,0" MinWidth="32"/>
-					<TextBlock Text="Total Burned:" Foreground="White" VerticalAlignment="Center" Margin="16,0,0,0"/>
-					<TextBlock x:Name="TotalBurnedTrees" Text="0" Foreground="White" VerticalAlignment="Center" Margin="5,0,0,0" MinWidth="32"/>
-					<TextBlock Text="Tree-Density:" Foreground="White" VerticalAlignment="Center" Margin="16,0,0,0"/>
-					<TextBlock x:Name="TreeDensityText" Text="0 / 0 (0%)" Foreground="White" VerticalAlignment="Center" Margin="16,0,0,0"/>
-				</StackPanel>
+		<!-- Steuerleiste oben -->
+		<StackPanel Orientation="Horizontal"
+            Background="#222"
+            Grid.Row="0">
 
-				<!-- Runtime -->
-				<TextBlock x:Name="SimulationTimeText"
-                           Grid.Column="1"
-                           Text="Runtime: 00:00:00"
-                           Foreground="White"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Right"
-                           Margin="16,0,8,0"/>
+			<!-- Geschwindigkeit -->
+			<TextBlock Text="Speed"
+                   Foreground="White"
+                   VerticalAlignment="Center"
+                   Margin="16,0,4,0"/>
+			<Slider x:Name="SpeedSlider"
+                Minimum="10"
+                Maximum="500"
+                Value="50"
+                Width="120"
+                ValueChanged="SpeedChanged"/>
 
-				<!-- Button rechts neben Runtime -->
-				<Button Content="Finish and Evaluate"
-                        Grid.Column="2"
-						Padding="2,0"
-                        Margin="8,0,16,0"
-                        VerticalAlignment="Center"
-                        Click="ShowEvaluation_Click"/>
-			</Grid>
+			<!-- Abstand -->
+			<Rectangle Width="10"/>
 
-			<!-- Canvas für Simulation -->
-			<Canvas x:Name="ForestCanvas" Background="Black" Margin="0,20,0,0"/>
-		</Grid>
+			<TextBlock Text="Total Grown:"
+               Foreground="White"
+               VerticalAlignment="Center"
+               Margin="16,0,0,0"/>
+			<TextBlock x:Name="TotalGrownTrees"
+               Text="0"
+               Foreground="White"
+               VerticalAlignment="Center"
+               Margin="5,0,0,0" MinWidth="32"/>
 
-		<!-- Fullscreen Auswertungs-Layer -->
-		<Grid x:Name="EvaluationLayer"
-              Background="White"
-              Visibility="Collapsed">
-			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
-				<TextBlock Text="Simulation Auswertung" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
-				<TextBlock x:Name="EvalTotalGrown" FontSize="16" Margin="0,5,0,0" Text="Total Grown: 0"/>
-				<TextBlock x:Name="EvalTotalBurned" FontSize="16" Margin="0,5,0,0" Text="Total Burned: 0"/>
-				<TextBlock x:Name="EvalTreeDensity" FontSize="16" Margin="0,5,0,0" Text="Tree Density: 0 / 0 (0%)"/>
-				<TextBlock x:Name="EvalRuntime" FontSize="16" Margin="0,5,0,0" Text="Runtime: 00:00:00"/>
-			</StackPanel>
-		</Grid>
+			<TextBlock Text="Total Burned:"
+               Foreground="White"
+               VerticalAlignment="Center"
+               Margin="16,0,0,0"/>
+			<TextBlock x:Name="TotalBurnedTrees"
+               Text="0"
+               Foreground="White"
+               VerticalAlignment="Center"
+               Margin="5,0,0,0" MinWidth="32"/>
+
+			<TextBlock Text="Tree-Density:"
+               Foreground="White"
+               VerticalAlignment="Center"
+               Margin="16,0,0,0"/>
+			<TextBlock x:Name="TreeDensityText"
+                Text="0 / 0 (0%)"
+                Foreground="White"
+                VerticalAlignment="Center"
+                Margin="16,0,0,0"/>
+			<!-- Button rechts neben Runtime -->
+			<Button Content="Finish and Evaluate"
+                Grid.Column="2"
+                Padding="2,0"
+                Margin="16,0,0,0"
+                VerticalAlignment="Center"
+                Click="ShowEvaluation_Click"/>
+		</StackPanel>
+
+		<!-- Canvas (Wald - Anzeige) -->
+		<Canvas x:Name="ForestCanvas"
+            Grid.Row="1"
+            Background="Black"/>
+
+		<!-- Rechte Seite (Timer) -->
+		<TextBlock x:Name="SimulationTimeText"
+           Text="Runtime: 00:00:00"
+           Foreground="White"
+           VerticalAlignment="Center"
+           HorizontalAlignment="Right"
+           Margin="0,0,16,0"
+           Grid.Column="1"/>
 
 	</Grid>
 

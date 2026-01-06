@@ -218,18 +218,15 @@ public sealed partial class SimulationWindow : Window
 
     private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
     {
-        EvalTotalGrown.Text = $"Total Grown: {TotalGrownTrees.Text}";
-        EvalTotalBurned.Text = $"Total Burned: {TotalBurnedTrees.Text}";
-        EvalTreeDensity.Text = $"Tree Density: {TreeDensityText.Text}";
-        EvalRuntime.Text = $"Runtime: {SimulationTimeText.Text}";
+        var evalWindow = new EvaluationWindow
+        (
+            $"Total Grown: {TotalGrownTrees.Text}",
+            $"Total Burned: {TotalBurnedTrees.Text}",
+            $"Tree Density: {TreeDensityText.Text}",
+            $"Runtime: {SimulationTimeText.Text}"
+        );
 
-        OpenEvaluationLayer();
-    }
-
-    private void OpenEvaluationLayer()
-    {
-        SimulationLayer.Visibility = Visibility.Collapsed;
-        EvaluationLayer.Visibility = Visibility.Visible;
+        evalWindow.Show();
     }
 
     protected override void OnClosed(EventArgs e)

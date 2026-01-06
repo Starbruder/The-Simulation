@@ -1,27 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
-namespace TheSimulation
+namespace TheSimulation;
+
+/// <summary>
+/// Interaktionslogik für EvaluationWindow.xaml
+/// </summary>
+public sealed partial class EvaluationWindow : Window
 {
-    /// <summary>
-    /// Interaktionslogik für EvaluationWindow.xaml
-    /// </summary>
-    public partial class EvaluationWindow : Window
+    public EvaluationWindow(string TotalGrownTrees, string TotalBurnedTrees, string TreeDensityText, string SimulationTimeText)
     {
-        public EvaluationWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+
+        EvalTotalGrown.Text = $"Total Grown: {TotalGrownTrees}";
+        EvalTotalBurned.Text = $"Total Burned: {TotalBurnedTrees}";
+        EvalTreeDensity.Text = $"Tree Density: {TreeDensityText}";
+        EvalRuntime.Text = $"Runtime: {SimulationTimeText}";
     }
 }
