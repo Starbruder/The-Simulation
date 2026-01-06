@@ -26,4 +26,8 @@
     <Resource Include="Assets\Images\completely-burning-tree.jpeg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="OxyPlot.Wpf" Version="2.2.0" />
+  </ItemGroup>
+
 </Project>
