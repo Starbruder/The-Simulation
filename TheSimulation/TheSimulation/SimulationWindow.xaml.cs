@@ -216,6 +216,22 @@ public sealed partial class SimulationWindow : Window
         windVisualizer?.Draw();
     }
 
+    private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
+    {
+        EvalTotalGrown.Text = $"Total Grown: {TotalGrownTrees.Text}";
+        EvalTotalBurned.Text = $"Total Burned: {TotalBurnedTrees.Text}";
+        EvalTreeDensity.Text = $"Tree Density: {TreeDensityText.Text}";
+        EvalRuntime.Text = $"Runtime: {SimulationTimeText.Text}";
+
+        OpenEvaluationLayer();
+    }
+
+    private void OpenEvaluationLayer()
+    {
+        SimulationLayer.Visibility = Visibility.Collapsed;
+        EvaluationLayer.Visibility = Visibility.Visible;
+    }
+
     protected override void OnClosed(EventArgs e)
     {
         simulationTimer.Stop();
@@ -499,17 +515,4 @@ public sealed partial class SimulationWindow : Window
         TotalGrownTrees.Text = totalGrownTrees.ToString();
         TotalBurnedTrees.Text = totalBurnedTrees.ToString();
     }
-
-    private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
-    {
-		// Werte aus der Toolbar in die Evaluation Layer übernehmen
-		EvalTotalGrown.Text = $"Total Grown: {TotalGrownTrees.Text}";
-		EvalTotalBurned.Text = $"Total Burned: {TotalBurnedTrees.Text}";
-		EvalTreeDensity.Text = $"Tree Density: {TreeDensityText.Text}";
-		EvalRuntime.Text = $"Runtime: {SimulationTimeText.Text}";
-
-		// Simulation Layer ausblenden, Evaluation Layer einblenden
-		SimulationLayer.Visibility = Visibility.Collapsed;
-		EvaluationLayer.Visibility = Visibility.Visible;
-	}
 }
