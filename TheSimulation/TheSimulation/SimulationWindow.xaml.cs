@@ -38,6 +38,8 @@ public sealed partial class SimulationWindow : Window
     private readonly Dictionary<Cell, Ellipse> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
 
+    private readonly List<(TimeSpan Time, uint Grown, uint Burned)> simulationHistory = [];
+
     public SimulationWindow(SimulationConfig simulationConfig)
     {
         // To get rid of the warning CS8618
@@ -103,9 +105,35 @@ public sealed partial class SimulationWindow : Window
         {
             Interval = TimeSpan.FromSeconds(1)
         };
-        simulationTimer.Tick += (_, _)
-            => TimerVisualizer.UpdateTimerUI(SimulationTimeText, simulationStartTime);
+
+        simulationTimer.Tick += (_, _) =>
+        {
+            TimerVisualizer.UpdateTimerUI(SimulationTimeText, simulationStartTime);
+            RecordSimulationStats();
+        };
         simulationTimer.Start();
+    }
+
+    private void RecordSimulationStats()
+    {
+        var elapsed = DateTime.Now - simulationStartTime;
+        simulationHistory.Add((elapsed, totalGrownTrees, totalBurnedTrees));
+    }
+
+    private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
+    {
+        var data = new EvaluationData
+        {
+            TotalGrownTrees = totalGrownTrees,
+            TotalBurnedTrees = totalBurnedTrees,
+            ActiveTrees = activeTrees.Count,
+            MaxTreesPossible = CalculateMaxTreesPossible(),
+            Runtime = DateTime.Now - simulationStartTime,
+            History = new(simulationHistory)
+        };
+
+        var evalWindow = new EvaluationWindow(data);
+        evalWindow.Show();
     }
 
     private void SetAndCalculateStartTime()
@@ -214,19 +242,6 @@ public sealed partial class SimulationWindow : Window
         fireTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
         igniteTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue * 750);
         windVisualizer?.Draw();
-    }
-
-    private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
-    {
-        var evalWindow = new EvaluationWindow
-        (
-            $"Total Grown: {TotalGrownTrees.Text}",
-            $"Total Burned: {TotalBurnedTrees.Text}",
-            $"Tree Density: {TreeDensityText.Text}",
-            $"Runtime: {SimulationTimeText.Text}"
-        );
-
-        evalWindow.Show();
     }
 
     protected override void OnClosed(EventArgs e)
