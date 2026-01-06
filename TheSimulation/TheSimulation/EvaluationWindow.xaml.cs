@@ -60,8 +60,8 @@ public sealed partial class EvaluationWindow : Window
 
         ChartCanvas.Children.Clear();
 
-        var width = ChartCanvas.ActualWidth;
-        var height = ChartCanvas.ActualHeight;
+        double width = ChartCanvas.ActualWidth;
+        double height = ChartCanvas.ActualHeight;
 
         if (width == 0)
         {
@@ -81,13 +81,13 @@ public sealed partial class EvaluationWindow : Window
         var plotHeight = height - marginBottom - 20;
 
         // Dynamisches Maximum für Y-Achse
-        var maxY = Math.Max(1, data.History.Max(h => Math.Max(h.Grown, h.Burned)));
+        uint maxY = Math.Max(1, data.History.Max(h => Math.Max(h.Grown, h.Burned)));
 
         // Funktion: Koordinaten in Canvas umrechnen
         Point ToCanvasPoint((TimeSpan Time, uint Grown, uint Burned) point, bool forBurned)
         {
             var x = marginLeft + point.Time.TotalSeconds / data.Runtime.TotalSeconds * plotWidth;
-            var yValue = forBurned ? point.Burned : point.Grown;
+            double yValue = forBurned ? point.Burned : point.Grown;
             var y = 10 + plotHeight - (yValue / maxY * plotHeight); // 10 px oben frei
             return new(x, y);
         }
@@ -131,8 +131,8 @@ public sealed partial class EvaluationWindow : Window
         const uint ySteps = 5;
         for (var i = 0; i <= ySteps; i++)
         {
-            var yVal = i * maxY / ySteps;
-            var y = 10 + plotHeight - (yVal / (double)maxY * plotHeight);
+            double yVal = i * maxY / ySteps;
+            var y = 10 + plotHeight - (yVal / maxY * plotHeight);
 
             // Tick
             var tick = new Line
@@ -161,7 +161,7 @@ public sealed partial class EvaluationWindow : Window
         const uint xSteps = 5;
         for (var i = 0; i <= xSteps; i++)
         {
-            var tSec = i * data.Runtime.TotalSeconds / xSteps;
+            double tSec = i * data.Runtime.TotalSeconds / xSteps;
             var x = marginLeft + tSec / data.Runtime.TotalSeconds * plotWidth;
 
             var tick = new Line
@@ -262,7 +262,7 @@ public sealed partial class EvaluationWindow : Window
         const uint ySteps = 5;
         for (var i = 0; i <= ySteps; i++)
         {
-            var yVal = i * maxActive / ySteps;
+            double yVal = i * maxActive / ySteps;
             var y = 10 + plotHeight - (yVal / maxActive * plotHeight);
 
             var tick = new Line
@@ -290,7 +290,7 @@ public sealed partial class EvaluationWindow : Window
         const uint xSteps = 5;
         for (var i = 0; i <= xSteps; i++)
         {
-            var tSec = i * data.Runtime.TotalSeconds / xSteps;
+            double tSec = i * data.Runtime.TotalSeconds / xSteps;
             var x = marginLeft + tSec / data.Runtime.TotalSeconds * plotWidth;
 
             var tick = new Line
