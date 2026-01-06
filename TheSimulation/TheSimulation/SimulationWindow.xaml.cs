@@ -123,14 +123,14 @@ public sealed partial class SimulationWindow : Window
     private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
     {
         var data = new EvaluationData
-        {
-            TotalGrownTrees = totalGrownTrees,
-            TotalBurnedTrees = totalBurnedTrees,
-            ActiveTrees = activeTrees.Count,
-            MaxTreesPossible = CalculateMaxTreesPossible(),
-            Runtime = DateTime.Now - simulationStartTime,
-            History = new(simulationHistory)
-        };
+        (
+            TotalGrownTrees: totalGrownTrees,
+            TotalBurnedTrees: totalBurnedTrees,
+            ActiveTrees: activeTrees.Count,
+            MaxTreesPossible: CalculateMaxTreesPossible(),
+            Runtime: DateTime.Now - simulationStartTime,
+            History: new(simulationHistory)
+        );
 
         var evalWindow = new EvaluationWindow(data);
         evalWindow.Show();
