@@ -57,30 +57,7 @@ public sealed partial class SimulationWindow : Window
 
         particleGenerator = new ParticleGenerator(ForestCanvas);
 
-        Loaded += async (_, _) =>
-        {
-            StartSimulationTimer();
-            InitializeGrid();
-
-            if (simulationConfig.PrefillConfig.ShouldPrefillMap)
-            {
-                await PrefillForest();
-            }
-
-            InitializeGrowTimer();
-            InitializeIgniteTimer();
-            InitializeFireTimer();
-            InitializeSliders();
-
-            if (simulationConfig.WindConfig.RandomDirection || simulationConfig.WindConfig.RandomStrength)
-            {
-                InitializeWindTimer();
-                return;
-            }
-
-            windVisualizer.Draw();
-            UpdateWindUI();
-        };
+        Loaded += async (_, _) => await InitializeSimulationAsync();
 
         ForestCanvas.MouseLeftButtonDown += (_, e) =>
         {
@@ -90,12 +67,37 @@ public sealed partial class SimulationWindow : Window
             var y = (int)(pos.Y / simulationConfig.TreeConfig.Size);
             var cell = new Cell(x, y);
 
-            if (forestGrid![x, y] == ForestCellState.Tree)
+            if (forestGrid[x, y] == ForestCellState.Tree)
             {
                 forestGrid[x, y] = ForestCellState.Burning;
                 UpdateTreeColor(cell, Brushes.Red);
             }
         };
+    }
+
+    private async Task InitializeSimulationAsync()
+    {
+        StartSimulationTimer();
+        InitializeGrid();
+
+        if (simulationConfig.PrefillConfig.ShouldPrefillMap)
+        {
+            await PrefillForest();
+        }
+
+        InitializeGrowTimer();
+        InitializeIgniteTimer();
+        InitializeFireTimer();
+        InitializeSliders();
+
+        if (simulationConfig.WindConfig.RandomDirection || simulationConfig.WindConfig.RandomStrength)
+        {
+            InitializeWindTimer();
+            return;
+        }
+
+        windVisualizer.Draw();
+        UpdateWindUI();
     }
 
     private void StartSimulationTimer()
