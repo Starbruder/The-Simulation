@@ -350,7 +350,15 @@ public sealed partial class SimulationWindow : Window
             toBurnDown.Add(burningCell);
         }
 
-        // Feuer ausbreiten mit neuen Bränden
+        SpreadFire(toIgnite);
+
+        BurnDownTrees(toBurnDown);
+
+        IsAnyBurningThenPause = isFireStepActive;
+    }
+
+    private void SpreadFire(HashSet<Cell> toIgnite)
+    {
         foreach (var burningCell in toIgnite)
         {
             forestGrid[burningCell.X, burningCell.Y] = ForestCellState.Burning;
@@ -358,10 +366,6 @@ public sealed partial class SimulationWindow : Window
 
             SpawnFireEffect(burningCell);
         }
-
-        BurnDownTrees(toBurnDown);
-
-        IsAnyBurningThenPause = isFireStepActive;
     }
 
     private void SpawnFireEffect(Cell burningCell)
