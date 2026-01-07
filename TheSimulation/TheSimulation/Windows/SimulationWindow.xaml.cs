@@ -320,10 +320,14 @@ public sealed partial class SimulationWindow : Window
     {
         windHelper.RandomizeAndUpdateWind();
 
+        // Setzen von toIgnite und toBurnDown
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
 
         var isFireStepActive = false;
+
+        // Berechnung des Wind-Effekts und der Verbreitungschancen für alle Zellen im Brandzustand
+        var fireSpreadChances = new Dictionary<Cell, double>();
 
         foreach (var burningCell in treeElements.Keys)
         {
@@ -334,6 +338,7 @@ public sealed partial class SimulationWindow : Window
 
             isFireStepActive = true;
 
+            // Berechne die Chancen für die benachbarten Zellen nur einmal
             foreach (var neighbor in GetNeighbors(burningCell))
             {
                 if (forestGrid[neighbor.X, neighbor.Y] != ForestCellState.Tree)
@@ -341,9 +346,15 @@ public sealed partial class SimulationWindow : Window
                     continue;
                 }
 
-                var chance = CalculateChances(burningCell, neighbor);
+                // Wenn die Chance noch nicht berechnet wurde, berechne sie jetzt
+                if (!fireSpreadChances.ContainsKey(neighbor))
+                {
+                    var chance = CalculateFireSpreadChance(burningCell, neighbor);
+                    fireSpreadChances[neighbor] = chance;
+                }
 
-                if (randomHelper.NextDouble() < chance)
+                // Wenn die zufällige Zahl kleiner als die Berechnete Chance ist, ignitiere den Baum
+                if (randomHelper.NextDouble() < fireSpreadChances[neighbor])
                 {
                     toIgnite.Add(neighbor);
                 }
@@ -352,11 +363,23 @@ public sealed partial class SimulationWindow : Window
             toBurnDown.Add(burningCell);
         }
 
+        // Zündung von Zellen
         SpreadFire(toIgnite);
 
+        // Brandzerstörung
         BurnDownTrees(toBurnDown);
 
         IsAnyBurningThenPause = isFireStepActive;
+    }
+
+    private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
+    {
+        // Berechne die Basischance für das Übergreifen des Feuers
+        var baseChance = simulationConfig.FireConfig.SpreadChancePercent / 100;
+        // Berechne den Wind-Effekt
+        var windEffect = windHelper.CalculateWindEffect(burningCell, neighbor);
+        // Multipliziere beide Werte
+        return baseChance * windEffect;
     }
 
     private void SpreadFire(HashSet<Cell> toIgnite)
