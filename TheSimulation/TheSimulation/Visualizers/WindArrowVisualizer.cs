@@ -14,6 +14,7 @@ public sealed class WindArrowVisualizer
 {
     private readonly Canvas canvas;
     private readonly SimulationConfig config;
+    private readonly WindHelper windHelper;
 
     private readonly Line arrow;
     private readonly Polygon arrowHead;
@@ -28,12 +29,13 @@ public sealed class WindArrowVisualizer
     private const double ArrowHeadLength = 8;
     private const double ArrowHeadWidth = 4;
 
-    private Vector currentWindVector = new(1, 0); // default nach rechts
+    private Vector currentWindVector = new();
 
-    public WindArrowVisualizer(Canvas canvas, SimulationConfig config)
+    public WindArrowVisualizer(Canvas canvas, SimulationConfig config, WindHelper windHelper)
     {
         this.canvas = canvas;
         this.config = config;
+        this.windHelper = windHelper;
 
         arrow = CreateLine();
         arrowHead = CreateArrowHead();
@@ -71,7 +73,7 @@ public sealed class WindArrowVisualizer
         }
 
         windVector.Normalize();
-        var length = BaseLength * config.WindConfig.Strength;
+        var length = BaseLength * windHelper.CurrentWindStrength;
 
         var endX = centerX + windVector.X * length;
         var endY = centerY + windVector.Y * length;

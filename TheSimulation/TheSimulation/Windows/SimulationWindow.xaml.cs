@@ -51,7 +51,7 @@ public sealed partial class SimulationWindow : Window
 
         this.simulationConfig = simulationConfig;
         windHelper = new(simulationConfig);
-        windVisualizer = new(ForestCanvas, simulationConfig);
+        windVisualizer = new(ForestCanvas, simulationConfig, windHelper);
 
         particleGenerator = new ParticleGenerator(ForestCanvas);
 
@@ -70,14 +70,15 @@ public sealed partial class SimulationWindow : Window
             InitializeFireTimer();
             InitializeSliders();
 
-            if (simulationConfig.WindConfig.RandomDirection)
+            if (simulationConfig.WindConfig.RandomDirection || simulationConfig.WindConfig.RandomStrength)
             {
                 InitializeWindTimer();
                 return;
             }
 
             windVisualizer.Draw();
-        };
+            UpdateWindUI();
+		};
 
         ForestCanvas.MouseLeftButtonDown += (_, e) =>
         {
@@ -228,9 +229,11 @@ public sealed partial class SimulationWindow : Window
 
         windTimer.Tick += (_, _) =>
         {
-            windHelper.RandomizedAndUpdateWindDirection(); // Windwinkel randomisieren
+            windHelper.RandomizedAndUpdateWind(); // Winkel und Strengh randomisieren
             var vector = windHelper.GetWindVector();
             windVisualizer.UpdateWind(vector); // Pfeil aktualisieren
+
+            UpdateWindUI();
         };
 
         windTimer.Start();
@@ -312,7 +315,7 @@ public sealed partial class SimulationWindow : Window
     {
         if (simulationConfig.WindConfig.RandomDirection)
         {
-            windHelper.RandomizedAndUpdateWindDirection();
+            windHelper.RandomizedAndUpdateWind();
         }
 
         var toIgnite = new HashSet<Cell>();
@@ -526,5 +529,11 @@ public sealed partial class SimulationWindow : Window
 
         TotalGrownTrees.Text = totalGrownTrees.ToString();
         TotalBurnedTrees.Text = totalBurnedTrees.ToString();
+    }
+
+    private void UpdateWindUI()
+    {
+        // Windstärke im TextBlock anzeigen und den Wert als Prozent
+        WindStrengthText.Text = $"{windHelper.CurrentWindStrength * 100:F0}%";
     }
 }

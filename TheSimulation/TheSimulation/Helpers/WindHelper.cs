@@ -9,6 +9,8 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 
     public double CurrentWindAngleDegrees { get; private set; } = (int)simulationConfig.WindConfig.Direction;
 
+    public double CurrentWindStrength { get; private set; } = simulationConfig.WindConfig.Strength;
+
     public double CalculateWindEffect(Cell from, Cell to)
     {
         var dx = to.X - from.X;
@@ -31,7 +33,7 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
         var alignment = Vector.Multiply(spreadDir, windVector);
 
         // multipliziere mit Stärke
-        var effect = 1 + simulationConfig.WindConfig.Strength * alignment;
+        var effect = 1 + CurrentWindStrength * alignment;
 
         // Keine negativen Wahrscheinlichkeiten
         return Math.Max(0.1, effect);
@@ -51,15 +53,39 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 
         var vector = new Vector(x, y);
         vector.Normalize();
-        vector *= config.WindConfig.Strength;
+        vector *= CurrentWindStrength;
 
         return vector;
     }
 
-    public void RandomizedAndUpdateWindDirection()
+    public void RandomizedAndUpdateWind()
     {
-        // z. B. ±5° pro Tick
-        var delta = (randomHelper.NextDouble() * 2 - 1) * 5;
-        CurrentWindAngleDegrees = (CurrentWindAngleDegrees + delta + 360) % 360;
+        if (config.WindConfig.RandomDirection)
+        {
+            // Windrichtung um ±5° ändern
+            RandomizeWindDirection(fluctuation: 5);
+        }
+
+        if (config.WindConfig.RandomStrength)
+        {
+            // Windstärke um ±5% ändern
+            RandomizeWindStrengh(fluctuation: 0.05f);
+        }
+    }
+
+    private void RandomizeWindDirection(uint fluctuation)
+    {
+        var deltaDirection = (randomHelper.NextDouble() * 2 - 1) * fluctuation;
+        CurrentWindAngleDegrees = (CurrentWindAngleDegrees + deltaDirection + 360) % 360;
+    }
+
+    private void RandomizeWindStrengh(float fluctuation)
+    {
+        var deltaStrength = randomHelper.NextDouble(-fluctuation, fluctuation);
+        CurrentWindStrength += deltaStrength;
+
+        // Sicherstellen, dass die Windstärke im erlaubten Bereich bleibt
+        const uint MaxWindStrength = 1;
+        CurrentWindStrength = Math.Clamp(CurrentWindStrength, 0, MaxWindStrength);
     }
 }

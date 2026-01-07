@@ -67,8 +67,19 @@
                 Foreground="White"
                 VerticalAlignment="Center"
                 Margin="16,0,0,0"/>
-			<!-- Button rechts neben Runtime -->
-			<Button Content="Finish and Evaluate"
+
+			<!-- Windstärke Anzeige -->
+			<TextBlock Text="Wind Strength:"
+                       Foreground="White"
+                       VerticalAlignment="Center"
+                       Margin="16,0,0,0"/>
+			<TextBlock x:Name="WindStrengthText"
+                    Text="0%"
+                    Foreground="White"
+                    VerticalAlignment="Center"
+                    Margin="5,0,0,0" MinWidth="32"/>
+
+			<Button Content="Get Evaluation"
                 Grid.Column="2"
                 Padding="2,0"
                 Margin="16,0,0,0"
