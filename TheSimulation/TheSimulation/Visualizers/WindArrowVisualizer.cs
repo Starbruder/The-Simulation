@@ -53,7 +53,9 @@ public sealed class WindArrowVisualizer
     private Vector GetWindVector()
     {
         if (config.WindConfig.RandomDirection)
+        {
             return currentWindVector;
+        }
 
         return WindMapper.GetWindVector(config.WindConfig.Direction);
     }

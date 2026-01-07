@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="EvaluationWindow"
         Height="650" Width="1000"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+		ResizeMode="CanMinimize">
 
 	<Grid Background="White" Margin="20">
 		<Grid.RowDefinitions>
