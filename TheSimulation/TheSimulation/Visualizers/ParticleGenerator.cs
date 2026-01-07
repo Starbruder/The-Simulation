@@ -11,7 +11,7 @@ public sealed class ParticleGenerator
     private readonly Canvas canvas;
     private readonly List<Particle> particles = [];
     private readonly DispatcherTimer updateTimer;
-    private readonly Random random = new();
+    private readonly RandomHelper randomHelper = new();
 
     public static readonly Brush[] FireColors =
     [
@@ -48,9 +48,40 @@ public sealed class ParticleGenerator
         canvas.Children.Add(ellipse);
 
         // zufällige Bewegung
-        var velocity = new Vector(random.NextDouble() * 2 - 1, -(random.NextDouble() * 2)); // nach oben
+        var velocity = new Vector(randomHelper.NextDouble() * 2 - 1, -(randomHelper.NextDouble() * 2)); // nach oben
 
         particles.Add(new(ellipse, velocity, lifetime));
+    }
+
+    public void AddFireParticle(Cell cell, SimulationConfig simulationConfig)
+    {
+        var pos = new Point(
+        cell.X * simulationConfig.TreeConfig.Size,
+        cell.Y * simulationConfig.TreeConfig.Size);
+
+        var fireColors = FireColors;
+        var color = fireColors[randomHelper.NextInt(0, fireColors.Length)];
+
+        SpawnParticle(
+            pos,
+            color,
+            size: 2 + randomHelper.NextInt(0, 3),
+            lifetime: 0.6 + randomHelper.NextDouble() * 0.5
+        );
+    }
+
+    public void AddSmoke(Cell cell, SimulationConfig config)
+    {
+        var pos = new Point(
+            cell.X * config.TreeConfig.Size,
+            cell.Y * config.TreeConfig.Size);
+
+        SpawnParticle(
+            pos,
+            Brushes.Gray,
+            size: 5 + randomHelper.NextInt(0, 4),
+            lifetime: 1.2 + randomHelper.NextDouble()
+        );
     }
 
     private void UpdateParticles()

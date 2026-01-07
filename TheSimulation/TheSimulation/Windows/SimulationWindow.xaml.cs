@@ -370,13 +370,13 @@ public sealed partial class SimulationWindow : Window
         if (simulationConfig.VisualEffectsConfig.ShowFireParticles
              && randomHelper.NextDouble() < 0.7)
         {
-            AddFireParticle(burningCell);
+            particleGenerator.AddFireParticle(burningCell, simulationConfig);
             return;
         }
 
         if (simulationConfig.VisualEffectsConfig.ShowSmokeParticles)
         {
-            AddSmokeParticle(burningCell);
+            particleGenerator.AddSmoke(burningCell, simulationConfig);
         }
     }
 
@@ -386,37 +386,6 @@ public sealed partial class SimulationWindow : Window
         {
             BurnDownTree(burnedDownCell);
         }
-    }
-
-    private void AddFireParticle(Cell cell)
-    {
-        var pos = new Point(
-        cell.X * simulationConfig.TreeConfig.Size,
-        cell.Y * simulationConfig.TreeConfig.Size);
-
-        var fireColors = ParticleGenerator.FireColors;
-        var color = fireColors[randomHelper.NextInt(0, fireColors.Length)];
-
-        particleGenerator.SpawnParticle(
-            pos,
-            color,
-            size: 2 + randomHelper.NextInt(0, 3),
-            lifetime: 0.6 + randomHelper.NextDouble() * 0.5
-        );
-    }
-
-    private void AddSmokeParticle(Cell cell)
-    {
-        var pos = new Point(
-            cell.X * simulationConfig.TreeConfig.Size,
-            cell.Y * simulationConfig.TreeConfig.Size);
-
-        particleGenerator.SpawnParticle(
-            pos,
-            Brushes.Gray,
-            size: 5 + randomHelper.NextInt(0, 4),
-            lifetime: 1.2 + randomHelper.NextDouble()
-        );
     }
 
     private double CalculateChances(Cell burningCell, Cell neighbor)
