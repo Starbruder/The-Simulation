@@ -30,6 +30,8 @@ public sealed partial class SimulationWindow : Window
     private int cols;
     private int rows;
 
+    private int maxTreesPossible;
+
     private bool IsAnyBurningThenPause = false;
 
     private uint totalGrownTrees = 0;
@@ -128,7 +130,7 @@ public sealed partial class SimulationWindow : Window
             TotalGrownTrees: totalGrownTrees,
             TotalBurnedTrees: totalBurnedTrees,
             ActiveTrees: activeTrees.Count,
-            MaxTreesPossible: CalculateMaxTreesPossible(),
+            MaxTreesPossible: maxTreesPossible,
             Runtime: DateTime.Now - simulationStartTime,
             History: new(simulationHistory)
         );
@@ -150,12 +152,13 @@ public sealed partial class SimulationWindow : Window
         rows = (int)(ForestCanvas.ActualHeight / simulationConfig.TreeConfig.Size);
 
         forestGrid = new ForestCellState[cols, rows];
+
+        maxTreesPossible = CalculateMaxTreesPossible();
     }
 
     private async Task PrefillForest()
     {
-        var maxPossibleTrees = CalculateMaxTreesPossible();
-        var maxTrees = (int)(maxPossibleTrees * simulationConfig.PrefillConfig.Density);
+        var maxTrees = (int)(maxTreesPossible * simulationConfig.PrefillConfig.Density);
 
         // Alle Zellen vorbereiten
         var allCells = new List<Cell>(cols * rows);
@@ -494,7 +497,6 @@ public sealed partial class SimulationWindow : Window
 
     private void UpdateTreeUI()
     {
-        var maxTreesPossible = CalculateMaxTreesPossible();
         TreeDensityText.Text = FormatHelper.FormatTreeDensityText(activeTrees.Count, maxTreesPossible);
 
         TotalGrownTrees.Text = totalGrownTrees.ToString();
