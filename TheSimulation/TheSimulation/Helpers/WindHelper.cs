@@ -58,7 +58,7 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
         return vector;
     }
 
-    public void RandomizedAndUpdateWind()
+    public void RandomizeAndUpdateWind()
     {
         if (config.WindConfig.RandomDirection)
         {

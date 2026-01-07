@@ -78,7 +78,7 @@ public sealed partial class SimulationWindow : Window
 
             windVisualizer.Draw();
             UpdateWindUI();
-		};
+        };
 
         ForestCanvas.MouseLeftButtonDown += (_, e) =>
         {
@@ -229,7 +229,7 @@ public sealed partial class SimulationWindow : Window
 
         windTimer.Tick += (_, _) =>
         {
-            windHelper.RandomizedAndUpdateWind(); // Winkel und Strengh randomisieren
+            windHelper.RandomizeAndUpdateWind(); // Winkel und Strengh randomisieren
             var vector = windHelper.GetWindVector();
             windVisualizer.UpdateWind(vector); // Pfeil aktualisieren
 
@@ -313,10 +313,7 @@ public sealed partial class SimulationWindow : Window
 
     private void FireStep()
     {
-        if (simulationConfig.WindConfig.RandomDirection)
-        {
-            windHelper.RandomizedAndUpdateWind();
-        }
+        windHelper.RandomizeAndUpdateWind();
 
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
