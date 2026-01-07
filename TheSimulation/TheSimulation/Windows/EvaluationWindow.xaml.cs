@@ -18,7 +18,6 @@ public sealed partial class EvaluationWindow : Window
         IconVisualizer.InitializeWindowIcon(this);
         this.data = data;
 
-        EvalTreeDensity.Text = $"Tree Density: {data.ActiveTrees} / {data.MaxTreesPossible} ({data.TreeDensityPercentage:F1}%)";
         EvalRuntime.Text = $"Runtime: {data.Runtime:hh\\:mm\\:ss}";
 
         Loaded += (_, _) =>
