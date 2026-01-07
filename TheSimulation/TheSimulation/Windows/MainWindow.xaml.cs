@@ -145,10 +145,4 @@ public sealed partial class MainWindow : Window
             }
         }
     }
-
-    private void RandomWindStrengthCheckBox_Changed(object sender, RoutedEventArgs e)
-    {
-        var isRandom = RandomWindStrengthCheckBox.IsChecked ?? false;
-        WindStrengthSlider.IsEnabled = !isRandom;
-    }
 }

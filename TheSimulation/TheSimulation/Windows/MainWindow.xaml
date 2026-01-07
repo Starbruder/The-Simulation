@@ -72,9 +72,7 @@
                       x:Name="RandomWindStrengthCheckBox"
                       Content="Random wind strength"
                       IsChecked="False"
-                      AutomationProperties.Name="Random wind strength"
-                      Checked="RandomWindStrengthCheckBox_Changed"
-                      Unchecked="RandomWindStrengthCheckBox_Changed"/>
+                      AutomationProperties.Name="Random wind strength"/>
 
 					<!-- TextBlock für Wind strength Wert -->
 					<TextBlock Margin="10,5,0,0"
