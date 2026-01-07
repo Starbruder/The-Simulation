@@ -347,14 +347,14 @@ public sealed partial class SimulationWindow : Window
                 }
 
                 // Wenn die Chance noch nicht berechnet wurde, berechne sie jetzt
-                if (!fireSpreadChances.ContainsKey(neighbor))
+                if (!fireSpreadChances.TryGetValue(neighbor, out var value))
                 {
-                    var chance = CalculateFireSpreadChance(burningCell, neighbor);
-                    fireSpreadChances[neighbor] = chance;
+                    value = CalculateFireSpreadChance(burningCell, neighbor);
+                    fireSpreadChances[neighbor] = value;
                 }
 
                 // Wenn die zufällige Zahl kleiner als die Berechnete Chance ist, ignitiere den Baum
-                if (randomHelper.NextDouble() < fireSpreadChances[neighbor])
+                if (randomHelper.NextDouble() < value)
                 {
                     toIgnite.Add(neighbor);
                 }
