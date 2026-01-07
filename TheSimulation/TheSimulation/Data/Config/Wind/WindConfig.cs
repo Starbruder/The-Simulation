@@ -4,5 +4,6 @@ public sealed record WindConfig
 (
     bool RandomDirection,
     WindDirection Direction, // Wird beachtet, wenn RandomDirection == false
-	double Strength
+    bool RandomStrength,
+    double Strength
 );

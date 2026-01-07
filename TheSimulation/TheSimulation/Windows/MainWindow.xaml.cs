@@ -62,12 +62,14 @@ public sealed partial class MainWindow : Window
     {
         var randomWindDirection = RandomWindDirectionCheckBox.IsChecked ?? false;
         var windDirection = GetWindDirection();
+        var randomStrength = RandomWindStrengthCheckBox.IsChecked ?? false;
         var windStrength = WindStrengthSlider.Value;
 
-		return new WindConfig
+        return new WindConfig
         (
             randomWindDirection,
             windDirection,
+            randomStrength,
             windStrength
         );
     }
@@ -142,5 +144,11 @@ public sealed partial class MainWindow : Window
                 break;
             }
         }
+    }
+
+    private void RandomWindStrengthCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        var isRandom = RandomWindStrengthCheckBox.IsChecked ?? false;
+        WindStrengthSlider.IsEnabled = !isRandom;
     }
 }

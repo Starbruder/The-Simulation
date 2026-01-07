@@ -64,6 +64,18 @@
 						<ComboBoxItem Content="West"/>
 					</ComboBox>
 
+					<!-- Abstand -->
+					<Rectangle Height="5"/>
+
+					<!-- Random Wind Strength Checkbox -->
+					<CheckBox Margin="5,5,0,0"
+                      x:Name="RandomWindStrengthCheckBox"
+                      Content="Random wind strength"
+                      IsChecked="False"
+                      AutomationProperties.Name="Random wind strength"
+                      Checked="RandomWindStrengthCheckBox_Changed"
+                      Unchecked="RandomWindStrengthCheckBox_Changed"/>
+
 					<!-- TextBlock für Wind strength Wert -->
 					<TextBlock Margin="10,5,0,0"
            FontSize="14"
