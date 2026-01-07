@@ -60,8 +60,8 @@ public sealed partial class EvaluationWindow : Window
 
         ChartCanvas.Children.Clear();
 
-        double width = ChartCanvas.ActualWidth;
-        double height = ChartCanvas.ActualHeight;
+        var width = ChartCanvas.ActualWidth;
+        var height = ChartCanvas.ActualHeight;
 
         if (width == 0)
         {
@@ -84,9 +84,9 @@ public sealed partial class EvaluationWindow : Window
         uint maxY = Math.Max(1, data.History.Max(h => Math.Max(h.Grown, h.Burned)));
 
         // Funktion: Koordinaten in Canvas umrechnen
-        Point ToCanvasPoint((TimeSpan Time, uint Grown, uint Burned) point, bool forBurned)
+        static Point ToCanvasPoint(EvaluationWindow @this, (TimeSpan Time, uint Grown, uint Burned) point, bool forBurned, double plotWidth, double plotHeight, uint maxY)
         {
-            var x = marginLeft + point.Time.TotalSeconds / data.Runtime.TotalSeconds * plotWidth;
+            var x = marginLeft + point.Time.TotalSeconds / @this.data.Runtime.TotalSeconds * plotWidth;
             double yValue = forBurned ? point.Burned : point.Grown;
             var y = 10 + plotHeight - (yValue / maxY * plotHeight); // 10 px oben frei
             return new(x, y);
@@ -98,8 +98,8 @@ public sealed partial class EvaluationWindow : Window
 
         foreach (var h in data.History)
         {
-            grownLine.Points.Add(ToCanvasPoint(h, false));
-            burnedLine.Points.Add(ToCanvasPoint(h, true));
+            grownLine.Points.Add(ToCanvasPoint(this, h, false, plotWidth, plotHeight, maxY));
+            burnedLine.Points.Add(ToCanvasPoint(this, h, true, plotWidth, plotHeight, maxY));
         }
 
         ChartCanvas.Children.Add(grownLine);
@@ -161,7 +161,7 @@ public sealed partial class EvaluationWindow : Window
         const uint xSteps = 5;
         for (var i = 0; i <= xSteps; i++)
         {
-            double tSec = i * data.Runtime.TotalSeconds / xSteps;
+            var tSec = i * data.Runtime.TotalSeconds / xSteps;
             var x = marginLeft + tSec / data.Runtime.TotalSeconds * plotWidth;
 
             var tick = new Line
