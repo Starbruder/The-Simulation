@@ -68,8 +68,8 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 
         if (config.WindConfig.RandomStrength)
         {
-            // Windstärke um ±5% ändern
-            RandomizeWindStrengh(fluctuation: 0.05f);
+            // Windstärke um ±3% ändern
+            RandomizeWindStrengh(fluctuation: 0.03f);
         }
     }
 
