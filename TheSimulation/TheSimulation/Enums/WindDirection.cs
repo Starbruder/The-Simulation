@@ -1,6 +1,13 @@
 ﻿namespace TheSimulation;
 
-// Compass directions in degrees (clockwise, 0° = North)
+/// <summary>
+/// Specifies the primary compass directions used to indicate wind direction.
+/// (clockwise, 0° = North)
+/// </summary>
+/// <remarks>
+/// The values correspond to the four cardinal points on a compass, measured in degrees clockwise from North.
+/// Use this enumeration to represent wind direction in meteorological or environmental applications.
+/// </remarks>
 public enum WindDirection
 {
     North = 0,
