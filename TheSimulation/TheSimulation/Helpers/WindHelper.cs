@@ -14,10 +14,12 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
         var dx = to.X - from.X;
         var dy = to.Y - from.Y;
 
+        // Richtungsvektor der Feuerausbreitung
         var spreadDir = new Vector(dx, dy);
         spreadDir.Normalize();
 
-		var windVector = GetWindVector();
+        // Wind normalisieren
+        var windVector = GetWindVector();
         if (windVector.Length == 0)
         {
             return 1;
@@ -25,11 +27,13 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 
         windVector.Normalize();
 
+        // Skalarprodukt: -1 .. 1
         var alignment = Vector.Multiply(spreadDir, windVector);
 
-        // optional: multipliziere mit Stärke, wenn nicht schon im Vector
-        var effect = 1 * config.WindConfig.Strength + alignment;
+        // multipliziere mit Stärke
+        var effect = 1 + simulationConfig.WindConfig.Strength * alignment;
 
+        // Keine negativen Wahrscheinlichkeiten
         return Math.Max(0.1, effect);
     }
 
@@ -37,11 +41,11 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
     {
         if (!config.WindConfig.RandomDirection)
         {
-			return WindMapper.GetWindVector(config.WindConfig.Direction);
-		}
+            return WindMapper.GetWindVector(config.WindConfig.Direction);
+        }
 
-		// in Radiant umrechnen
-		var rad = CurrentWindAngleDegrees * Math.PI / 180;
+        // in Radiant umrechnen
+        var rad = CurrentWindAngleDegrees * Math.PI / 180;
         var x = Math.Cos(rad);
         var y = Math.Sin(rad);
 
