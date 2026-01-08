@@ -24,6 +24,12 @@
 			<!-- Fire -->
 			<GroupBox Header="Fire" Margin="0,0,0,10">
 				<StackPanel>
+					<CheckBox Margin="5,5,0,0"
+                      x:Name="PauseFireCheckBox"
+                      Content="Pause during fire"
+                      IsChecked="True"
+                      AutomationProperties.Name="Pause during fire"/>
+
 					<TextBlock
                         Text="{Binding ElementName=FireIntensitySlider,
                                        Path=Value,

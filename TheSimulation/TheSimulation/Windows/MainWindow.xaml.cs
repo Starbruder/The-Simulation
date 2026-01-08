@@ -29,12 +29,13 @@ public sealed partial class MainWindow : Window
             7
         );
 
+        var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
         var fireIntensity = FireIntensitySlider.Value; /// (Fire spread chance percent)
 
         var fireConfig = new FireConfig
         (
             fireIntensity,
-            true
+            pauseDuringFire
         );
 
         var windConfig = GetWindConfigFromUI();
