@@ -1,0 +1,23 @@
+﻿namespace TheSimulation;
+
+/// <summary>
+/// <see langword="new"/> <see langword="class"/> representing graphics settings for the simulation.
+/// Used to configure visual effects such as lightning, fire particles, and smoke particles.
+/// Interfaces with the <see cref="MainWindow"/> and <see cref="GraphicsWindow"/> to visually apply user preferences.
+/// </summary>
+public sealed class GraphicsSettings
+{
+    public bool ShowLightning { get; set; } = true;
+    public bool ShowFireParticles { get; set; } = true;
+    public bool ShowSmokeParticles { get; set; } = true;
+
+    public GraphicsSettings(){}
+
+    public GraphicsSettings
+        (bool showLightning, bool showFireParticles, bool showSmokeParticles)
+	{
+        ShowLightning = showLightning;
+        ShowFireParticles = showFireParticles;
+        ShowSmokeParticles = showSmokeParticles;
+    }
+}
