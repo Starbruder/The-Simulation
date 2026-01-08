@@ -19,12 +19,23 @@
 			<!-- Simulate-Button -->
 		</Grid.RowDefinitions>
 
+		<!-- Zahnrad Icon oben rechts -->
+		<Button x:Name="SettingsButton"
+        Width="40" Height="40" Margin="-10"
+        HorizontalAlignment="Right" VerticalAlignment="Top"
+        Background="Transparent"
+        BorderThickness="0"
+        Click="OpenGraphicsSettingsWindow">
+			<Image Source="/Assets/Images/gear-icon.png" Stretch="Uniform"
+                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		</Button>
+
 		<!-- Controls (Fire + Wind) -->
 		<StackPanel Grid.Row="0" VerticalAlignment="Top">
 			<!-- Fire -->
-			<GroupBox Header="Fire" Margin="0,0,0,10">
+			<GroupBox Header="Fire" Margin="0,30,0,10">
 				<StackPanel>
-					<CheckBox Margin="5,5,0,0"
+					<CheckBox Margin="5,5,60,0"
                       x:Name="PauseFireCheckBox"
                       Content="Pause growing during fire"
                       IsChecked="True"

@@ -8,6 +8,8 @@ namespace TheSimulation;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
+    private readonly GraphicsSettings settings = new();
+
     public MainWindow()
     {
         InitializeComponent();
@@ -24,9 +26,9 @@ public sealed partial class MainWindow : Window
     {
         var treeConfig = new TreeConfig
         (
-            MaxCount:       50_000,
-            ForestDensity:  0.6f,
-            Size:           7
+            MaxCount: 50_000,
+            ForestDensity: 0.6f,
+            Size: 7
         );
 
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
@@ -43,9 +45,9 @@ public sealed partial class MainWindow : Window
 
         var effectsConfig = new VisualEffectsConfig
         (
-            ShowLightning:      true,
-            ShowFireParticles:  true,
-            ShowSmokeParticles: true
+            settings.ShowLightning,
+            settings.ShowFireParticles,
+            settings.ShowSmokeParticles
         );
 
         return new SimulationConfig
@@ -145,5 +147,11 @@ public sealed partial class MainWindow : Window
                 break;
             }
         }
+    }
+
+    private void OpenGraphicsSettingsWindow(object sender, RoutedEventArgs e)
+    {
+        var graphicsSettingsWindow = new GraphicsWindow(settings);
+        graphicsSettingsWindow.ShowDialog();
     }
 }
