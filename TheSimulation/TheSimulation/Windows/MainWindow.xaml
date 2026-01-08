@@ -26,9 +26,9 @@
 				<StackPanel>
 					<CheckBox Margin="5,5,0,0"
                       x:Name="PauseFireCheckBox"
-                      Content="Pause during fire"
+                      Content="Pause growing during fire"
                       IsChecked="True"
-                      AutomationProperties.Name="Pause during fire"/>
+                      AutomationProperties.Name="Pause growing during fire"/>
 
 					<TextBlock
                         Text="{Binding ElementName=FireIntensitySlider,
