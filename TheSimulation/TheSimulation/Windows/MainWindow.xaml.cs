@@ -24,9 +24,9 @@ public sealed partial class MainWindow : Window
     {
         var treeConfig = new TreeConfig
         (
-            50_000,
-            0.6f,
-            7
+            MaxCount:       50_000,
+            ForestDensity:  0.6f,
+            Size:           7
         );
 
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
@@ -43,9 +43,9 @@ public sealed partial class MainWindow : Window
 
         var effectsConfig = new VisualEffectsConfig
         (
-            true,
-            true,
-            true
+            ShowLightning:      true,
+            ShowFireParticles:  true,
+            ShowSmokeParticles: true
         );
 
         return new SimulationConfig
