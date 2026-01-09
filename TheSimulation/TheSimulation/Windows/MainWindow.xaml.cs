@@ -24,11 +24,14 @@ public sealed partial class MainWindow : Window
 
     private SimulationConfig GetSimulationConfigFromUI()
     {
+        var regrowForest = GrowForestCheckBox.IsChecked ?? true;
+
         var treeConfig = new TreeConfig
         (
             MaxCount: 50_000,
             ForestDensity: 0.6f,
-            Size: 7
+            Size: 7,
+            AllowRegrowForest: regrowForest
         );
 
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
@@ -58,6 +61,8 @@ public sealed partial class MainWindow : Window
             windConfig,
             prefillConfig,
             effectsConfig,
+
+            // TODO : Von UI holen & in Unterconfig auslagern
             0, // Air Humidity Percentage: 0.3 = trocken, 0.7 = feucht ( % )
             30 // Air Temperature Celsius ( °C )
         );
@@ -155,5 +160,23 @@ public sealed partial class MainWindow : Window
     {
         var graphicsSettingsWindow = new GraphicsWindow(settings);
         graphicsSettingsWindow.ShowDialog();
+    }
+
+    private void GrowForestCheckBox_Unchecked(object sender, RoutedEventArgs e)
+    {
+        PrefillCheckBox.IsChecked = true;
+        PrefillCheckBox.IsEnabled = false;
+
+        PauseFireCheckBox.IsChecked = true;
+        PauseFireCheckBox.IsEnabled = false;
+    }
+
+    private void GrowForestCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+        if (PrefillCheckBox is not null)
+        {
+            PrefillCheckBox.IsEnabled = true;
+            PauseFireCheckBox.IsEnabled = true;
+        }
     }
 }

@@ -21,19 +21,56 @@
 
 		<!-- Zahnrad Icon oben rechts -->
 		<Button x:Name="SettingsButton"
-        Width="40" Height="40" Margin="-10"
-        HorizontalAlignment="Right" VerticalAlignment="Top"
-        Background="Transparent"
-        BorderThickness="0"
-        Click="OpenGraphicsSettingsWindow">
+            Width="40" Height="40" Margin="-10"
+            HorizontalAlignment="Right" VerticalAlignment="Top"
+            Background="Transparent"
+            BorderThickness="0"
+            Click="OpenGraphicsSettingsWindow">
 			<Image Source="/Assets/Images/gear-icon.png" Stretch="Uniform"
-                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		</Button>
 
-		<!-- Controls (Fire + Wind) -->
+		<!-- Settingboxes -->
 		<StackPanel Grid.Row="0" VerticalAlignment="Top">
+
+			<!-- Trees -->
+			<GroupBox Header="Trees" Margin="0,30,0,10">
+				<StackPanel>
+					<CheckBox Margin="5,5,0,5"
+                      x:Name="GrowForestCheckBox"
+                      Content="Grow forest"
+                      IsChecked="True"
+                      AutomationProperties.Name="Grow forest"
+                      Unchecked="GrowForestCheckBox_Unchecked"
+                      Checked="GrowForestCheckBox_Checked"/>
+
+					<CheckBox Margin="5,5,0,0"
+                      x:Name="PrefillCheckBox"
+                      Content="Prefill forest"
+                      IsChecked="False"
+                      AutomationProperties.Name="Prefill forest"
+                      Checked="PrefillCheckBox_Changed"
+                      Unchecked="PrefillCheckBox_Changed"/>
+
+					<!-- TextBlock für Prefill density Wert -->
+					<TextBlock Margin="10,5,0,5"
+                   FontSize="14"
+                   Text="{Binding ElementName=PrefillDensitySlider,
+                                  Path=Value,
+                                  StringFormat=Prefill density: {0:F0}%}"/>
+					<Slider x:Name="PrefillDensitySlider"
+                Minimum="0"
+                Maximum="100"
+                Value="60"
+                TickFrequency="5"
+                IsSnapToTickEnabled="True"
+                AutomationProperties.Name="Prefill density"
+                IsEnabled="False"/>
+				</StackPanel>
+			</GroupBox>
+
 			<!-- Fire -->
-			<GroupBox Header="Fire" Margin="0,30,0,10">
+			<GroupBox Header="Fire" Margin="0,0,0,10">
 				<StackPanel>
 					<CheckBox Margin="5,5,60,0"
                       x:Name="PauseFireCheckBox"
@@ -66,7 +103,7 @@
                       Checked="RandomWindDirectionCheckBox_Changed"
                       Unchecked="RandomWindDirectionCheckBox_Changed"/>
 
-                    <TextBlock Margin="10,5,0,0"
+					<TextBlock Margin="10,5,0,0"
                                Text="Wind direction (from)"
                                AutomationProperties.Name="Wind direction label"/>
 					<ComboBox Margin="4,5,4,0"
@@ -107,34 +144,6 @@
                         LargeChange="0.1"
                         AutomationProperties.Name="Wind strength"
                         AutomationProperties.HelpText="0 is no wind, 1 is strong wind"/>
-				</StackPanel>
-			</GroupBox>
-
-			<!-- Prefill -->
-			<GroupBox Header="Prefill" Margin="0,10,0,0">
-				<StackPanel>
-					<CheckBox Margin="5,5,0,0"
-                              x:Name="PrefillCheckBox"
-                              Content="Prefill forest"
-                              IsChecked="False"
-                              AutomationProperties.Name="Prefill forest"
-                              Checked="PrefillCheckBox_Changed"
-                              Unchecked="PrefillCheckBox_Changed"/>
-
-					<!-- TextBlock für Prefill density Wert -->
-					<TextBlock Margin="10,5,0,5"
-                               FontSize="14"
-                               Text="{Binding ElementName=PrefillDensitySlider,
-                                              Path=Value,
-                                              StringFormat=Prefill density: {0:F0}%}"/>
-					<Slider x:Name="PrefillDensitySlider"
-                            Minimum="0"
-                            Maximum="100"
-                            Value="60"
-                            TickFrequency="5"
-                            IsSnapToTickEnabled="True"
-                            AutomationProperties.Name="Prefill density"
-                            IsEnabled="False"/>
 				</StackPanel>
 			</GroupBox>
 		</StackPanel>

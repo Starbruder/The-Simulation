@@ -88,7 +88,10 @@ public sealed partial class SimulationWindow : Window
             await PrefillForest();
         }
 
-        InitializeGrowTimer();
+        if (simulationConfig.TreeConfig.AllowRegrowForest)
+        {
+            InitializeGrowTimer();
+        }
         InitializeIgniteTimer();
         InitializeFireTimer();
         InitializeSliders();
