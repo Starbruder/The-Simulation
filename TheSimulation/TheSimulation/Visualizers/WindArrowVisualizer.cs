@@ -86,12 +86,12 @@ public sealed class WindArrowVisualizer
     /// </returns>
     private Vector GetWindVector()
     {
-        if (config.WindConfig.RandomDirection)
+        if (config.EnvironmentConfig.WindConfig.RandomDirection)
         {
             return currentWindVector;
         }
 
-        return WindMapper.GetWindVector(config.WindConfig.Direction);
+        return WindMapper.GetWindVector(config.EnvironmentConfig.WindConfig.Direction);
     }
 
     /// <summary>

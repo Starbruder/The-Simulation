@@ -43,7 +43,8 @@ public sealed partial class MainWindow : Window
             pauseDuringFire
         );
 
-        var windConfig = GetWindConfigFromUI();
+        var environmentConfig = GetEnvironmentConfigFromUI();
+
         var prefillConfig = GetPrefillConfigFromUI();
 
         var effectsConfig = new VisualEffectsConfig
@@ -54,17 +55,31 @@ public sealed partial class MainWindow : Window
             settings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
         );
 
-        return new SimulationConfig
+        return new
         (
             treeConfig,
             fireConfig,
-            windConfig,
+            environmentConfig,
             prefillConfig,
-            effectsConfig,
+            effectsConfig
+        );
+    }
 
-            // TODO : Von UI holen & in Unterconfig auslagern
-            0, // Air Humidity Percentage: 0.3 = trocken, 0.7 = feucht ( % )
-            30 // Air Temperature Celsius ( °C )
+    private EnvironmentConfig GetEnvironmentConfigFromUI()
+    {
+        var atmosphereConfig = new AtmosphereConfig
+        (
+            // TODO : Von UI holen
+            AirHumidityPercentage: 0, // Air Humidity Percentage: 0.3 = trocken, 0.7 = feucht ( % )
+            AirTemperatureCelsius: 30 // Air Temperature Celsius ( °C )
+        );
+
+        var windConfig = GetWindConfigFromUI();
+
+        return new
+        (
+            atmosphereConfig,
+            windConfig
         );
     }
 
@@ -75,7 +90,7 @@ public sealed partial class MainWindow : Window
         var randomStrength = RandomWindStrengthCheckBox.IsChecked ?? false;
         var windStrength = WindStrengthSlider.Value;
 
-        return new WindConfig
+        return new
         (
             randomWindDirection,
             windDirection,
@@ -89,7 +104,7 @@ public sealed partial class MainWindow : Window
         var prefill = PrefillCheckBox.IsChecked ?? false;
         var prefillDensity = PrefillDensitySlider.Value / 100; // 0..1
 
-        return new PrefillConfig
+        return new
         (
             prefill,
             prefillDensity // Z.b: 0.5 = 50 %

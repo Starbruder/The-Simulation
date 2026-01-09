@@ -42,7 +42,8 @@ public sealed partial class SimulationWindow : Window
     private readonly Dictionary<Cell, Ellipse> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
 
-    private readonly List<(TimeSpan Time, uint Grown, uint Burned)> simulationHistory = [];
+    private readonly List<(TimeSpan Time, uint Grown, uint Burned)> simulationHistory
+        = [];
 
     public SimulationWindow(SimulationConfig simulationConfig)
     {
@@ -96,7 +97,8 @@ public sealed partial class SimulationWindow : Window
         InitializeFireTimer();
         InitializeSliders();
 
-        if (simulationConfig.WindConfig.RandomDirection || simulationConfig.WindConfig.RandomStrength)
+        if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
+            simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
         {
             InitializeWindTimer();
             return;
@@ -109,7 +111,8 @@ public sealed partial class SimulationWindow : Window
     private void CacheEnvironmentFactors()
     {
         cachedTemperatureEffect = CalculateTemperatureEffect();
-        cachedHumidityEffect = 1 - simulationConfig.AirHumidityPercentage;
+        cachedHumidityEffect =
+            1 - simulationConfig.EnvironmentConfig.AtmosphereConfig.AirHumidityPercentage;
     }
 
     private void StartSimulationTimer()
@@ -285,7 +288,8 @@ public sealed partial class SimulationWindow : Window
         // Zielanzahl anhand der Dichte oder Maximalanzahl
         var targetTrees = (int)(cols * rows * simulationConfig.TreeConfig.ForestDensity);
 
-        if (activeTrees.Count >= targetTrees || activeTrees.Count >= simulationConfig.TreeConfig.MaxCount)
+        if (activeTrees.Count >= targetTrees ||
+            activeTrees.Count >= simulationConfig.TreeConfig.MaxCount)
         {
             return;
         }
@@ -338,7 +342,7 @@ public sealed partial class SimulationWindow : Window
 
         var isFireStepActive = false;
 
-        // Berechnung des Wind-Effekts und der Verbreitungschancen für alle Zellen im Brandzustand
+        // Berechnung Wind-Effekt und Verbreitungschancen für alle Zellen im Brandzustand
         var fireSpreadChances = new Dictionary<Cell, double>();
 
         foreach (var burningCell in treeElements.Keys)
@@ -365,7 +369,7 @@ public sealed partial class SimulationWindow : Window
                     fireSpreadChances[neighbor] = value;
                 }
 
-                // Wenn die zufällige Zahl kleiner als die Berechnete Chance ist, ignitiere den Baum
+                // Zufällige Zahl ist kleiner als die Berechnete Chance?: ignitiere den Baum
                 if (randomHelper.NextDouble() < value)
                 {
                     toIgnite.Add(neighbor);
@@ -386,7 +390,8 @@ public sealed partial class SimulationWindow : Window
 
     private float CalculateTemperatureEffect()
     {
-        var tempature = simulationConfig.AirTemperatureCelsius;
+        var tempature =
+            simulationConfig.EnvironmentConfig.AtmosphereConfig.AirTemperatureCelsius;
 
         // Referenzbereich für Waldbrandrelevanz
         const int minTemp = 0;
@@ -559,7 +564,8 @@ public sealed partial class SimulationWindow : Window
 
     private void UpdateTreeUI()
     {
-        TreeDensityText.Text = FormatHelper.FormatTreeDensityText(activeTrees.Count, cachedMaxTreesPossible);
+        TreeDensityText.Text =
+            FormatHelper.FormatTreeDensityText(activeTrees.Count, cachedMaxTreesPossible);
 
         TotalGrownTrees.Text = totalGrownTrees.ToString();
         TotalBurnedTrees.Text = totalBurnedTrees.ToString();
