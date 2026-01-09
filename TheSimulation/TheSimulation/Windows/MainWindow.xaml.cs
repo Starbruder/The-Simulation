@@ -58,7 +58,8 @@ public sealed partial class MainWindow : Window
             prefillConfig,
             effectsConfig,
             false, // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
-            0 // Air Humidity Percentage: 0.3 = trocken, 0.7 = feucht
+            0, // Air Humidity Percentage: 0.3 = trocken, 0.7 = feucht ( % )
+            30 // Air Temperature Celsius ( °C )
         );
     }
 
