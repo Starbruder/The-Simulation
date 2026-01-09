@@ -11,6 +11,7 @@
 /// <param name="VisualEffectsConfig">The configuration settings for visual effects, including rendering and animation options for the simulation.</param>
 /// <param name="ReplaceWithBurnedDownTree">Indicates whether trees should be replaced with burned-down versions after being consumed by fire. Set to <see
 /// langword="true"/> to enable replacement; otherwise, <see langword="false"/>.</param>
+/// <param name="AirHumidityPercentage">The global air humidity level in the simulation, represented as a percentage (0 to 1), which can affect fire behavior and spread.</param>
 public sealed record SimulationConfig
 (
     TreeConfig TreeConfig,
@@ -18,5 +19,6 @@ public sealed record SimulationConfig
     WindConfig WindConfig,
     PrefillConfig PrefillConfig,
     VisualEffectsConfig VisualEffectsConfig,
-    bool ReplaceWithBurnedDownTree
+    bool ReplaceWithBurnedDownTree,
+    double AirHumidityPercentage // Normalized relative humidity factor (0..1), not meteorological rH
 );

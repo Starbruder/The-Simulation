@@ -374,12 +374,18 @@ public sealed partial class SimulationWindow : Window
 
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
     {
-        // Berechne die Basischance für das Übergreifen des Feuers
-        var baseChance = simulationConfig.FireConfig.SpreadChancePercent / 100;
-        // Berechne den Wind-Effekt
-        var windEffect = windHelper.CalculateWindEffect(burningCell, neighbor);
-        // Multipliziere beide Werte
-        return baseChance * windEffect;
+        var baseChance =
+        simulationConfig.FireConfig.SpreadChancePercent / 100.0;
+
+        var windEffect =
+            windHelper.CalculateWindEffect(burningCell, neighbor);
+
+        var humidityEffect =
+            1.0f - simulationConfig.AirHumidityPercentage;
+
+        var chance = baseChance * windEffect * humidityEffect;
+
+        return chance;
     }
 
     private void SpreadFire(HashSet<Cell> toIgnite)
