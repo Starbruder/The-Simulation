@@ -34,7 +34,7 @@
 		<StackPanel Grid.Row="0" VerticalAlignment="Top">
 
 			<!-- Trees -->
-			<GroupBox Header="Trees" Margin="0,30,0,10">
+			<GroupBox Header="Trees" Margin="0,30,0,10" BorderBrush="Green">
 				<StackPanel>
 					<CheckBox Margin="5,5,0,5"
                       x:Name="GrowForestCheckBox"
@@ -70,7 +70,7 @@
 			</GroupBox>
 
 			<!-- Fire -->
-			<GroupBox Header="Fire" Margin="0,0,0,10">
+			<GroupBox Header="Fire" Margin="0,0,0,10" BorderBrush="Red">
 				<StackPanel>
 					<CheckBox Margin="5,5,60,0"
                       x:Name="PauseFireCheckBox"
@@ -92,8 +92,8 @@
 				</StackPanel>
 			</GroupBox>
 
-			<!-- Wind -->
-			<GroupBox Header="Wind">
+			<!-- Environment -->
+			<GroupBox Header="Environment" BorderBrush="Blue">
 				<StackPanel>
 					<CheckBox Margin="5,5,0,0"
                       x:Name="RandomWindDirectionCheckBox"
