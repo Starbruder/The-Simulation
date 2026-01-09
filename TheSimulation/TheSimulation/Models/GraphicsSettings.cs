@@ -10,14 +10,21 @@ public sealed class GraphicsSettings
     public bool ShowLightning { get; set; } = true;
     public bool ShowFireParticles { get; set; } = true;
     public bool ShowSmokeParticles { get; set; } = true;
+    public bool ShowBurnedDownTrees { get; set; } = false;
 
-    public GraphicsSettings(){}
+    public GraphicsSettings() { }
 
     public GraphicsSettings
-        (bool showLightning, bool showFireParticles, bool showSmokeParticles)
-	{
+    (
+        bool showLightning,
+        bool showFireParticles,
+        bool showSmokeParticles,
+        bool showBurnedDownTrees
+    )
+    {
         ShowLightning = showLightning;
         ShowFireParticles = showFireParticles;
         ShowSmokeParticles = showSmokeParticles;
+        ShowBurnedDownTrees = showBurnedDownTrees;
     }
 }

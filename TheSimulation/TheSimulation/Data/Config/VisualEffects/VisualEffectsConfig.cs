@@ -10,9 +10,11 @@
 /// particles; otherwise, <see langword="false"/>.</param>
 /// <param name="ShowSmokeParticles">A value indicating whether smoke particle effects are displayed. Set to <see langword="true"/> to show smoke
 /// particles; otherwise, <see langword="false"/>.</param>
+/// <param name="ShowBurnedDownTrees">A value indicating whether burned down trees are displayed. Set to <see langword="true"/> to show burned down
 public sealed record VisualEffectsConfig
 (
     bool ShowLightning,
     bool ShowFireParticles,
-    bool ShowSmokeParticles
+    bool ShowSmokeParticles,
+    bool ShowBurnedDownTrees
 );
