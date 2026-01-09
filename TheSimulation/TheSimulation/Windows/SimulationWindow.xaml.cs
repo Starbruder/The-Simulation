@@ -95,7 +95,6 @@ public sealed partial class SimulationWindow : Window
         }
         InitializeIgniteTimer();
         InitializeFireTimer();
-        InitializeSliders();
 
         if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
             simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
@@ -233,14 +232,6 @@ public sealed partial class SimulationWindow : Window
         fireTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value);
         fireTimer.Tick += (_, _) => FireStep();
         fireTimer.Start();
-    }
-
-    private void InitializeSliders()
-    {
-        SpeedSlider.Minimum = 1;
-        SpeedSlider.Maximum = 300;
-        SpeedSlider.Value = 1;
-        SpeedSlider.IsDirectionReversed = true;
     }
 
     private void InitializeWindTimer()
