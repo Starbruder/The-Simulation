@@ -9,8 +9,6 @@
 /// <param name="WindConfig">The configuration options specifying wind direction, strength, and its influence on the simulation.</param>
 /// <param name="PrefillConfig">The configuration for pre-filling the simulation environment, such as initial tree or fire placement.</param>
 /// <param name="VisualEffectsConfig">The configuration settings for visual effects, including rendering and animation options for the simulation.</param>
-/// <param name="ReplaceWithBurnedDownTree">Indicates whether trees should be replaced with burned-down versions after being consumed by fire. Set to <see
-/// langword="true"/> to enable replacement; otherwise, <see langword="false"/>.</param>
 /// <param name="AirHumidityPercentage">The global air humidity level in the simulation, represented as a percentage (0 to 1), which can affect fire behavior and spread.</param>
 /// <param name="TemperatureCelsius">The ambient temperature in degrees Celsius, influencing fire dynamics and environmental conditions within the simulation.</param>
 public sealed record SimulationConfig
@@ -20,7 +18,6 @@ public sealed record SimulationConfig
     WindConfig WindConfig,
     PrefillConfig PrefillConfig,
     VisualEffectsConfig VisualEffectsConfig,
-    bool ReplaceWithBurnedDownTree,
     float AirHumidityPercentage, // Normalized relative humidity factor (0..1), not meteorological rH
     float AirTemperatureCelsius // z.B. 15 = kühl, 30 = heiß, 40 = extrem
 );

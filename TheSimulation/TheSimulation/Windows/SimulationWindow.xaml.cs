@@ -460,16 +460,6 @@ public sealed partial class SimulationWindow : Window
         }
     }
 
-    private double CalculateChances(Cell burningCell, Cell neighbor)
-    {
-        // Zufallschance für Feuerweitergabe berechnen
-        var baseChance = simulationConfig.FireConfig.SpreadChancePercent / 100;
-        // Zufallschance für Wind-Einfluss berechnen
-        var windEffect = windHelper.CalculateWindEffect(burningCell, neighbor);
-        var chance = baseChance * windEffect;
-        return chance;
-    }
-
     private void BurnDownTree(Cell cell)
     {
         // Grid aktualisieren
@@ -479,7 +469,7 @@ public sealed partial class SimulationWindow : Window
         {
             totalBurnedTrees++;
 
-            if (simulationConfig.ReplaceWithBurnedDownTree)
+            if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
             {
                 tree.Fill = Brushes.Gray;
             }

@@ -32,7 +32,7 @@ public sealed partial class MainWindow : Window
         );
 
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
-        var fireIntensity = FireIntensitySlider.Value; /// (Fire spread chance percent)
+        var fireIntensity = FireIntensitySlider.Value; // (Fire spread chance percent)
 
         var fireConfig = new FireConfig
         (
@@ -47,7 +47,8 @@ public sealed partial class MainWindow : Window
         (
             settings.ShowLightning,
             settings.ShowFireParticles,
-            settings.ShowSmokeParticles
+            settings.ShowSmokeParticles,
+            settings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
         );
 
         return new SimulationConfig
@@ -57,7 +58,6 @@ public sealed partial class MainWindow : Window
             windConfig,
             prefillConfig,
             effectsConfig,
-            false, // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
             0, // Air Humidity Percentage: 0.3 = trocken, 0.7 = feucht ( % )
             30 // Air Temperature Celsius ( °C )
         );
