@@ -30,7 +30,9 @@ public sealed partial class SimulationWindow : Window
     private int cols;
     private int rows;
 
-    private int maxTreesPossible;
+    private int cachedMaxTreesPossible;
+    private float cachedTemperatureEffect;
+    private float cachedHumidityEffect;
 
     private bool IsAnyBurningThenPause = false;
 
@@ -77,6 +79,7 @@ public sealed partial class SimulationWindow : Window
 
     private async Task InitializeSimulationAsync()
     {
+        CacheEnvironmentFactors();
         StartSimulationTimer();
         InitializeGrid();
 
@@ -98,6 +101,12 @@ public sealed partial class SimulationWindow : Window
 
         windVisualizer.Draw();
         UpdateWindUI();
+    }
+
+    private void CacheEnvironmentFactors()
+    {
+        cachedTemperatureEffect = CalculateTemperatureEffect();
+        cachedHumidityEffect = 1 - simulationConfig.AirHumidityPercentage;
     }
 
     private void StartSimulationTimer()
@@ -132,7 +141,7 @@ public sealed partial class SimulationWindow : Window
             TotalGrownTrees: totalGrownTrees,
             TotalBurnedTrees: totalBurnedTrees,
             ActiveTrees: activeTrees.Count,
-            MaxTreesPossible: maxTreesPossible,
+            MaxTreesPossible: cachedMaxTreesPossible,
             Runtime: DateTime.Now - simulationStartTime,
             History: new(simulationHistory)
         );
@@ -155,12 +164,12 @@ public sealed partial class SimulationWindow : Window
 
         forestGrid = new ForestCellState[cols, rows];
 
-        maxTreesPossible = CalculateMaxTreesPossible();
+        cachedMaxTreesPossible = CalculateMaxTreesPossible();
     }
 
     private async Task PrefillForest()
     {
-        var maxTrees = (int)(maxTreesPossible * simulationConfig.PrefillConfig.Density);
+        var maxTrees = (int)(cachedMaxTreesPossible * simulationConfig.PrefillConfig.Density);
 
         // Alle Zellen vorbereiten
         var allCells = new List<Cell>(cols * rows);
@@ -372,6 +381,37 @@ public sealed partial class SimulationWindow : Window
         IsAnyBurningThenPause = isFireStepActive;
     }
 
+    private float CalculateTemperatureEffect()
+    {
+        var tempature = simulationConfig.AirTemperatureCelsius;
+
+        // Referenzbereich für Waldbrandrelevanz
+        const int minTemp = 0;
+        const int maxTemp = 30;
+
+        var normalized =
+            (tempature - minTemp) / (maxTemp - minTemp);
+
+        // Begrenzen
+        normalized = Math.Clamp(normalized, 0, 1);
+
+        // leichte Überverstärkung bei extremer Hitze
+        const int extremeHeatScaleFaktor = 100;
+        if (tempature > maxTemp)
+        {
+            normalized += (tempature - maxTemp) / extremeHeatScaleFaktor;
+        }
+
+        // –20 °C  ⇒  0.0
+        // –10 °C  ⇒  0.0
+        //  0  °C  ⇒  0.0
+        // 15  °C  ⇒  0.5
+        // 30  °C  ⇒  1.0
+        // 35  °C  ⇒  1.05
+        // 40  °C  ⇒  1.10
+        return normalized;
+    }
+
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
     {
         var baseChance =
@@ -380,10 +420,8 @@ public sealed partial class SimulationWindow : Window
         var windEffect =
             windHelper.CalculateWindEffect(burningCell, neighbor);
 
-        var humidityEffect =
-            1.0f - simulationConfig.AirHumidityPercentage;
-
-        var chance = baseChance * windEffect * humidityEffect;
+        var chance
+            = baseChance * windEffect * cachedHumidityEffect * cachedTemperatureEffect;
 
         return chance;
     }
@@ -528,7 +566,7 @@ public sealed partial class SimulationWindow : Window
 
     private void UpdateTreeUI()
     {
-        TreeDensityText.Text = FormatHelper.FormatTreeDensityText(activeTrees.Count, maxTreesPossible);
+        TreeDensityText.Text = FormatHelper.FormatTreeDensityText(activeTrees.Count, cachedMaxTreesPossible);
 
         TotalGrownTrees.Text = totalGrownTrees.ToString();
         TotalBurnedTrees.Text = totalBurnedTrees.ToString();
