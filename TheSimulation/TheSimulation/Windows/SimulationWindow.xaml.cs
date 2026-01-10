@@ -174,6 +174,9 @@ public sealed partial class SimulationWindow : Window
 
     private async Task PrefillForest()
     {
+        var maxTrees =
+            (int)(cachedMaxTreesPossible * simulationConfig.PrefillConfig.Density);
+
         // Alle Zellen vorbereiten
         var allCells = new List<Cell>(cols * rows);
         for (var x = 0; x < cols; x++)
@@ -194,9 +197,9 @@ public sealed partial class SimulationWindow : Window
         const int batchSize = 200; // optional: Bäume in Paketen laden
         var loaded = 0;
 
-        while (loaded < cachedMaxTreesPossible)
+        while (loaded < maxTrees)
         {
-            var count = Math.Min(batchSize, cachedMaxTreesPossible - loaded);
+            var count = Math.Min(batchSize, maxTrees - loaded);
             var batch = allCells.GetRange(loaded, count);
             loaded += count;
 
