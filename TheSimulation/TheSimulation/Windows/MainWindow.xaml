@@ -85,7 +85,7 @@
                         FontSize="14" Margin="10,5,0,0"/>
 					<Slider x:Name="FireIntensitySlider"
                             Maximum="100"
-                            Value="50"
+                            Value="85"
                             IsSnapToTickEnabled="True"
                             TickFrequency="5"
                             AutomationProperties.Name="Fire spread chance"/>
@@ -106,7 +106,7 @@
 					<Slider x:Name="AirHumiditySlider"
         Minimum="0"
         Maximum="100"
-        Value="30"
+        Value="50"
         TickFrequency="5"
         IsSnapToTickEnabled="True"
         AutomationProperties.Name="Air humidity"
