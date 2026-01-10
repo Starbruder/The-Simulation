@@ -9,11 +9,13 @@
 /// <param name="EnvironmentConfig">The configuration options specifying the overall environmental configuration for a simulation such as: atmosphere and wind settings.</param>
 /// <param name="PrefillConfig">The configuration for pre-filling the simulation environment, such as initial tree or fire placement.</param>
 /// <param name="VisualEffectsConfig">The configuration settings for visual effects, including rendering and animation options for the simulation.</param>
+/// <param name="TerrainConfig">The configuration settings for terrain properties and behavior within the simulation.</param>
 public sealed record SimulationConfig
 (
     TreeConfig TreeConfig,
     FireConfig FireConfig,
     EnvironmentConfig EnvironmentConfig,
     PrefillConfig PrefillConfig,
-    VisualEffectsConfig VisualEffectsConfig
+    VisualEffectsConfig VisualEffectsConfig,
+    TerrainConfig TerrainConfig
 );
