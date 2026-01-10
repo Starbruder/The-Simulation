@@ -55,13 +55,16 @@ public sealed partial class MainWindow : Window
             settings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
         );
 
+        var terrainConfig = new TerrainConfig();
+
         return new
         (
             treeConfig,
             fireConfig,
             environmentConfig,
             prefillConfig,
-            effectsConfig
+            effectsConfig,
+            terrainConfig
         );
     }
 
