@@ -20,7 +20,7 @@ public sealed class RandomHelper
 
     public Brush NextTreeColor()
     {
-        var index = NextInt(0, ColorHelper.TreeColors.Length);
-        return ColorHelper.TreeColors[index];
+        var index = NextInt(0, Colors.TreeColors.Length);
+        return Colors.TreeColors[index];
     }
 }

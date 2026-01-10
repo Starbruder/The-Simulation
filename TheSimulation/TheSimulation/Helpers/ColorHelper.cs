@@ -4,16 +4,6 @@ namespace TheSimulation;
 
 public static class ColorHelper
 {
-    public static Brush[] TreeColors
-    {
-        get => [
-            Brushes.Green,       // Kiefer
-            Brushes.DarkGreen,   // Eiche
-            Brushes.YellowGreen, // Buche
-            Brushes.ForestGreen  // Tanne
-        ];
-    }
-
     public static Brush AdjustColorByElevation(Brush baseColor, float elevation)
     {
         // elevation: 0.0 (tief) bis 1.0 (hoch)
