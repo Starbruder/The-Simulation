@@ -95,6 +95,43 @@
 			<!-- Environment -->
 			<GroupBox Header="Environment" BorderBrush="Blue">
 				<StackPanel>
+					<!-- Air Humidity -->
+					<TextBlock Margin="10,5,0,0"
+           FontSize="14"
+           Text="{Binding ElementName=AirHumiditySlider,
+                          Path=Value,
+                          StringFormat=Air humidity: {0:F0}%}"
+           AutomationProperties.Name="Air humidity label"/>
+
+					<Slider x:Name="AirHumiditySlider"
+        Minimum="0"
+        Maximum="100"
+        Value="30"
+        TickFrequency="5"
+        IsSnapToTickEnabled="True"
+        AutomationProperties.Name="Air humidity"
+        AutomationProperties.HelpText="0% is very dry, 100% is very humid"/>
+
+					<!-- Air Temperature -->
+					<TextBlock Margin="10,5,0,0"
+                       FontSize="14"
+                       Text="{Binding ElementName=AirTemperatureSlider,
+                                      Path=Value,
+                                      StringFormat=Air temperature: {0:F0} °C}"
+                       AutomationProperties.Name="Air temperature label"/>
+
+					<Slider x:Name="AirTemperatureSlider"
+                        Minimum="-10"
+                        Maximum="50"
+                        Value="30"
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        AutomationProperties.Name="Air temperature"
+                        AutomationProperties.HelpText="Air temperature in degrees Celsius"/>
+
+					<!-- Abstand -->
+					<Rectangle Height="10"/>
+
 					<CheckBox Margin="5,5,0,0"
                       x:Name="RandomWindDirectionCheckBox"
                       Content="Random wind direction"

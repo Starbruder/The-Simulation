@@ -67,11 +67,15 @@ public sealed partial class MainWindow : Window
 
     private EnvironmentConfig GetEnvironmentConfigFromUI()
     {
+        var airHumidityPercentage = AirHumiditySlider.Value / 100;
+        var airTemperatureCelsius = AirTemperatureSlider.Value;
+
         var atmosphereConfig = new AtmosphereConfig
         (
-            // TODO : Von UI holen
-            AirHumidityPercentage: 0, // Air Humidity Percentage: 0.3 = trocken, 0.7 = feucht ( % )
-            AirTemperatureCelsius: 30 // Air Temperature Celsius ( °C )
+            // Air Humidity Percentage: 0.3 = trocken, 0.7 = feucht ( % )
+            (float)airHumidityPercentage,
+            // Air Temperature Celsius ( °C )
+            (float)airTemperatureCelsius
         );
 
         var windConfig = GetWindConfigFromUI();
