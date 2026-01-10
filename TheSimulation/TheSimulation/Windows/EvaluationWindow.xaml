@@ -13,7 +13,7 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,20">
-			<TextBlock Text="Simulation Auswertung" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
+			<TextBlock Text="Simulation Evalualtion" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
 			<TextBlock x:Name="EvalRuntime" FontSize="16" Margin="0,5,0,10" Text="Runtime: 00:00:00"/>
 		</StackPanel>
 
