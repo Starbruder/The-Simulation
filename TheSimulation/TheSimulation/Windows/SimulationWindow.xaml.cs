@@ -45,11 +45,14 @@ public sealed partial class SimulationWindow : Window
     private readonly List<(TimeSpan Time, uint Grown, uint Burned)> simulationHistory
         = [];
 
+    private TerrainCell[,] terrainGrid;
+
     public SimulationWindow(SimulationConfig simulationConfig)
     {
         // To get rid of the warning CS8618
         forestGrid = new ForestCellState[0, 0];
         simulationTimer = new();
+        terrainGrid = new TerrainCell[0, 0];
 
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
@@ -170,6 +173,12 @@ public sealed partial class SimulationWindow : Window
         forestGrid = new ForestCellState[cols, rows];
 
         cachedMaxTreesPossible = CalculateMaxTreesPossible();
+
+        if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+        {
+            terrainGrid = new TerrainCell[cols, rows];
+            GenerateTerrain();
+        }
     }
 
     private async Task PrefillForest()
@@ -294,16 +303,56 @@ public sealed partial class SimulationWindow : Window
             return;
         }
 
+        if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
+        {
+            AddTree(cell);
+            return;
+        }
+
+        // 🌍 TOPOGRAPHIE-LOGIK
+        var terrain = terrainGrid[cell.X, cell.Y];
+
+		// ❌ kein Baum auf Wasser oder Felsen (needs to be uncommented later when impl.)
+		//if (terrain.Type != TerrainType.Soil)
+		//{
+		//    return;
+		//}
+
+		// ⛰️ Höhenabhängige Wachstumswahrscheinlichkeit
+		// je höher, desto unwahrscheinlicher
+		var heightPenalty = terrain.Elevation; // 0.0 – 1.0
+
+        if (randomHelper.NextDouble() < heightPenalty * 0.7)
+        {
+            return;
+        }
+
         // Baum wächst
         AddTree(cell);
+    }
+
+    private double CalculateSlopeEffect(Cell from, Cell to)
+    {
+        var hFrom = terrainGrid[from.X, from.Y].Elevation;
+        var hTo = terrainGrid[to.X, to.Y].Elevation;
+
+        var delta = hTo - hFrom;
+
+        // bergauf → Bonus
+        if (delta > 0)
+        {
+            return 1.0 + delta * 2.0;
+        }
+
+        // bergab → Malus
+        return 1.0 + delta; // delta ist negativ
     }
 
     private void AddTree(Cell cell)
     {
         forestGrid[cell.X, cell.Y] = ForestCellState.Tree;
 
-        // Simulate different tree types by using different colors
-        var color = randomHelper.NextTreeColor();
+        var color = GetTreeColor(cell);
 
         var tree = new Ellipse
         {
@@ -322,6 +371,21 @@ public sealed partial class SimulationWindow : Window
 
         totalGrownTrees++;
         UpdateTreeUI();
+    }
+
+    private Brush GetTreeColor(Cell cell)
+    {
+        // Simulate different tree types by using different colors
+        var color = randomHelper.NextTreeColor();
+
+        if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+        {
+            // 🌍 TOPOGRAPHIE-COLOR-LOGIK
+            var elevation = terrainGrid[cell.X, cell.Y].Elevation;
+            return ColorHelper.AdjustColorByElevation(color, elevation);
+        }
+
+        return color;
     }
 
     private void FireStep()
@@ -414,14 +478,39 @@ public sealed partial class SimulationWindow : Window
 
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
     {
+        if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+        {
+            // 🌍 TOPOGRAPHIE-LOGIK
+            var terrain = terrainGrid[neighbor.X, neighbor.Y];
+            // ❌ kein Feuer auf Wasser oder Felsen
+            if (terrain.Type != TerrainType.Soil)
+            {
+                return 0.0;
+            }
+        }
+
         var baseChance =
         simulationConfig.FireConfig.SpreadChancePercent / 100.0;
 
         var windEffect =
             windHelper.CalculateWindEffect(burningCell, neighbor);
 
-        var chance
-            = baseChance * windEffect * cachedHumidityEffect * cachedTemperatureEffect;
+        var chance =
+            baseChance *
+            windEffect *
+            cachedHumidityEffect *
+            cachedTemperatureEffect;
+
+        if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+        {
+            // Höhe → trockener
+            var terrain = terrainGrid[neighbor.X, neighbor.Y];
+            var elevationEffect = 1.0 + terrain.Elevation * 0.5;
+
+            var slopeEffect = CalculateSlopeEffect(burningCell, neighbor);
+
+            return chance * elevationEffect * slopeEffect;
+        }
 
         return chance;
     }
@@ -512,6 +601,36 @@ public sealed partial class SimulationWindow : Window
         if (treeElements.TryGetValue(cell, out var tree))
         {
             tree.Fill = color;
+        }
+    }
+
+    private void GenerateTerrain()
+    {
+        for (var x = 0; x < cols; x++)
+        {
+            for (var y = 0; y < rows; y++)
+            {
+                // sanfter Verlauf: Zentrum = hoch, Ränder = niedrig
+                var centerX = cols / 2.0;
+                var centerY = rows / 2.0;
+
+                var dx = (x - centerX) / centerX; // -1 ... 1
+                var dy = (y - centerY) / centerY; // -1 ... 1
+
+                var distance = Math.Sqrt(dx * dx + dy * dy); // 0 = Mitte, 1 = Ecke
+                var baseElevation = 1.0 - distance;          // 0 = Rand, 1 = Mitte
+
+                // leichte Zufälligkeit für Hügel
+                var noise = randomHelper.NextDouble(-0.1f, 0.1f);
+
+                var elevation = Math.Clamp(baseElevation + noise, 0, 1);
+
+                terrainGrid[x, y] = new TerrainCell
+                {
+                    Elevation = (float)elevation,
+                    Type = TerrainType.Soil
+                };
+            }
         }
     }
 

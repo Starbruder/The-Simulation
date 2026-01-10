@@ -20,14 +20,7 @@ public sealed class RandomHelper
 
     public Brush NextTreeColor()
     {
-        Brush[] colors = [
-            Brushes.Green,       // Kiefer
-            Brushes.DarkGreen,   // Eiche
-            Brushes.YellowGreen, // Buche
-            Brushes.ForestGreen  // Tanne
-        ];
-
-        var index = NextInt(0, colors.Length);
-        return colors[index];
+        var index = NextInt(0, ColorHelper.TreeColors.Length);
+        return ColorHelper.TreeColors[index];
     }
 }
