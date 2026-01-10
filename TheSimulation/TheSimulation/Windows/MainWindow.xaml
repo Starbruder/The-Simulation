@@ -21,7 +21,7 @@
 
 		<!-- Zahnrad Icon oben rechts -->
 		<Button x:Name="SettingsButton"
-            Width="40" Height="40" Margin="-10"
+            Width="40" Height="40" Margin="0,5,0,0"
             HorizontalAlignment="Right" VerticalAlignment="Top"
             Background="Transparent"
             BorderThickness="0"
@@ -33,8 +33,19 @@
 		<!-- Settingboxes -->
 		<StackPanel Grid.Row="0" VerticalAlignment="Top">
 
+            <!-- Terrain -->
+			<GroupBox Header="Terrain" Margin="0,0,50,10" BorderBrush="Black">
+				<StackPanel>
+					<CheckBox Margin="5,5,0,0"
+                      x:Name="TerrainGenerationCheckBox"
+                      Content="Enable terrain generation"
+                      IsChecked="True"
+                      AutomationProperties.Name="Enable terrain generation"/>
+				</StackPanel>
+			</GroupBox>
+
 			<!-- Trees -->
-			<GroupBox Header="Trees" Margin="0,30,0,10" BorderBrush="Green">
+			<GroupBox Header="Trees" Margin="0,0,0,10" BorderBrush="Green">
 				<StackPanel>
 					<CheckBox Margin="5,5,0,5"
                       x:Name="GrowForestCheckBox"

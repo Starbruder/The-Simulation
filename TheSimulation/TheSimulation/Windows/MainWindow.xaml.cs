@@ -55,9 +55,11 @@ public sealed partial class MainWindow : Window
             settings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
         );
 
+        var useTerrainGeneration = TerrainGenerationCheckBox.IsChecked ?? true;
+
         var terrainConfig = new TerrainConfig
         (
-            UseTerrainGeneration: true,
+            UseTerrainGeneration: useTerrainGeneration,
             EnableWaterBodies: false,
             EnableRocks: false
         );
