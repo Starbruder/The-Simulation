@@ -67,26 +67,32 @@ public sealed partial class SimulationWindow : Window
 
         ForestCanvas.MouseLeftButtonDown += (_, e) =>
         {
-            var pos = e.GetPosition(ForestCanvas);
-
-            var x = (int)(pos.X / simulationConfig.TreeConfig.Size);
-            var y = (int)(pos.Y / simulationConfig.TreeConfig.Size);
-
-			// Löst das Problem, dass außerhalb geklickt wird und das Programm abstürzt.
-			// because of out of bounds (Knapp außqerhalb des Baumrasters klicken)
-			if (x < 0 || y < 0 || x >= cols || y >= rows)
-            {
-                return;
-            }
-
-            var cell = new Cell(x, y);
-
-            if (forestGrid[x, y] == ForestCellState.Tree)
-            {
-                forestGrid[x, y] = ForestCellState.Burning;
-                UpdateTreeColor(cell, Brushes.Red);
-            }
+            MouseBurnClick(simulationConfig, e);
         };
+    }
+
+    private void MouseBurnClick
+        (SimulationConfig simulationConfig, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        var pos = e.GetPosition(ForestCanvas);
+
+        var x = (int)(pos.X / simulationConfig.TreeConfig.Size);
+        var y = (int)(pos.Y / simulationConfig.TreeConfig.Size);
+
+        // Löst das Problem, dass außerhalb geklickt wird und das Programm abstürzt.
+        // of out of bounds (Knapp außerhalb des Baumrasters klicken)
+        if (x < 0 || y < 0 || x >= cols || y >= rows)
+        {
+            return;
+        }
+
+        var cell = new Cell(x, y);
+
+        if (forestGrid[x, y] == ForestCellState.Tree)
+        {
+            forestGrid[x, y] = ForestCellState.Burning;
+            UpdateTreeColor(cell, Brushes.Red);
+        }
     }
 
     private async Task InitializeSimulationAsync()
@@ -162,7 +168,8 @@ public sealed partial class SimulationWindow : Window
             AirTemperatureCelsius:
                 simulationConfig.EnvironmentConfig.AtmosphereConfig.AirTemperatureCelsius,
             Runtime: DateTime.Now - simulationStartTime,
-            History: new(simulationHistory)
+            History: new(simulationHistory),
+            FireEvents: [] // Fire events not tracked in this implementation
         );
 
         var evalWindow = new EvaluationWindow(data);

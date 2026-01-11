@@ -1,7 +1,7 @@
 ﻿namespace TheSimulation;
 
 /// <summary>
-/// <see langword="public"/> record that holds evaluation data for the simulation.
+/// <see langword="public"/> <see langword="record"/> that holds evaluation data for the simulation.
 /// <see langword="public"/> properties include total grown trees, total burned trees, active trees, maximum possible trees, runtime, and history of growth and burn events.
 /// </summary>
 /// <param name="TotalGrownTrees"></param>
@@ -11,6 +11,7 @@
 /// <param name="AirTemperatureCelsius"></param>
 /// <param name="Runtime"></param>
 /// <param name="History"></param>
+/// <param name="FireEvents"></param>
 public sealed record Evaluation
 (
     uint TotalGrownTrees,
@@ -19,5 +20,6 @@ public sealed record Evaluation
     float AirHumidityPercentage,
     float AirTemperatureCelsius,
     TimeSpan Runtime,
-    List<(TimeSpan Time, uint Grown, uint Burned)> History
+    List<(TimeSpan Time, uint Grown, uint Burned)> History,
+    List<FireEvent> FireEvents
 );
