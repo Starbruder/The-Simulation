@@ -45,6 +45,8 @@ public sealed partial class SimulationWindow : Window
     private readonly List<(TimeSpan Time, uint Grown, uint Burned)> simulationHistory
         = [];
 
+    private readonly List<FireEvent> fireEvents = [];
+
     private TerrainCell[,] terrainGrid;
 
     public SimulationWindow(SimulationConfig simulationConfig)
@@ -92,6 +94,12 @@ public sealed partial class SimulationWindow : Window
         {
             forestGrid[x, y] = ForestCellState.Burning;
             UpdateTreeColor(cell, Brushes.Red);
+
+            var elapsed = DateTime.Now - simulationStartTime;
+            fireEvents.Add(new FireEvent(
+                FireEventType.ManualIgnition,
+                elapsed
+            ));
         }
     }
 
@@ -169,7 +177,7 @@ public sealed partial class SimulationWindow : Window
                 simulationConfig.EnvironmentConfig.AtmosphereConfig.AirTemperatureCelsius,
             Runtime: DateTime.Now - simulationStartTime,
             History: new(simulationHistory),
-            FireEvents: [] // Fire events not tracked in this implementation
+            FireEvents: new(fireEvents)
         );
 
         var evalWindow = new EvaluationWindow(data);
@@ -659,6 +667,12 @@ public sealed partial class SimulationWindow : Window
         if (simulationConfig.VisualEffectsConfig.ShowLightning)
         {
             ShowLightning(cell);
+
+            var elapsed = DateTime.Now - simulationStartTime;
+            fireEvents.Add(new(
+                FireEventType.Lightning,
+                elapsed
+            ));
         }
 
         if (forestGrid[cell.X, cell.Y] == ForestCellState.Tree)
