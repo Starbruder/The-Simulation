@@ -11,7 +11,7 @@
 /// <param name="AirTemperatureCelsius"></param>
 /// <param name="Runtime"></param>
 /// <param name="History"></param>
-public sealed record EvaluationData
+public sealed record Evaluation
 (
     uint TotalGrownTrees,
     uint TotalBurnedTrees,

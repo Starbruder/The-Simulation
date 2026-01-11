@@ -8,9 +8,9 @@ namespace TheSimulation;
 /// </summary>
 public sealed partial class EvaluationWindow : Window
 {
-    private readonly EvaluationData data;
+    private readonly Evaluation data;
 
-    public EvaluationWindow(EvaluationData data)
+    public EvaluationWindow(Evaluation data)
     {
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
@@ -24,7 +24,7 @@ public sealed partial class EvaluationWindow : Window
         DrawCharts(data);
     }
 
-    private void DrawCharts(EvaluationData data)
+    private void DrawCharts(Evaluation data)
     {
         if (data.History.Count < 1)
         {

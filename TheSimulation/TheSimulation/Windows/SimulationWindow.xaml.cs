@@ -144,7 +144,7 @@ public sealed partial class SimulationWindow : Window
 
     private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
     {
-        var data = new EvaluationData
+        var data = new Evaluation
         (
             TotalGrownTrees: totalGrownTrees,
             TotalBurnedTrees: totalBurnedTrees,
