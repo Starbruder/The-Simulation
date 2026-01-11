@@ -148,8 +148,11 @@ public sealed partial class SimulationWindow : Window
         (
             TotalGrownTrees: totalGrownTrees,
             TotalBurnedTrees: totalBurnedTrees,
-            ActiveTrees: activeTrees.Count,
             MaxTreesPossible: cachedMaxTreesPossible,
+            AirHumidityPercentage:
+                simulationConfig.EnvironmentConfig.AtmosphereConfig.AirHumidityPercentage,
+            AirTemperatureCelsius:
+                simulationConfig.EnvironmentConfig.AtmosphereConfig.AirTemperatureCelsius,
             Runtime: DateTime.Now - simulationStartTime,
             History: new(simulationHistory)
         );
@@ -312,15 +315,15 @@ public sealed partial class SimulationWindow : Window
         // 🌍 TOPOGRAPHIE-LOGIK
         var terrain = terrainGrid[cell.X, cell.Y];
 
-		// ❌ kein Baum auf Wasser oder Felsen (needs to be uncommented later when impl.)
-		//if (terrain.Type != TerrainType.Soil)
-		//{
-		//    return;
-		//}
+        // ❌ kein Baum auf Wasser oder Felsen (needs to be uncommented later when impl.)
+        //if (terrain.Type != TerrainType.Soil)
+        //{
+        //    return;
+        //}
 
-		// ⛰️ Höhenabhängige Wachstumswahrscheinlichkeit
-		// je höher, desto unwahrscheinlicher
-		var heightPenalty = terrain.Elevation; // 0.0 – 1.0
+        // ⛰️ Höhenabhängige Wachstumswahrscheinlichkeit
+        // je höher, desto unwahrscheinlicher
+        var heightPenalty = terrain.Elevation; // 0.0 – 1.0
 
         if (randomHelper.NextDouble() < heightPenalty * 0.7)
         {

@@ -16,7 +16,22 @@ public sealed partial class EvaluationWindow : Window
         IconVisualizer.InitializeWindowIcon(this);
         this.data = data;
 
+        EvalHumidity.Text = $"Air Humidity: {data.AirHumidityPercentage * 100:F0} %";
+        EvalTemperature.Text = $"Air Temperature: {data.AirTemperatureCelsius}°C";
+
         EvalRuntime.Text = $"Runtime: {data.Runtime:hh\\:mm\\:ss}";
+
+        DrawCharts(data);
+    }
+
+    private void DrawCharts(EvaluationData data)
+    {
+        if (data.History.Count < 1)
+        {
+            MessageBox.Show("Havent yet collected enough infos to display charts.",
+                "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
 
         Loaded += (_, _) =>
         {
