@@ -71,6 +71,14 @@ public sealed partial class SimulationWindow : Window
 
             var x = (int)(pos.X / simulationConfig.TreeConfig.Size);
             var y = (int)(pos.Y / simulationConfig.TreeConfig.Size);
+
+			// Löst das Problem, dass außerhalb geklickt wird und das Programm abstürzt.
+			// because of out of bounds (Knapp außqerhalb des Baumrasters klicken)
+			if (x < 0 || y < 0 || x >= cols || y >= rows)
+            {
+                return;
+            }
+
             var cell = new Cell(x, y);
 
             if (forestGrid[x, y] == ForestCellState.Tree)
