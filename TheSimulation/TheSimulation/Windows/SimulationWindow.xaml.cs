@@ -64,7 +64,8 @@ public sealed partial class SimulationWindow : Window
 
         this.simulationConfig = simulationConfig;
         windHelper = new(simulationConfig.EnvironmentConfig.WindConfig);
-        windVisualizer = new(ForestCanvas, simulationConfig, windHelper);
+        windVisualizer =
+            new(ForestCanvas, simulationConfig.EnvironmentConfig.WindConfig, windHelper);
 
         particleGenerator = new ParticleGenerator(ForestCanvas);
 

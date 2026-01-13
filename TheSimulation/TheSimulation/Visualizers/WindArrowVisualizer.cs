@@ -18,7 +18,7 @@ namespace TheSimulation;
 public sealed class WindArrowVisualizer
 {
     private readonly Canvas canvas;
-    private readonly SimulationConfig config;
+    private readonly WindConfig config;
     private readonly WindHelper windHelper;
 
     private readonly Line arrow;
@@ -49,7 +49,7 @@ public sealed class WindArrowVisualizer
     /// <param name="windHelper">
     /// The WindHelper instance used to obtain wind data for visualization.
     /// </param>
-    public WindArrowVisualizer(Canvas canvas, SimulationConfig config, WindHelper windHelper)
+    public WindArrowVisualizer(Canvas canvas, WindConfig config, WindHelper windHelper)
     {
         this.canvas = canvas;
         this.config = config;
@@ -86,12 +86,12 @@ public sealed class WindArrowVisualizer
     /// </returns>
     private Vector GetWindVector()
     {
-        if (config.EnvironmentConfig.WindConfig.RandomDirection)
+        if (config.RandomDirection)
         {
             return currentWindVector;
         }
 
-        return WindMapper.GetWindVector(config.EnvironmentConfig.WindConfig.Direction);
+        return WindMapper.GetWindVector(config.Direction);
     }
 
     /// <summary>
