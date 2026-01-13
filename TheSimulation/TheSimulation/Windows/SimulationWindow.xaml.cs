@@ -504,18 +504,19 @@ public sealed partial class SimulationWindow : Window
 
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
     {
-        if (simulationConfig.TerrainConfig.UseTerrainGeneration)
-        {
-            // 🌍 TOPOGRAPHIE-LOGIK
-            var terrain = terrainGrid[neighbor.X, neighbor.Y];
-            // ❌ kein Feuer auf Wasser oder Felsen
-            if (terrain.Type != TerrainType.Soil)
-            {
-                return 0.0;
-            }
-        }
+		// Uncommented later when impl. diffrent ground types
+		//if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+		//{
+		// 🌍 TOPOGRAPHIE-LOGIK
+		//var terrain = terrainGrid[neighbor.X, neighbor.Y];
+		// ❌ kein Feuer auf Wasser oder Felsen
+		//if (terrain.Type != TerrainType.Soil)
+		//{
+		//    return 0.0;
+		//}
+		//}
 
-        var baseChance =
+		var baseChance =
         simulationConfig.FireConfig.SpreadChancePercent / 100.0;
 
         var windEffect =
