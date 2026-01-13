@@ -50,6 +50,7 @@ public sealed partial class MainWindow : Window
         var effectsConfig = new VisualEffectsConfig
         (
             settings.ShowLightning,
+            false,
             settings.ShowFireParticles,
             settings.ShowSmokeParticles,
             settings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen

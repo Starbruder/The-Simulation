@@ -49,12 +49,15 @@ public sealed partial class SimulationWindow : Window
 
     private TerrainCell[,] terrainGrid;
 
+    private Rectangle screenFlash;
+
     public SimulationWindow(SimulationConfig simulationConfig)
     {
         // To get rid of the warning CS8618
         forestGrid = new ForestCellState[0, 0];
         simulationTimer = new();
         terrainGrid = new TerrainCell[0, 0];
+        screenFlash = new();
 
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
@@ -109,6 +112,11 @@ public sealed partial class SimulationWindow : Window
         StartSimulationTimer();
         InitializeGrid();
 
+        if (simulationConfig.VisualEffectsConfig.ShowBoltScreenFlash)
+        {
+            InitializeScreenFlash();
+        }
+
         if (simulationConfig.PrefillConfig.ShouldPrefillMap)
         {
             await PrefillForest();
@@ -130,6 +138,21 @@ public sealed partial class SimulationWindow : Window
 
         windVisualizer.Draw();
         UpdateWindUI();
+    }
+
+    private void InitializeScreenFlash()
+    {
+        screenFlash = new Rectangle
+        {
+            Width = ForestCanvas.ActualWidth,
+            Height = ForestCanvas.ActualHeight,
+            Fill = Brushes.White,
+            Opacity = 0
+        };
+
+        Panel.SetZIndex(screenFlash, int.MaxValue);
+
+        ForestCanvas.Children.Add(screenFlash);
     }
 
     private void CacheEnvironmentFactors()
@@ -504,19 +527,19 @@ public sealed partial class SimulationWindow : Window
 
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
     {
-		// Uncommented later when impl. diffrent ground types
-		//if (simulationConfig.TerrainConfig.UseTerrainGeneration)
-		//{
-		// 🌍 TOPOGRAPHIE-LOGIK
-		//var terrain = terrainGrid[neighbor.X, neighbor.Y];
-		// ❌ kein Feuer auf Wasser oder Felsen
-		//if (terrain.Type != TerrainType.Soil)
-		//{
-		//    return 0.0;
-		//}
-		//}
+        // Uncommented later when impl. diffrent ground types
+        //if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+        //{
+        // 🌍 TOPOGRAPHIE-LOGIK
+        //var terrain = terrainGrid[neighbor.X, neighbor.Y];
+        // ❌ kein Feuer auf Wasser oder Felsen
+        //if (terrain.Type != TerrainType.Soil)
+        //{
+        //    return 0.0;
+        //}
+        //}
 
-		var baseChance =
+        var baseChance =
         simulationConfig.FireConfig.SpreadChancePercent / 100.0;
 
         var windEffect =
@@ -685,7 +708,7 @@ public sealed partial class SimulationWindow : Window
 
     private async void ShowLightning(Cell cell)
     {
-        var lightning = new Ellipse
+        var lightningCell = new Ellipse
         {
             Width = simulationConfig.TreeConfig.Size,
             Height = simulationConfig.TreeConfig.Size,
@@ -694,13 +717,64 @@ public sealed partial class SimulationWindow : Window
             Tag = cell
         };
 
-        Canvas.SetLeft(lightning, cell.X * simulationConfig.TreeConfig.Size);
-        Canvas.SetTop(lightning, cell.Y * simulationConfig.TreeConfig.Size);
-        ForestCanvas.Children.Add(lightning);
+        Canvas.SetLeft(lightningCell, cell.X * simulationConfig.TreeConfig.Size);
+        Canvas.SetTop(lightningCell, cell.Y * simulationConfig.TreeConfig.Size);
+        ForestCanvas.Children.Add(lightningCell);
 
-        await Task.Delay(millisecondsDelay: 150);
+        var boltEffect = CreateLightningBolt(cell);
+        ForestCanvas.Children.Add(boltEffect);
 
-        ForestCanvas.Children.Remove(lightning);
+        if (simulationConfig.VisualEffectsConfig.ShowBoltScreenFlash)
+        {
+            await FlashScreen();
+        }
+        await Task.Delay(millisecondsDelay: 80);
+
+        ForestCanvas.Children.Remove(lightningCell);
+        ForestCanvas.Children.Remove(boltEffect);
+    }
+
+    private async Task FlashScreen()
+    {
+        screenFlash.Opacity = 0.6;
+        await Task.Delay(40);   // ~1 Frame
+        screenFlash.Opacity = 0;
+    }
+
+    private Polyline CreateLightningBolt(Cell target)
+    {
+        var rnd = randomHelper;
+        var size = simulationConfig.TreeConfig.Size;
+
+        var startX = target.X * size + size / 2.0;
+        var startY = 0.0;
+
+        var endX = startX;
+        var endY = target.Y * size + size / 2.0;
+
+        var points = new PointCollection
+        {
+            new(startX, startY)
+        };
+
+        const int segments = 8;
+        for (var i = 1; i < segments; i++)
+        {
+            var t = i / (double)segments;
+            var x = startX + rnd.NextDouble(-15, 15);
+            var y = startY + (endY - startY) * t;
+            points.Add(new(x, y));
+        }
+
+        points.Add(new(endX, endY));
+
+        return new Polyline
+        {
+            Points = points,
+            Stroke = Brushes.LightBlue,
+            StrokeThickness = 2.5,
+            Opacity = 1
+        };
     }
 
     private int CalculateMaxTreesPossible()
