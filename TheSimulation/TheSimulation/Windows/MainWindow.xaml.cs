@@ -201,9 +201,6 @@ public sealed partial class MainWindow : Window
 
     private void GrowForestCheckBox_Unchecked(object sender, RoutedEventArgs e)
     {
-        PrefillCheckBox.IsChecked = true;
-        PrefillCheckBox.IsEnabled = false;
-
         PauseFireCheckBox.IsChecked = true;
         PauseFireCheckBox.IsEnabled = false;
     }
@@ -212,7 +209,6 @@ public sealed partial class MainWindow : Window
     {
         if (PrefillCheckBox is not null)
         {
-            PrefillCheckBox.IsEnabled = true;
             PauseFireCheckBox.IsEnabled = true;
         }
     }
