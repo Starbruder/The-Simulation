@@ -175,11 +175,11 @@ public sealed partial class SimulationWindow : Window
 
         simulationTimer.Tick += (_, _) =>
         {
-            if (CalculateSimulationTime() >= new TimeSpan(99, 99, 99))
+            if (CalculateSimulationTime() >= new TimeSpan(99, 99, 99)
+            || simulationConfig.PrefillConfig.ShouldPrefillMap && LowDensityMinimumReached())
             {
                 StopSimulation();
                 OpenEvalualtionWindow();
-                simulationTimer.Stop();
                 return;
             }
 
@@ -189,8 +189,22 @@ public sealed partial class SimulationWindow : Window
         simulationTimer.Start();
     }
 
+    private bool LowDensityMinimumReached()
+    {
+        const uint lowDensityMinimumPercent = 3;
+        return CalculateCurrentTreeDensityPercent() <= lowDensityMinimumPercent;
+    }
+
+    private int CalculateCurrentTreeDensityPercent()
+    {
+        var density = activeTrees.Count / (double)cachedMaxTreesPossible;
+        var densityPercent = (int)Math.Round(density * 100);
+        return densityPercent;
+    }
+
     private void StopSimulation()
     {
+        simulationTimer.Stop();
         growTimer.Stop();
         igniteTimer.Stop();
         fireTimer.Stop();
@@ -806,7 +820,7 @@ public sealed partial class SimulationWindow : Window
     private void UpdateTreeUI()
     {
         TreeDensityText.Text =
-            FormatHelper.FormatTreeDensityText(activeTrees.Count, cachedMaxTreesPossible);
+            $"{activeTrees.Count} / {cachedMaxTreesPossible} ({CalculateCurrentTreeDensityPercent()}%)";
 
         TotalGrownTrees.Text = totalGrownTrees.ToString();
         TotalBurnedTrees.Text = totalBurnedTrees.ToString();
