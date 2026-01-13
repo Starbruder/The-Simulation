@@ -195,10 +195,10 @@ public sealed partial class SimulationWindow : Window
         return CalculateCurrentTreeDensityPercent() <= lowDensityMinimumPercent;
     }
 
-    private int CalculateCurrentTreeDensityPercent()
+    private double CalculateCurrentTreeDensityPercent()
     {
         var density = activeTrees.Count / (double)cachedMaxTreesPossible;
-        var densityPercent = (int)Math.Round(density * 100);
+        var densityPercent = Math.Round(density * 100);
         return densityPercent;
     }
 
@@ -319,7 +319,7 @@ public sealed partial class SimulationWindow : Window
     private void InitializeIgniteTimer()
     {
         igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 750);
-        igniteTimer.Tick += (_, _) => IgniteRandomTree();
+        igniteTimer.Tick += (_, _) => IgniteRandomCell();
         igniteTimer.Start();
     }
 
@@ -721,9 +721,11 @@ public sealed partial class SimulationWindow : Window
         }
     }
 
-    private void IgniteRandomTree()
+    private void IgniteRandomCell()
     {
-        var cell = randomHelper.NextCell(cols, rows);
+        var minChanceToHitTree = CalculateCurrentTreeDensityPercent() / 100;
+
+        var cell = GetCellByChance(minChanceToHitTree);
 
         if (simulationConfig.VisualEffectsConfig.ShowLightning)
         {
@@ -741,6 +743,17 @@ public sealed partial class SimulationWindow : Window
             forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
             UpdateTreeColor(cell, Brushes.Red);
         }
+    }
+
+    private Cell GetCellByChance(double minChanceToHitTree)
+    {
+        if (randomHelper.NextDouble() < minChanceToHitTree)
+        {
+            return randomHelper.NextTree(activeTrees);
+        }
+
+
+        return randomHelper.NextCell(cols, rows);
     }
 
     private async void ShowLightning(Cell cell)
@@ -780,25 +793,24 @@ public sealed partial class SimulationWindow : Window
 
     private Polyline CreateLightningBolt(Cell target)
     {
-        var rnd = randomHelper;
         var size = simulationConfig.TreeConfig.Size;
 
-        var startX = target.X * size + size / 2.0;
-        var startY = 0.0;
+        var startX = target.X * size + size / 2f;
+        var startY = 0f;
 
         var endX = startX;
-        var endY = target.Y * size + size / 2.0;
+        var endY = target.Y * size + size / 2f;
 
         var points = new PointCollection
         {
             new(startX, startY)
         };
 
-        const int segments = 8;
-        for (var i = 1; i < segments; i++)
+        const byte boltSegments = 8;
+        for (var i = 1; i < boltSegments; i++)
         {
-            var t = i / (double)segments;
-            var x = startX + rnd.NextDouble(-15, 15);
+            var t = i / (float)boltSegments;
+            var x = startX + randomHelper.NextDouble(-15, 15);
             var y = startY + (endY - startY) * t;
             points.Add(new(x, y));
         }
@@ -820,7 +832,7 @@ public sealed partial class SimulationWindow : Window
     private void UpdateTreeUI()
     {
         TreeDensityText.Text =
-            $"{activeTrees.Count} / {cachedMaxTreesPossible} ({CalculateCurrentTreeDensityPercent()}%)";
+            $"{activeTrees.Count} / {cachedMaxTreesPossible} ({CalculateCurrentTreeDensityPercent():F0}%)";
 
         TotalGrownTrees.Text = totalGrownTrees.ToString();
         TotalBurnedTrees.Text = totalBurnedTrees.ToString();
