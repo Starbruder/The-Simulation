@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheSimulation"
         mc:Ignorable="d"
-        Title="GraphicsSettingsWindow"
+        Title="Forest fire graphics settings"
         Height="450" Width="750"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
