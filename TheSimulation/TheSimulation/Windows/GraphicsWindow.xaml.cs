@@ -17,6 +17,7 @@ public sealed partial class GraphicsWindow : Window
         IconVisualizer.InitializeWindowIcon(this);
 
         LightningCheckBox.IsChecked = settings.ShowLightning;
+        BoltFlashCheckBox.IsChecked = settings.ShowBoltFlashes;
         FireSparksCheckBox.IsChecked = settings.ShowFireParticles;
         SmokeCheckBox.IsChecked = settings.ShowSmokeParticles;
         BurnedTreeCheckBox.IsChecked = settings.ShowBurnedDownTrees;
@@ -25,20 +26,17 @@ public sealed partial class GraphicsWindow : Window
     private void ApplyGraphicsSettings(object sender, RoutedEventArgs e)
     {
         var lightningEnabled = LightningCheckBox.IsChecked ?? true;
+        var boltFlashesEnabled = BoltFlashCheckBox.IsChecked ?? false;
         var fireSparksEnabled = FireSparksCheckBox.IsChecked ?? true;
         var smokeEnabled = SmokeCheckBox.IsChecked ?? true;
         var showBurnedDownTrees = BurnedTreeCheckBox.IsChecked ?? false;
 
-        ApplySettings(lightningEnabled, fireSparksEnabled, smokeEnabled, showBurnedDownTrees);
-        Close();
-    }
-
-    private void ApplySettings
-        (bool showLightning, bool showFireSparks, bool showSmoke, bool showBurnedDownTrees)
-    {
-        settings.ShowLightning = showLightning;
-        settings.ShowFireParticles = showFireSparks;
-        settings.ShowSmokeParticles = showSmoke;
+        settings.ShowLightning = lightningEnabled;
+        settings.ShowBoltFlashes = boltFlashesEnabled;
+        settings.ShowFireParticles = fireSparksEnabled;
+        settings.ShowSmokeParticles = smokeEnabled;
         settings.ShowBurnedDownTrees = showBurnedDownTrees;
+
+        Close();
     }
 }

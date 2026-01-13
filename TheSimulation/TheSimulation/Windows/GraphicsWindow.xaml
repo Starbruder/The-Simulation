@@ -24,6 +24,9 @@
 				<CheckBox x:Name="LightningCheckBox"
                           Content="Show Lightning"
                           Margin="10"/>
+				<CheckBox x:Name="BoltFlashCheckBox"
+						  Content="Show Bolt Flashes"
+						  Margin="10"/>
 			</StackPanel>
 		</GroupBox>
 
