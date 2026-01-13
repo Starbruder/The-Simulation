@@ -2,14 +2,14 @@
 
 namespace TheSimulation;
 
-public sealed class WindHelper(SimulationConfig simulationConfig)
+public sealed class WindHelper(WindConfig config)
 {
-    private readonly SimulationConfig config = simulationConfig;
+    private readonly WindConfig config = config;
     private readonly RandomHelper randomHelper = new();
 
-    public double CurrentWindAngleDegrees { get; private set; } = (int)simulationConfig.EnvironmentConfig.WindConfig.Direction;
+    public double CurrentWindAngleDegrees { get; private set; } = (int)config.Direction;
 
-    public double CurrentWindStrength { get; private set; } = simulationConfig.EnvironmentConfig.WindConfig.Strength;
+    public double CurrentWindStrength { get; private set; } = config.Strength;
 
     public double CalculateWindEffect(Cell from, Cell to)
     {
@@ -41,9 +41,9 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 
     public Vector GetWindVector()
     {
-        if (!config.EnvironmentConfig.WindConfig.RandomDirection)
+        if (!config.RandomDirection)
         {
-            return WindMapper.GetWindVector(config.EnvironmentConfig.WindConfig.Direction);
+            return WindMapper.GetWindVector(config.Direction);
         }
 
         // in Radiant umrechnen
@@ -60,13 +60,13 @@ public sealed class WindHelper(SimulationConfig simulationConfig)
 
     public void RandomizeAndUpdateWind()
     {
-        if (config.EnvironmentConfig.WindConfig.RandomDirection)
+        if (config.RandomDirection)
         {
             // Windrichtung um ±5° ändern
             RandomizeWindDirection(fluctuation: 5);
         }
 
-        if (config.EnvironmentConfig.WindConfig.RandomStrength)
+        if (config.RandomStrength)
         {
             // Windstärke um ±3% ändern
             RandomizeWindStrengh(fluctuation: 0.03f);
