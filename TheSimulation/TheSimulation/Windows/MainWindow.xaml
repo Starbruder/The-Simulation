@@ -28,6 +28,9 @@
             Click="OpenGraphicsSettingsWindow">
 			<Image Source="/Assets/Images/gear-icon.png" Stretch="Uniform"
                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<Button.ToolTip>
+				<ToolTip Content="Graphicssettings"/>
+			</Button.ToolTip>
 		</Button>
 
 		<!-- Settingboxes -->
