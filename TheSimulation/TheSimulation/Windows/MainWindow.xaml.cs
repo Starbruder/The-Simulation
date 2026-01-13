@@ -207,6 +207,9 @@ public sealed partial class MainWindow : Window
 
     private void GrowForestCheckBox_Checked(object sender, RoutedEventArgs e)
     {
-        PauseFireCheckBox.IsEnabled = true;
-    }
+        if (PauseFireCheckBox is not null)
+        {
+			PauseFireCheckBox.IsEnabled = true;
+		}
+	}
 }
