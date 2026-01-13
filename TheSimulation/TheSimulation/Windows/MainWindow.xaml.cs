@@ -184,8 +184,8 @@ public sealed partial class MainWindow : Window
     {
         foreach (ComboBoxItem item in WindDirectionBox.Items)
         {
-            if (Enum.TryParse<WindDirection>(item.Content.ToString(), out var dir) &&
-                dir == randomDirection)
+            if (Enum.TryParse<WindDirection>(item.Content.ToString(), out var dir)
+                && dir == randomDirection)
             {
                 WindDirectionBox.SelectedItem = item;
                 break;
@@ -207,9 +207,6 @@ public sealed partial class MainWindow : Window
 
     private void GrowForestCheckBox_Checked(object sender, RoutedEventArgs e)
     {
-        if (PrefillCheckBox is not null)
-        {
-            PauseFireCheckBox.IsEnabled = true;
-        }
+        PauseFireCheckBox.IsEnabled = true;
     }
 }
