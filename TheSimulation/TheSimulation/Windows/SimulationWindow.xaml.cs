@@ -175,19 +175,42 @@ public sealed partial class SimulationWindow : Window
 
         simulationTimer.Tick += (_, _) =>
         {
+            if (CalculateSimulationTime() >= new TimeSpan(99, 99, 99))
+            {
+                StopSimulation();
+                OpenEvalualtionWindow();
+                simulationTimer.Stop();
+                return;
+            }
+
             TimerVisualizer.UpdateTimerUI(SimulationTimeText, simulationStartTime);
             RecordSimulationStats();
         };
         simulationTimer.Start();
     }
 
+    private void StopSimulation()
+    {
+        growTimer.Stop();
+        igniteTimer.Stop();
+        fireTimer.Stop();
+        windTimer.Stop();
+    }
+
     private void RecordSimulationStats()
     {
-        var elapsed = DateTime.Now - simulationStartTime;
+        var elapsed = CalculateSimulationTime();
         simulationHistory.Add((elapsed, totalGrownTrees, totalBurnedTrees));
     }
 
-    private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
+    private TimeSpan CalculateSimulationTime()
+    {
+        return DateTime.Now - simulationStartTime;
+    }
+
+    private void ShowEvaluation_Click(object sender, RoutedEventArgs e) => OpenEvalualtionWindow();
+
+    private void OpenEvalualtionWindow()
     {
         var data = new Evaluation
         (
