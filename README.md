@@ -74,7 +74,7 @@ The goal is to provide an intuitive and visual understanding of how environmenta
 The simulation uses multiple random processes to model natural behavior:
 
 - **Uniform distribution** → random fire start position  
-- **Normal distribution** → wind fluctuations  
+- **Normal distribution** → fire spread chance    
 - **Exponential distribution** → potential secondary ignition events  
 
 These random components ensure that each simulation run behaves differently while remaining reproducible in its overall patterns.
