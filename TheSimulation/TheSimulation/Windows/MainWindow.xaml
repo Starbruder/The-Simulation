@@ -163,10 +163,6 @@
                               MinWidth="150"
                               AutomationProperties.Name="Wind direction"
                               AutomationProperties.HelpText="Selects the direction of the wind">
-						<ComboBoxItem Content="North"/>
-						<ComboBoxItem Content="East"/>
-						<ComboBoxItem Content="South"/>
-						<ComboBoxItem Content="West"/>
 					</ComboBox>
 
 					<!-- Abstand -->

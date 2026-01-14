@@ -14,6 +14,17 @@ public sealed partial class MainWindow : Window
     {
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
+        InitailizeWindDirectionDropdown();
+    }
+
+    private void InitailizeWindDirectionDropdown()
+    {
+        var enumtypes = Enum.GetValues<WindDirection>();
+        foreach (var enumtype in enumtypes)
+        {
+            var windDirectionItem = new ComboBoxItem().Content = enumtype;
+            WindDirectionBox.Items.Add(windDirectionItem);
+        }
     }
 
     private void StartSimulation_Click(object sender, RoutedEventArgs e)
@@ -50,7 +61,7 @@ public sealed partial class MainWindow : Window
         var effectsConfig = new VisualEffectsConfig
         (
             settings.ShowLightning,
-			settings.ShowBoltFlashes,
+            settings.ShowBoltFlashes,
             settings.ShowFireParticles,
             settings.ShowSmokeParticles,
             settings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
@@ -209,7 +220,7 @@ public sealed partial class MainWindow : Window
     {
         if (PauseFireCheckBox is not null)
         {
-			PauseFireCheckBox.IsEnabled = true;
-		}
-	}
+            PauseFireCheckBox.IsEnabled = true;
+        }
+    }
 }
