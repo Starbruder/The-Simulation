@@ -149,7 +149,9 @@ public sealed partial class MainWindow : Window
 
     private WindDirection GetParsedWindDirectionFromUI()
     {
-        var selectedString = ((ComboBoxItem)WindDirectionBox.SelectedItem).Content.ToString();
+        var selectedComboBoxItem = WindDirectionBox.SelectedItem;
+
+        var selectedString = selectedComboBoxItem.ToString();
 
         return Enum.TryParse<WindDirection>(selectedString, out var windDir)
             ? windDir

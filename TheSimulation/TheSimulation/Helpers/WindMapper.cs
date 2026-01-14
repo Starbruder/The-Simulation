@@ -4,15 +4,18 @@ namespace TheSimulation;
 
 public static class WindMapper
 {
-    public static Vector GetWindVector(WindDirection direction) =>
-        direction switch
-        {
-            WindDirection.North => new(0, 1),
-            WindDirection.South => new(0, -1),
-            WindDirection.East => new(-1, 0),
-            WindDirection.West => new(1, 0),
-            _ => new(0, 0)
-        };
+    public static Vector GetWindVector(WindDirection direction)
+    {
+        const int correctionDegrees = 90;
+        var angleInDegrees = (float)direction + correctionDegrees;
+
+        var angleInRadians = angleInDegrees * (float)Math.PI / 180;
+
+        var x = (float)Math.Cos(angleInRadians);
+        var y = (float)Math.Sin(angleInRadians);
+
+        return new(x, y);
+    }
 
     public static WindDirection ToWindDirection(this float angle)
     {
