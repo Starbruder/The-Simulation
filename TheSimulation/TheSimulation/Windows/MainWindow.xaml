@@ -159,7 +159,7 @@
                                AutomationProperties.Name="Wind direction label"/>
 					<ComboBox Margin="4,5,4,0"
                               x:Name="WindDirectionBox"
-                              SelectedIndex="2"
+                              SelectedIndex="0"
                               MinWidth="150"
                               AutomationProperties.Name="Wind direction"
                               AutomationProperties.HelpText="Selects the direction of the wind">
