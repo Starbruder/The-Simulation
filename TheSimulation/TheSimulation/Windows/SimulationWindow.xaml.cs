@@ -34,6 +34,7 @@ public sealed partial class SimulationWindow : Window
     private float cachedTemperatureEffect;
     private float cachedHumidityEffect;
 
+    private bool isPaused = false;
     private bool IsAnyBurningThenPause = false;
 
     private uint totalGrownTrees = 0;
@@ -75,6 +76,32 @@ public sealed partial class SimulationWindow : Window
         {
             MouseBurnClick(simulationConfig, e);
         };
+
+        StartOrResumeSimulation();
+    }
+
+    private void StartOrResumeSimulation()
+    {
+        isPaused = false;
+
+        if (simulationConfig.TreeConfig.AllowRegrowForest)
+        {
+            growTimer.Start();
+        }
+
+        igniteTimer.Start();
+        fireTimer.Start();
+        simulationTimer.Start();
+
+        if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
+            simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
+        {
+            windTimer.Start();
+            return;
+        }
+
+        windVisualizer.Draw();
+        UpdateWindUI();
     }
 
     private void MouseBurnClick
@@ -110,7 +137,7 @@ public sealed partial class SimulationWindow : Window
     private async Task InitializeSimulationAsync()
     {
         CacheEnvironmentFactors();
-        StartSimulationTimer();
+        InitializeSimulationTimer();
         InitializeGrid();
 
         if (simulationConfig.VisualEffectsConfig.ShowBoltScreenFlash)
@@ -164,7 +191,7 @@ public sealed partial class SimulationWindow : Window
             1 - simulationConfig.EnvironmentConfig.AtmosphereConfig.AirHumidityPercentage;
     }
 
-    private void StartSimulationTimer()
+    private void InitializeSimulationTimer()
     {
         SetAndCalculateStartTime();
 
@@ -180,7 +207,7 @@ public sealed partial class SimulationWindow : Window
             if (CalculateSimulationTime() >= new TimeSpan(99, 99, 99)
             || simulationConfig.PrefillConfig.ShouldPrefillMap && LowDensityMinimumReached())
             {
-                StopSimulation();
+                StopOrPauseSimulation();
                 OpenEvalualtionWindow();
                 return;
             }
@@ -188,7 +215,6 @@ public sealed partial class SimulationWindow : Window
             TimerVisualizer.UpdateTimerUI(SimulationTimeText, simulationStartTime);
             RecordSimulationStats();
         };
-        simulationTimer.Start();
     }
 
     private bool LowDensityMinimumReached()
@@ -204,8 +230,10 @@ public sealed partial class SimulationWindow : Window
         return densityPercent;
     }
 
-    private void StopSimulation()
+    private void StopOrPauseSimulation()
     {
+        isPaused = true;
+
         simulationTimer.Stop();
         growTimer.Stop();
         igniteTimer.Stop();
@@ -224,7 +252,27 @@ public sealed partial class SimulationWindow : Window
         return DateTime.Now - simulationStartTime;
     }
 
-    private void ShowEvaluation_Click(object sender, RoutedEventArgs e) => OpenEvalualtionWindow();
+	private void PauseResume_Click(object sender, RoutedEventArgs e)
+	{
+		if (isPaused)
+		{
+			// Wenn die Simulation pausiert ist, setzen wir sie fort
+			StartOrResumeSimulation();
+			PauseResumeButton.Content = "Pause";  // Text ändern
+            isPaused = false;
+            MessageBox.Show("Simulation resumed.");
+		}
+		else
+		{
+			// Wenn die Simulation läuft, pausieren wir sie
+			StopOrPauseSimulation();
+			PauseResumeButton.Content = "Resume";  // Text ändern
+            isPaused = true;
+            MessageBox.Show("Simulation paused.");
+		}
+	}
+
+	private void ShowEvaluation_Click(object sender, RoutedEventArgs e) => OpenEvalualtionWindow();
 
     private void OpenEvalualtionWindow()
     {
@@ -315,21 +363,18 @@ public sealed partial class SimulationWindow : Window
     {
         growTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value);
         growTimer.Tick += (_, _) => GrowStep();
-        growTimer.Start();
     }
 
     private void InitializeIgniteTimer()
     {
         igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 750);
         igniteTimer.Tick += (_, _) => IgniteRandomCell();
-        igniteTimer.Start();
     }
 
     private void InitializeFireTimer()
     {
         fireTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value);
         fireTimer.Tick += (_, _) => FireStep();
-        fireTimer.Start();
     }
 
     private void InitializeWindTimer()
@@ -344,8 +389,6 @@ public sealed partial class SimulationWindow : Window
 
             UpdateWindUI();
         };
-
-        windTimer.Start();
     }
 
     private void SpeedChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -813,4 +856,9 @@ public sealed partial class SimulationWindow : Window
         // Windstärke im TextBlock anzeigen und den Wert als Prozent
         WindStrengthText.Text = $"{windHelper.CurrentWindStrength * 100:F0}%";
     }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+
+	}
 }

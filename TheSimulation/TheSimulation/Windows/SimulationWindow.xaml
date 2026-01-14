@@ -24,6 +24,13 @@
             Grid.Row="0">
 
 			<!-- Geschwindigkeit -->
+			<Button x:Name="PauseResumeButton"
+                Content="Pause"
+                Padding="2,0"
+                Margin="16,0,0,0"
+                VerticalAlignment="Center"
+                Click="PauseResume_Click"/>
+
 			<TextBlock Text="Speed"
                    Foreground="White"
                    VerticalAlignment="Center"
@@ -52,7 +59,7 @@
 			<TextBlock Text="Total Burned:"
                Foreground="White"
                VerticalAlignment="Center"
-               Margin="16,0,0,0"/>
+               Margin="8,0,0,0"/>
 			<TextBlock x:Name="TotalBurnedTrees"
                Text="0"
                Foreground="White"
@@ -62,7 +69,7 @@
 			<TextBlock Text="Tree-Density:"
                Foreground="White"
                VerticalAlignment="Center"
-               Margin="16,0,0,0"/>
+               Margin="8,0,0,0"/>
 			<TextBlock x:Name="TreeDensityText"
                 Text="0 / 0 (0%)"
                 Foreground="White"
@@ -80,7 +87,7 @@
                     VerticalAlignment="Center"
                     Margin="5,0,0,0" MinWidth="32"/>
 
-			<Button Content="Get Evaluation"
+			<Button Content="Evaluation"
                 Grid.Column="2"
                 Padding="2,0"
                 Margin="16,0,0,0"
