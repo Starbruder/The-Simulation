@@ -252,27 +252,22 @@ public sealed partial class SimulationWindow : Window
         return DateTime.Now - simulationStartTime;
     }
 
-	private void PauseResume_Click(object sender, RoutedEventArgs e)
-	{
-		if (isPaused)
-		{
-			// Wenn die Simulation pausiert ist, setzen wir sie fort
-			StartOrResumeSimulation();
-			PauseResumeButton.Content = "Pause";  // Text ändern
-            isPaused = false;
+    private void PauseResume_Click(object sender, RoutedEventArgs e)
+    {
+        if (isPaused)
+        {
+            StartOrResumeSimulation();
+            PauseResumeButton.Content = "Pause";
             MessageBox.Show("Simulation resumed.");
-		}
-		else
-		{
-			// Wenn die Simulation läuft, pausieren wir sie
-			StopOrPauseSimulation();
-			PauseResumeButton.Content = "Resume";  // Text ändern
-            isPaused = true;
-            MessageBox.Show("Simulation paused.");
-		}
-	}
+            return;
+        }
 
-	private void ShowEvaluation_Click(object sender, RoutedEventArgs e) => OpenEvalualtionWindow();
+        StopOrPauseSimulation();
+        PauseResumeButton.Content = "Resume";
+        MessageBox.Show("Simulation paused.");
+    }
+
+    private void ShowEvaluation_Click(object sender, RoutedEventArgs e) => OpenEvalualtionWindow();
 
     private void OpenEvalualtionWindow()
     {
@@ -860,5 +855,5 @@ public sealed partial class SimulationWindow : Window
     private void Button_Click(object sender, RoutedEventArgs e)
     {
 
-	}
+    }
 }
