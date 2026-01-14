@@ -30,7 +30,7 @@ The goal is to provide an intuitive and visual understanding of how environmenta
 - Randomized ignition point (lightning strike)
 
 ### Weather System
-- **Wind direction** N, E, S, W (static or randomized)
+- **Wind direction** N, NE, E, SE, S, SW, W, NW (static or randomized)
 - **Wind strength** 0–100% (static or randomized)
 - Dynamic wind recalculation during the simulation
 - Wind directly affects fire spread probability and direction
