@@ -262,13 +262,13 @@ public sealed partial class SimulationWindow : Window
         if (isPaused)
         {
             StartOrResumeSimulation();
-            PauseResumeButton.Content = "Pause";
+            PauseResumeButton.Content = "❚❚";
             MessageBox.Show("Simulation resumed.");
             return;
         }
 
         StopOrPauseSimulation();
-        PauseResumeButton.Content = "Resume";
+        PauseResumeButton.Content = "▶";
         MessageBox.Show("Simulation paused.");
     }
 

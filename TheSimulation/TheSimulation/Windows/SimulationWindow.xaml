@@ -43,7 +43,7 @@
 
 			<!-- Geschwindigkeit -->
 			<Button x:Name="PauseResumeButton"
-                Content="Pause"
+                Content="❚❚"
                 Margin="16,0,0,0"
                 VerticalAlignment="Center"
                 Click="PauseResume_Click" Style="{StaticResource CustomButtonStyle}"/>
