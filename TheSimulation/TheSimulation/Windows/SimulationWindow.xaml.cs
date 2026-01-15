@@ -344,36 +344,26 @@ public sealed partial class SimulationWindow : Window
         }
     }
 
-
-
     private async Task PrefillForest()
     {
         var maxTrees =
             (int)(cachedMaxTreesPossible * simulationConfig.PrefillConfig.Density);
 
-        // Alle Zellen vorbereiten
-        var allCells = new List<Cell>(cols * rows);
-        for (var x = 0; x < cols; x++)
-        {
-            for (var y = 0; y < rows; y++)
-            {
-                allCells.Add(new(x, y));
-            }
-        }
+        var allCells = GenerateCells();
 
-        // Shuffle
-        for (var i = allCells.Count - 1; i > 0; i--)
-        {
-            var j = randomHelper.NextInt(0, i + 1);
-            (allCells[j], allCells[i]) = (allCells[i], allCells[j]);
-        }
+        ShuffleCells(allCells);
 
-        const int batchSize = 200; // optional: Bäume in Paketen laden
+        const int treesBatchSize = 200;
+        await LoadTreesInBatches(maxTrees, allCells, treesBatchSize);
+    }
+
+    private async Task LoadTreesInBatches(int maxTrees, List<Cell> allCells, int treesBatchSize)
+    {
         var loaded = 0;
 
         while (loaded < maxTrees)
         {
-            var count = Math.Min(batchSize, maxTrees - loaded);
+            var count = Math.Min(treesBatchSize, maxTrees - loaded);
             var batch = allCells.GetRange(loaded, count);
             loaded += count;
 
@@ -386,6 +376,30 @@ public sealed partial class SimulationWindow : Window
                 }
             });
         }
+    }
+
+    private void ShuffleCells(List<Cell> allCells)
+    {
+        for (var i = allCells.Count - 1; i > 0; i--)
+        {
+            var j = randomHelper.NextInt(0, i + 1);
+            (allCells[j], allCells[i]) = (allCells[i], allCells[j]);
+        }
+    }
+
+    private List<Cell> GenerateCells()
+    {
+        var allCells = new List<Cell>(cols * rows);
+
+        for (var x = 0; x < cols; x++)
+        {
+            for (var y = 0; y < rows; y++)
+            {
+                allCells.Add(new(x, y));
+            }
+        }
+
+        return allCells;
     }
 
     private void InitializeGrowTimer()
