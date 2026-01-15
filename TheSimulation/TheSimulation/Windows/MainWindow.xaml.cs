@@ -195,9 +195,9 @@ public sealed partial class MainWindow : Window
 
     private void ShowRandomsetWinddirection(WindDirection randomDirection)
     {
-        foreach (ComboBoxItem item in WindDirectionBox.Items)
+        foreach (var item in WindDirectionBox.Items)
         {
-            if (Enum.TryParse<WindDirection>(item.Content.ToString(), out var dir)
+            if (Enum.TryParse<WindDirection>(item.ToString(), out var dir)
                 && dir == randomDirection)
             {
                 WindDirectionBox.SelectedItem = item;
