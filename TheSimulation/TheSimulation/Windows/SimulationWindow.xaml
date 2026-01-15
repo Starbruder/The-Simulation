@@ -31,19 +31,23 @@
                 VerticalAlignment="Center"
                 Click="PauseResume_Click"/>
 
-			<Button Content="Slow"
+			<Button x:Name="SpeedSlowButton"
+                Content="Slow"
                 Click="SpeedSlow_Click"
                 Margin="2"/>
 
-			<Button Content="Normal"
+			<Button x:Name="SpeedNormalButton"
+                Content="Normal"
                 Click="SpeedNormal_Click"
                 Margin="2"/>
 
-			<Button Content="Fast"
+			<Button x:Name="SpeedFastButton"
+                Content="Fast"
                 Click="SpeedFast_Click"
                 Margin="2"/>
 
-			<Button Content="Ultra"
+			<Button x:Name="SpeedUltraButton"
+                Content="Ultra"
                 Click="SpeedUltra_Click"
                 Margin="2"/>
 

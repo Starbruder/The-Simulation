@@ -158,9 +158,9 @@ public sealed partial class SimulationWindow : Window
         InitializeIgniteTimer();
         InitializeFireTimer();
 
-        SetSimulationSpeed(SimulationSpeed.Normal);
+        SpeedNormal_Click(this, new());
 
-        if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
+		if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
             simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
         {
             InitializeWindTimer();
@@ -417,13 +417,45 @@ public sealed partial class SimulationWindow : Window
         };
     }
 
-    public void SpeedSlow_Click(object s, RoutedEventArgs e) => SetSimulationSpeed(SimulationSpeed.Slow);
+    public void SpeedSlow_Click(object s, RoutedEventArgs e)
+    {
+        SetSimulationSpeed(SimulationSpeed.Slow);
+        SpeedSlowButton.IsEnabled = false;
 
-    public void SpeedNormal_Click(object s, RoutedEventArgs e) => SetSimulationSpeed(SimulationSpeed.Normal);
+        SpeedNormalButton.IsEnabled = true;
+        SpeedFastButton.IsEnabled = true;
+        SpeedUltraButton.IsEnabled = true;
+	}
 
-    public void SpeedFast_Click(object s, RoutedEventArgs e) => SetSimulationSpeed(SimulationSpeed.Fast);
+    public void SpeedNormal_Click(object s, RoutedEventArgs e)
+    {
+        SetSimulationSpeed(SimulationSpeed.Normal);
+        SpeedNormalButton.IsEnabled = false;
 
-    public void SpeedUltra_Click(object s, RoutedEventArgs e) => SetSimulationSpeed(SimulationSpeed.Ultra);
+        SpeedSlowButton.IsEnabled = true;
+        SpeedFastButton.IsEnabled = true;
+        SpeedUltraButton.IsEnabled = true;
+	}
+
+    public void SpeedFast_Click(object s, RoutedEventArgs e)
+    {
+        SetSimulationSpeed(SimulationSpeed.Fast);
+        SpeedFastButton.IsEnabled = false;
+
+        SpeedSlowButton.IsEnabled = true;
+        SpeedNormalButton.IsEnabled = true;
+        SpeedUltraButton.IsEnabled = true;
+	}
+
+    public void SpeedUltra_Click(object s, RoutedEventArgs e)
+    {
+        SetSimulationSpeed(SimulationSpeed.Ultra);
+        SpeedUltraButton.IsEnabled = false;
+
+        SpeedSlowButton.IsEnabled = true;
+        SpeedNormalButton.IsEnabled = true;
+        SpeedFastButton.IsEnabled = true;
+	}
 
     private void SetSimulationSpeed(SimulationSpeed simulationSpeed)
     {
