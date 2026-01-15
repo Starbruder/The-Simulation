@@ -417,7 +417,7 @@ public sealed partial class SimulationWindow : Window
         };
     }
 
-    public void SpeedSlow_Click(object s, RoutedEventArgs e)
+    private void SpeedSlow_Click(object s, RoutedEventArgs e)
     {
         SetSimulationSpeed(SimulationSpeed.Slow);
         SpeedSlowButton.IsEnabled = false;
@@ -427,7 +427,7 @@ public sealed partial class SimulationWindow : Window
         SpeedUltraButton.IsEnabled = true;
 	}
 
-    public void SpeedNormal_Click(object s, RoutedEventArgs e)
+    private void SpeedNormal_Click(object s, RoutedEventArgs e)
     {
         SetSimulationSpeed(SimulationSpeed.Normal);
         SpeedNormalButton.IsEnabled = false;
@@ -437,7 +437,7 @@ public sealed partial class SimulationWindow : Window
         SpeedUltraButton.IsEnabled = true;
 	}
 
-    public void SpeedFast_Click(object s, RoutedEventArgs e)
+    private void SpeedFast_Click(object s, RoutedEventArgs e)
     {
         SetSimulationSpeed(SimulationSpeed.Fast);
         SpeedFastButton.IsEnabled = false;
@@ -447,7 +447,7 @@ public sealed partial class SimulationWindow : Window
         SpeedUltraButton.IsEnabled = true;
 	}
 
-    public void SpeedUltra_Click(object s, RoutedEventArgs e)
+    private void SpeedUltra_Click(object s, RoutedEventArgs e)
     {
         SetSimulationSpeed(SimulationSpeed.Ultra);
         SpeedUltraButton.IsEnabled = false;

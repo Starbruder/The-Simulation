@@ -97,8 +97,8 @@
 			<!-- Trees -->
 			<GroupBox Header="Trees" Margin="0,2,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 				<StackPanel>
-					<CheckBox Margin="5,0,0,5" x:Name="GrowForestCheckBox" Content="Grow forest" IsChecked="True" />
-					<CheckBox Margin="5,5,0,0" x:Name="PrefillCheckBox" Content="Prefill forest" IsChecked="False" />
+					<CheckBox Margin="5,0,0,5" x:Name="GrowForestCheckBox" Content="Grow forest" IsChecked="True" Unchecked="GrowForestCheckBox_Unchecked" Checked="GrowForestCheckBox_Checked"/>
+					<CheckBox Margin="5,5,0,0" x:Name="PrefillCheckBox" Content="Prefill forest" IsChecked="False" Checked="PrefillCheckBox_Changed" />
 					<!-- TextBlock für Prefill density Wert -->
 					<TextBlock Margin="10,5,0,5" FontSize="14" Text="{Binding ElementName=PrefillDensitySlider, Path=Value, StringFormat=Prefill density: {0:F0}%}"/>
 					<Slider x:Name="PrefillDensitySlider" Minimum="0" Maximum="100" Value="60" TickFrequency="5" IsSnapToTickEnabled="True" IsEnabled="False"/>
@@ -124,7 +124,7 @@
 					<TextBlock Margin="10,5,0,0" FontSize="14" Text="{Binding ElementName=AirTemperatureSlider, Path=Value, StringFormat=Air temperature: {0:F0} °C}"/>
 					<Slider x:Name="AirTemperatureSlider" Minimum="-10" Maximum="50" Value="30" TickFrequency="1" IsSnapToTickEnabled="True"/>
 					<!-- Random Wind Direction -->
-					<CheckBox Margin="5,5,0,0" x:Name="RandomWindDirectionCheckBox" Content="Random wind direction" IsChecked="False"/>
+					<CheckBox Margin="5,5,0,0" x:Name="RandomWindDirectionCheckBox" Content="Random wind direction" IsChecked="False" Checked="RandomWindDirectionCheckBox_Changed" Unchecked="RandomWindDirectionCheckBox_Changed"/>
 					<TextBlock Margin="10,5,0,0" Text="Wind direction (from)"/>
 					<ComboBox Margin="4,5,4,0" x:Name="WindDirectionBox" SelectedIndex="0" MinWidth="150"/>
 					<!-- Random Wind Strength -->
