@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:fa="http://schemas.fontawesome.io/icons/"
     xmlns:local="clr-namespace:TheSimulation"
     mc:Ignorable="d"
     Title="Forest fire simulation configuration"
@@ -19,29 +20,47 @@
 
 		<!-- Simulate-Button -->
 		<Button Grid.Row="0"
-            Content="Simulate"
             Height="40" Width="120"
             HorizontalAlignment="Right" VerticalAlignment="Top"
-            Click="StartSimulation_Click"/>
+            Click="StartSimulation_Click">
+			<Button.Content>
+				<StackPanel Orientation="Horizontal">
+					<fa:ImageAwesome Icon="Play" Width="10" Height="10"/>
+					<TextBlock Text="Simulate" Margin="5,0,0,0"/>
+				</StackPanel>
+			</Button.Content>
+		</Button>
 
 		<Button Grid.Row="0"
-            Content="Reset settings"
             Height="40" Width="120"
             HorizontalAlignment="Center" VerticalAlignment="Top"
             Margin="0,0,0,0"
-            Click="ResetAllSettings_Click"/>
+            Click="ResetAllSettings_Click">
+			<Button.Content>
+				<StackPanel Orientation="Horizontal">
+					<fa:ImageAwesome Icon="Undo" Width="10" Height="10"/>
+					<TextBlock Text="Reset settings" Margin="5,0,0,0"/>
+				</StackPanel>
+			</Button.Content>
+		</Button>
 
 		<Button Grid.Row="0"
-            Content="Graphics settings"
             Height="40" Width="120"
             HorizontalAlignment="Left" VerticalAlignment="Top"
-            Click="OpenGraphicsSettingsWindow"/>
+            Click="OpenGraphicsSettingsWindow">
+			<Button.Content>
+				<StackPanel Orientation="Horizontal">
+					<fa:ImageAwesome Icon="Cog" Width="10" Height="10"/>
+					<TextBlock Text="Graphics settings" Margin="5,0,0,0"/>
+				</StackPanel>
+			</Button.Content>
+		</Button>
 
 		<!-- Settingboxes -->
 		<StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="0,8,0,0">
 
 			<!-- Terrain -->
-			<GroupBox Header="Terrain" Margin="0,00,0,10" BorderBrush="Black">
+			<GroupBox Header="Terrain" Margin="0,0,0,10" BorderBrush="Black">
 				<StackPanel>
 					<CheckBox Margin="5,5,0,0"
                       x:Name="TerrainGenerationCheckBox"
