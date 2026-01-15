@@ -54,7 +54,7 @@
 		</Grid.RowDefinitions>
 
 		<!-- Wettereffekte GroupBox -->
-		<GroupBox Header="Weather Effects" Grid.Row="0" Style="{StaticResource CustomGroupBoxStyle}">
+		<GroupBox Header="Weather Effects" Grid.Row="0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Blue">
 			<StackPanel>
 				<CheckBox x:Name="LightningCheckBox" Content="Show Lightning" Margin="10"/>
 				<CheckBox x:Name="BoltFlashCheckBox" Content="Show Bolt Flashes" Margin="10"/>
@@ -70,7 +70,7 @@
 		</GroupBox>
 
 		<!-- Baumeffekte GroupBox -->
-		<GroupBox Header="Tree Effects" Grid.Row="2" Style="{StaticResource CustomGroupBoxStyle}">
+		<GroupBox Header="Tree Effects" Grid.Row="2" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 			<StackPanel>
 				<CheckBox x:Name="BurnedTreeCheckBox" Content="Show Burned Trees" Margin="10"/>
 			</StackPanel>
