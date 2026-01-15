@@ -20,10 +20,10 @@ public sealed partial class SimulationWindow : Window
     private DispatcherTimer simulationTimer;
     private DateTime simulationStartTime;
 
-    private readonly DispatcherTimer growTimer = new();
+    private readonly DispatcherTimer treeGrowthTimer = new();
     private readonly DispatcherTimer igniteTimer = new();
     private readonly DispatcherTimer fireTimer = new();
-    private readonly DispatcherTimer windTimer = new();
+    private readonly DispatcherTimer windUpdateTimer = new();
 
     private ForestCellState[,] forestGrid;
 
@@ -35,7 +35,7 @@ public sealed partial class SimulationWindow : Window
     private float cachedHumidityEffect;
 
     private bool isPaused = false;
-    private bool IsAnyBurningThenPause = false;
+    private bool IsAnyFireActiveThenPause = false;
 
     private uint totalGrownTrees = 0;
     private uint totalBurnedTrees = 0;
@@ -87,7 +87,7 @@ public sealed partial class SimulationWindow : Window
 
         if (simulationConfig.TreeConfig.AllowRegrowForest)
         {
-            growTimer.Start();
+            treeGrowthTimer.Start();
         }
 
         igniteTimer.Start();
@@ -97,7 +97,7 @@ public sealed partial class SimulationWindow : Window
         if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
             simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
         {
-            windTimer.Start();
+            windUpdateTimer.Start();
             return;
         }
 
@@ -160,7 +160,7 @@ public sealed partial class SimulationWindow : Window
 
         SpeedNormal_Click(this, new());
 
-		if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
+        if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
             simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
         {
             InitializeWindTimer();
@@ -209,7 +209,8 @@ public sealed partial class SimulationWindow : Window
 
         simulationTimer.Tick += (_, _) =>
         {
-            if (CalculateSimulationTime() >= new TimeSpan(99, 99, 99)
+            const int maxSimulationHours = 99;
+            if (CalculateSimulationTime() >= new TimeSpan(maxSimulationHours, 0, 0)
             || simulationConfig.PrefillConfig.ShouldPrefillMap && LowDensityMinimumReached())
             {
                 StopOrPauseSimulation();
@@ -240,10 +241,10 @@ public sealed partial class SimulationWindow : Window
         isPaused = true;
 
         simulationTimer.Stop();
-        growTimer.Stop();
+        treeGrowthTimer.Stop();
         igniteTimer.Stop();
         fireTimer.Stop();
-        windTimer.Stop();
+        windUpdateTimer.Stop();
     }
 
     private void RecordSimulationStats()
@@ -389,7 +390,7 @@ public sealed partial class SimulationWindow : Window
 
     private void InitializeGrowTimer()
     {
-        growTimer.Tick += (_, _) => GrowStep();
+        treeGrowthTimer.Tick += (_, _) => GrowStep();
     }
 
     private void InitializeIgniteTimer()
@@ -405,9 +406,9 @@ public sealed partial class SimulationWindow : Window
     private void InitializeWindTimer()
     {
         const uint windChangeIntervalMs = 300;
-        windTimer.Interval = TimeSpan.FromMilliseconds(windChangeIntervalMs);
+        windUpdateTimer.Interval = TimeSpan.FromMilliseconds(windChangeIntervalMs);
 
-        windTimer.Tick += (_, _) =>
+        windUpdateTimer.Tick += (_, _) =>
         {
             windHelper.RandomizeAndUpdateWind(); // Winkel und Strengh randomisieren
             var vector = windHelper.GetWindVector();
@@ -425,7 +426,7 @@ public sealed partial class SimulationWindow : Window
         SpeedNormalButton.IsEnabled = true;
         SpeedFastButton.IsEnabled = true;
         SpeedUltraButton.IsEnabled = true;
-	}
+    }
 
     private void SpeedNormal_Click(object s, RoutedEventArgs e)
     {
@@ -435,7 +436,7 @@ public sealed partial class SimulationWindow : Window
         SpeedSlowButton.IsEnabled = true;
         SpeedFastButton.IsEnabled = true;
         SpeedUltraButton.IsEnabled = true;
-	}
+    }
 
     private void SpeedFast_Click(object s, RoutedEventArgs e)
     {
@@ -445,7 +446,7 @@ public sealed partial class SimulationWindow : Window
         SpeedSlowButton.IsEnabled = true;
         SpeedNormalButton.IsEnabled = true;
         SpeedUltraButton.IsEnabled = true;
-	}
+    }
 
     private void SpeedUltra_Click(object s, RoutedEventArgs e)
     {
@@ -455,13 +456,13 @@ public sealed partial class SimulationWindow : Window
         SpeedSlowButton.IsEnabled = true;
         SpeedNormalButton.IsEnabled = true;
         SpeedFastButton.IsEnabled = true;
-	}
+    }
 
     private void SetSimulationSpeed(SimulationSpeed simulationSpeed)
     {
         var baseIntervalMs = (int)simulationSpeed;
 
-        growTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
+        treeGrowthTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
         fireTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
         igniteTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs * 750);
 
@@ -471,7 +472,7 @@ public sealed partial class SimulationWindow : Window
     private void GrowStep()
     {
         // Wenn irgendwo Feuer brennt → überspringen
-        if (simulationConfig.FireConfig.PauseDuringFire && IsAnyBurningThenPause)
+        if (simulationConfig.FireConfig.PauseDuringFire && IsAnyFireActiveThenPause)
         {
             return;
         }
@@ -506,8 +507,8 @@ public sealed partial class SimulationWindow : Window
         // ⛰️ Höhenabhängige Wachstumswahrscheinlichkeit
         // je höher, desto unwahrscheinlicher
         var heightPenalty = terrain.Elevation; // 0.0 – 1.0
-
-        if (randomHelper.NextDouble() < heightPenalty * 0.7)
+        const double HeightPenaltyFactor = 0.7;
+        if (randomHelper.NextDouble() < heightPenalty * HeightPenaltyFactor)
         {
             return;
         }
@@ -626,7 +627,7 @@ public sealed partial class SimulationWindow : Window
         // Brandzerstörung
         BurnDownTrees(toBurnDown);
 
-        IsAnyBurningThenPause = isFireStepActive;
+        IsAnyFireActiveThenPause = isFireStepActive;
     }
 
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
