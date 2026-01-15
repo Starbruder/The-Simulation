@@ -20,7 +20,7 @@
 		</Grid.RowDefinitions>
 
 		<!-- Weather Effects GroupBox -->
-		<GroupBox Header="Weather Effects" Grid.Row="0" Margin="0,0,0,10">
+		<GroupBox Header="Weather Effects" Grid.Row="0" Margin="0,0,0,10" BorderBrush="Blue">
 			<StackPanel>
 				<CheckBox x:Name="LightningCheckBox"
                           Content="Show Lightning"
@@ -32,7 +32,7 @@
 		</GroupBox>
 
 		<!-- Particle Effects GroupBox -->
-		<GroupBox Header="Particle Effects" Grid.Row="1" Margin="0,0,0,10">
+		<GroupBox Header="Particle Effects" Grid.Row="1" Margin="0,0,0,10" BorderBrush="Red">
 			<StackPanel>
 				<CheckBox x:Name="FireSparksCheckBox"
                           Content="Show Sparks"
@@ -44,7 +44,7 @@
 		</GroupBox>
 
 		<!-- Tree Effects GroupBox -->
-		<GroupBox Header="Tree Effects" Grid.Row="2" Margin="0,0,0,10">
+		<GroupBox Header="Tree Effects" Grid.Row="2" Margin="0,0,0,10" BorderBrush="Green">
 			<StackPanel>
 				<CheckBox x:Name="BurnedTreeCheckBox"
 					Content="Show Burned Trees"
