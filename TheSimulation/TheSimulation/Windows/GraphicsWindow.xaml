@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:local="clr-namespace:TheSimulation"
         mc:Ignorable="d"
         Title="Forest fire graphics settings"
@@ -11,7 +11,41 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
 
-    <Grid Margin="20">
+	<Window.Resources>
+		<!-- Style für GroupBoxen -->
+		<Style x:Key="CustomGroupBoxStyle" TargetType="GroupBox">
+			<Setter Property="BorderBrush" Value="#FF4C8F94"/>
+			<Setter Property="BorderThickness" Value="2"/>
+			<Setter Property="Padding" Value="10"/>
+			<Setter Property="Margin" Value="0,0,0,15"/>
+			<Setter Property="Background" Value="WhiteSmoke"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" Direction="315" ShadowDepth="5" Opacity="0.2" BlurRadius="8"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Style für Buttons -->
+		<Style x:Key="CustomButtonStyle" TargetType="Button">
+			<Setter Property="Background" Value="#FF4C8F94"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Padding" Value="10,5"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="Width" Value="120"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" Direction="315" ShadowDepth="5" Opacity="0.3" BlurRadius="8"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Resources>
+
+	<Grid Margin="20">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
@@ -19,51 +53,37 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<!-- Weather Effects GroupBox -->
-		<GroupBox Header="Weather Effects" Grid.Row="0" Margin="0,0,0,10" BorderBrush="Blue">
+		<!-- Wettereffekte GroupBox -->
+		<GroupBox Header="Weather Effects" Grid.Row="0" Style="{StaticResource CustomGroupBoxStyle}">
 			<StackPanel>
-				<CheckBox x:Name="LightningCheckBox"
-                          Content="Show Lightning"
-                          Margin="10"/>
-				<CheckBox x:Name="BoltFlashCheckBox"
-						  Content="Show Bolt Flashes"
-						  Margin="10"/>
+				<CheckBox x:Name="LightningCheckBox" Content="Show Lightning" Margin="10"/>
+				<CheckBox x:Name="BoltFlashCheckBox" Content="Show Bolt Flashes" Margin="10"/>
 			</StackPanel>
 		</GroupBox>
 
-		<!-- Particle Effects GroupBox -->
-		<GroupBox Header="Particle Effects" Grid.Row="1" Margin="0,0,0,10" BorderBrush="Red">
+		<!-- Partikeleffekte GroupBox -->
+		<GroupBox Header="Particle Effects" Grid.Row="1" Style="{StaticResource CustomGroupBoxStyle}">
 			<StackPanel>
-				<CheckBox x:Name="FireSparksCheckBox"
-                          Content="Show Sparks"
-                          Margin="10"/>
-				<CheckBox x:Name="SmokeCheckBox"
-                          Content="Show Smoke"
-                          Margin="10"/>
+				<CheckBox x:Name="FireSparksCheckBox" Content="Show Sparks" Margin="10"/>
+				<CheckBox x:Name="SmokeCheckBox" Content="Show Smoke" Margin="10"/>
 			</StackPanel>
 		</GroupBox>
 
-		<!-- Tree Effects GroupBox -->
-		<GroupBox Header="Tree Effects" Grid.Row="2" Margin="0,0,0,10" BorderBrush="Green">
+		<!-- Baumeffekte GroupBox -->
+		<GroupBox Header="Tree Effects" Grid.Row="2" Style="{StaticResource CustomGroupBoxStyle}">
 			<StackPanel>
-				<CheckBox x:Name="BurnedTreeCheckBox"
-					Content="Show Burned Trees"
-					Margin="10"/>
+				<CheckBox x:Name="BurnedTreeCheckBox" Content="Show Burned Trees" Margin="10"/>
 			</StackPanel>
 		</GroupBox>
 
 		<!-- Apply Button -->
-		<Button Grid.Row="3"
-			Width="100" Height="40"
-			HorizontalAlignment="Center" VerticalAlignment="Center"
-			Margin="0,20" Click="ApplyGraphicsSettings">
+		<Button Grid.Row="3" Style="{StaticResource CustomButtonStyle}" Click="ApplyGraphicsSettings">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
-					<fa:ImageAwesome Icon="Check" Width="10" Height="10"/>
-					<TextBlock Text="Apply" Margin="5,0,0,0"/>
+					<fa:ImageAwesome Icon="Check" Width="15" Height="15" Margin="0,0,5,0"/>
+					<TextBlock Text="Apply"/>
 				</StackPanel>
 			</Button.Content>
 		</Button>
 	</Grid>
-
 </Window>
