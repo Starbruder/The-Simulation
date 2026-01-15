@@ -32,22 +32,26 @@
                 Click="PauseResume_Click"/>
 
 			<Button x:Name="SpeedSlowButton"
-                Content="Slow"
+                Content="0,5"
+                Padding="2,0"
                 Click="SpeedSlow_Click"
                 Margin="2"/>
 
 			<Button x:Name="SpeedNormalButton"
-                Content="Normal"
+                Content="×1"
+                Padding="2,0"
                 Click="SpeedNormal_Click"
                 Margin="2"/>
 
 			<Button x:Name="SpeedFastButton"
-                Content="Fast"
+                Content="×2"
+                Padding="2,0"
                 Click="SpeedFast_Click"
                 Margin="2"/>
 
 			<Button x:Name="SpeedUltraButton"
-                Content="Ultra"
+                Content="×40"
+                Padding="2,0"
                 Click="SpeedUltra_Click"
                 Margin="2"/>
 
