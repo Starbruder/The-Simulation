@@ -11,6 +11,24 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
 
+	<Window.Resources>
+		<!-- Style für Buttons -->
+		<Style x:Key="CustomButtonStyle" TargetType="Button">
+			<Setter Property="Background" Value="#FF4C8F94"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Padding" Value="5,0"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Effect">
+				<Setter.Value>
+					<DropShadowEffect Color="Black" Direction="315" ShadowDepth="5" Opacity="0.3" BlurRadius="8"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Resources>
+
 	<Grid>
 
 		<Grid.RowDefinitions>
@@ -26,34 +44,29 @@
 			<!-- Geschwindigkeit -->
 			<Button x:Name="PauseResumeButton"
                 Content="Pause"
-                Padding="2,0"
                 Margin="16,0,0,0"
                 VerticalAlignment="Center"
-                Click="PauseResume_Click"/>
+                Click="PauseResume_Click" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedSlowButton"
                 Content="0,5"
-                Padding="2,0"
                 Click="SpeedSlow_Click"
-                Margin="2"/>
+                Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedNormalButton"
                 Content="×1"
-                Padding="2,0"
                 Click="SpeedNormal_Click"
-                Margin="2"/>
+                Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedFastButton"
                 Content="×2"
-                Padding="2,0"
                 Click="SpeedFast_Click"
-                Margin="2"/>
+                Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedUltraButton"
                 Content="×40"
-                Padding="2,0"
                 Click="SpeedUltra_Click"
-                Margin="2"/>
+                Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<!-- Abstand -->
 			<Rectangle Width="10"/>
@@ -101,10 +114,9 @@
 
 			<Button Content="Evaluation"
                 Grid.Column="2"
-                Padding="2,0"
                 Margin="16,0,0,0"
                 VerticalAlignment="Center"
-                Click="ShowEvaluation_Click"/>
+                Click="ShowEvaluation_Click" Style="{StaticResource CustomButtonStyle}"/>
 		</StackPanel>
 
 		<!-- Canvas (Wald - Anzeige) -->
