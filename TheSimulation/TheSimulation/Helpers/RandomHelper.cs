@@ -24,14 +24,14 @@ public sealed class RandomHelper
         return Colors.TreeColors[index];
     }
 
-    public Cell NextTree(HashSet<Cell> trees)
+    public Cell NextCell(HashSet<Cell> cell)
     {
-        if (trees.Count == 0)
+        if (cell.Count == 0)
         {
-            return new(0, 0);
+            throw new InvalidOperationException("No free growable cells left.");
         }
 
-        var randomIndex = NextInt(0, trees.Count);
-        return trees.ElementAt(randomIndex);
+        var randomIndex = NextInt(0, cell.Count);
+        return cell.ElementAt(randomIndex);
     }
 }
