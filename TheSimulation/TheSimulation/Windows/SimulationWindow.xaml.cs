@@ -374,7 +374,8 @@ public sealed partial class SimulationWindow : Window
 
     private void InitializeWindTimer()
     {
-        windTimer.Interval = TimeSpan.FromMilliseconds(300); // Aktualisierungsintervall
+        const uint windChangeIntervalMs = 300;
+        windTimer.Interval = TimeSpan.FromMilliseconds(windChangeIntervalMs);
 
         windTimer.Tick += (_, _) =>
         {
@@ -850,10 +851,5 @@ public sealed partial class SimulationWindow : Window
     {
         // Windstärke im TextBlock anzeigen und den Wert als Prozent
         WindStrengthText.Text = $"{windHelper.CurrentWindStrength * 100:F0}%";
-    }
-
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-
     }
 }
