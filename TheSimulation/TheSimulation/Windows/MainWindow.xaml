@@ -13,31 +13,35 @@
 
 	<Grid Margin="20">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<!-- Controls -->
 			<RowDefinition Height="Auto"/>
-			<!-- Simulate-Button -->
+			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<!-- Zahnrad Icon oben rechts -->
-		<Button x:Name="SettingsButton"
-            Width="40" Height="40" Margin="0,5,0,0"
+		<!-- Simulate-Button -->
+		<Button Grid.Row="0"
+            Content="Simulate"
+            Height="40" Width="120"
             HorizontalAlignment="Right" VerticalAlignment="Top"
-            Background="Transparent"
-            BorderThickness="0"
-            Click="OpenGraphicsSettingsWindow">
-			<Image Source="/Assets/Images/gear-icon.png" Stretch="Uniform"
-                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
-			<Button.ToolTip>
-				<ToolTip Content="Graphicssettings"/>
-			</Button.ToolTip>
-		</Button>
+            Click="StartSimulation_Click"/>
+
+		<Button Grid.Row="0"
+            Content="Reset settings"
+            Height="40" Width="120"
+            HorizontalAlignment="Center" VerticalAlignment="Top"
+            Margin="0,0,0,0"
+            Click="ResetAllSettings_Click"/>
+
+		<Button Grid.Row="0"
+            Content="Graphics settings"
+            Height="40" Width="120"
+            HorizontalAlignment="Left" VerticalAlignment="Top"
+            Click="OpenGraphicsSettingsWindow"/>
 
 		<!-- Settingboxes -->
-		<StackPanel Grid.Row="0" VerticalAlignment="Top">
+		<StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="0,8,0,0">
 
-            <!-- Terrain -->
-			<GroupBox Header="Terrain" Margin="0,0,50,10" BorderBrush="Black">
+			<!-- Terrain -->
+			<GroupBox Header="Terrain" Margin="0,00,0,10" BorderBrush="Black">
 				<StackPanel>
 					<CheckBox Margin="5,5,0,0"
                       x:Name="TerrainGenerationCheckBox"
@@ -194,15 +198,6 @@
 				</StackPanel>
 			</GroupBox>
 		</StackPanel>
-
-		<!-- Simulate-Button -->
-		<Button Grid.Row="1"
-                Content="Simulate"
-                Height="40"
-                Width="120"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                Click="StartSimulation_Click"/>
 	</Grid>
 
 </Window>

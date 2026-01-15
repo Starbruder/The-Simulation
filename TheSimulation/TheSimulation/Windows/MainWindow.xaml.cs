@@ -225,4 +225,29 @@ public sealed partial class MainWindow : Window
             PauseFireCheckBox.IsEnabled = true;
         }
     }
+
+    private void ResetAllSettings_Click(object sender, RoutedEventArgs e) => SetDefaultSettings();
+
+    private void SetDefaultSettings()
+    {
+        // Terrain zurücksetzen
+        TerrainGenerationCheckBox.IsChecked = true;
+
+        // Bäume zurücksetzen
+        GrowForestCheckBox.IsChecked = true;
+        PrefillCheckBox.IsChecked = false;
+        PrefillDensitySlider.Value = 60;
+
+        // Feuer zurücksetzen
+        PauseFireCheckBox.IsChecked = true;
+        FireIntensitySlider.Value = 85;
+
+        // Umwelt zurücksetzen
+        AirHumiditySlider.Value = 50;
+        AirTemperatureSlider.Value = 30;
+        RandomWindDirectionCheckBox.IsChecked = false;
+        WindDirectionBox.SelectedIndex = 0;
+        RandomWindStrengthCheckBox.IsChecked = false;
+        WindStrengthSlider.Value = 0.7;
+    }
 }
