@@ -15,7 +15,6 @@
     <None Remove="Assets\Images\burning-tree.jpeg" />
     <None Remove="Assets\Images\completely-burning-tree.ico" />
     <None Remove="Assets\Images\completely-burning-tree.jpeg" />
-    <None Remove="Assets\Images\gear-icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +24,6 @@
     <Resource Include="Assets\Images\burning-tree.jpeg" />
     <Resource Include="Assets\Icons\completely-burning-tree.ico" />
     <Resource Include="Assets\Images\completely-burning-tree.jpeg" />
-    <Resource Include="Assets\Images\gear-icon.png" />
   </ItemGroup>
 
   <ItemGroup>
