@@ -389,9 +389,15 @@ public sealed partial class SimulationWindow : Window
 
     private void SpeedChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        growTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
-        fireTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue);
-        igniteTimer.Interval = TimeSpan.FromMilliseconds(e.NewValue * 750);
+        SetSimulationSpeed(e.NewValue);
+    }
+
+    private void SetSimulationSpeed(double baseIntervalMs)
+    {
+        growTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
+        fireTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
+        igniteTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs * 750);
+
         windVisualizer?.Draw();
     }
 
