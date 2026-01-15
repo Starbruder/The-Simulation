@@ -31,17 +31,21 @@
                 VerticalAlignment="Center"
                 Click="PauseResume_Click"/>
 
-			<TextBlock Text="Speed"
-                   Foreground="White"
-                   VerticalAlignment="Center"
-                   Margin="16,0,4,0"/>
-			<Slider x:Name="SpeedSlider"
-                Minimum="1"
-                Maximum="300"
-                Value="1"
-                Width="120"
-                ValueChanged="SpeedChanged"
-                IsDirectionReversed="True"/>
+			<Button Content="Slow"
+                Click="SpeedSlow_Click"
+                Margin="2"/>
+
+			<Button Content="Normal"
+                Click="SpeedNormal_Click"
+                Margin="2"/>
+
+			<Button Content="Fast"
+                Click="SpeedFast_Click"
+                Margin="2"/>
+
+			<Button Content="Ultra"
+                Click="SpeedUltra_Click"
+                Margin="2"/>
 
 			<!-- Abstand -->
 			<Rectangle Width="10"/>

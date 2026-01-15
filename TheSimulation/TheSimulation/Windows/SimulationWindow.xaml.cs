@@ -42,6 +42,7 @@ public sealed partial class SimulationWindow : Window
 
     private readonly Dictionary<Cell, Ellipse> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
+    private readonly HashSet<Cell> growableCells = [];
 
     private readonly List<(TimeSpan Time, uint Grown, uint Burned)> simulationHistory
         = [];
@@ -157,6 +158,8 @@ public sealed partial class SimulationWindow : Window
         InitializeIgniteTimer();
         InitializeFireTimer();
 
+        SetSimulationSpeed(SimulationSpeed.Normal);
+
         if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
             simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
         {
@@ -166,6 +169,8 @@ public sealed partial class SimulationWindow : Window
 
         windVisualizer.Draw();
         UpdateWindUI();
+
+        simulationTimer.Start();
     }
 
     private void InitializeScreenFlash()
@@ -310,7 +315,35 @@ public sealed partial class SimulationWindow : Window
             terrainGrid = new TerrainCell[cols, rows];
             GenerateTerrain();
         }
+
+        InitializeGrowableCells();
     }
+
+    private void InitializeGrowableCells()
+    {
+        growableCells.Clear();
+
+        for (var x = 0; x < cols; x++)
+        {
+            for (var y = 0; y < rows; y++)
+            {
+                if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
+                {
+                    growableCells.Add(new(x, y));
+                    continue;
+                }
+
+                var terrain = terrainGrid[x, y];
+
+                if (terrain.Type == TerrainType.Soil)
+                {
+                    growableCells.Add(new(x, y));
+                }
+            }
+        }
+    }
+
+
 
     private async Task PrefillForest()
     {
@@ -356,19 +389,16 @@ public sealed partial class SimulationWindow : Window
 
     private void InitializeGrowTimer()
     {
-        growTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value);
         growTimer.Tick += (_, _) => GrowStep();
     }
 
     private void InitializeIgniteTimer()
     {
-        igniteTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value * 750);
         igniteTimer.Tick += (_, _) => IgniteRandomCell();
     }
 
     private void InitializeFireTimer()
     {
-        fireTimer.Interval = TimeSpan.FromMilliseconds(SpeedSlider.Value);
         fireTimer.Tick += (_, _) => FireStep();
     }
 
@@ -387,28 +417,23 @@ public sealed partial class SimulationWindow : Window
         };
     }
 
-    private void SpeedChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        SetSimulationSpeed(e.NewValue);
-    }
+    public void SpeedSlow_Click(object s, RoutedEventArgs e) => SetSimulationSpeed(SimulationSpeed.Slow);
 
-    private void SetSimulationSpeed(double baseIntervalMs)
+    public void SpeedNormal_Click(object s, RoutedEventArgs e) => SetSimulationSpeed(SimulationSpeed.Normal);
+
+    public void SpeedFast_Click(object s, RoutedEventArgs e) => SetSimulationSpeed(SimulationSpeed.Fast);
+
+    public void SpeedUltra_Click(object s, RoutedEventArgs e) => SetSimulationSpeed(SimulationSpeed.Ultra);
+
+    private void SetSimulationSpeed(SimulationSpeed simulationSpeed)
     {
+        var baseIntervalMs = (int)simulationSpeed;
+
         growTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
         fireTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
         igniteTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs * 750);
 
         windVisualizer?.Draw();
-    }
-
-    protected override void OnClosed(EventArgs e)
-    {
-        simulationTimer.Stop();
-        growTimer.Stop();
-        igniteTimer.Stop();
-        fireTimer.Stop();
-        windTimer.Stop();
-        base.OnClosed(e);
     }
 
     private void GrowStep()
@@ -428,13 +453,8 @@ public sealed partial class SimulationWindow : Window
             return;
         }
 
-        var cell = randomHelper.NextCell(cols, rows);
-
-        // schon belegt → nichts tun
-        if (forestGrid[cell.X, cell.Y] != ForestCellState.Empty)
-        {
-            return;
-        }
+        var cell = randomHelper.NextCell(growableCells);
+        growableCells.Remove(cell);
 
         if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
         {
@@ -672,6 +692,7 @@ public sealed partial class SimulationWindow : Window
         }
 
         activeTrees.Remove(cell);
+        growableCells.Add(cell);
 
         UpdateTreeUI();
     }
@@ -764,7 +785,7 @@ public sealed partial class SimulationWindow : Window
     {
         if (randomHelper.NextDouble() < minChanceToHitTree)
         {
-            return randomHelper.NextTree(activeTrees);
+            return randomHelper.NextCell(activeTrees);
         }
 
 
