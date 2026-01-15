@@ -1,16 +1,16 @@
 ﻿<Window x:Class="TheSimulation.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:fa="http://schemas.fontawesome.io/icons/"
-    xmlns:local="clr-namespace:TheSimulation"
-    mc:Ignorable="d"
-    Title="Forest fire simulation configuration"
-    Height="650"
-    Width="1000"
-    ResizeMode="CanMinimize"
-    WindowStartupLocation="CenterScreen">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:local="clr-namespace:TheSimulation"
+        mc:Ignorable="d"
+        Title="Forest fire simulation configuration"
+        Height="650"
+        Width="1000"
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen">
 
 	<Grid Margin="20">
 		<Grid.RowDefinitions>
@@ -20,9 +20,9 @@
 
 		<!-- Simulate-Button -->
 		<Button Grid.Row="0"
-            Height="40" Width="120"
-            HorizontalAlignment="Right" VerticalAlignment="Top"
-            Click="StartSimulation_Click">
+                Height="40" Width="120"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Click="StartSimulation_Click">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
 					<fa:ImageAwesome Icon="Play" Width="10" Height="10"/>
@@ -32,10 +32,10 @@
 		</Button>
 
 		<Button Grid.Row="0"
-            Height="40" Width="120"
-            HorizontalAlignment="Center" VerticalAlignment="Top"
-            Margin="0,0,0,0"
-            Click="ResetAllSettings_Click">
+                Height="40" Width="120"
+                HorizontalAlignment="Center" VerticalAlignment="Top"
+                Margin="0,0,0,0"
+                Click="ResetAllSettings_Click">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
 					<fa:ImageAwesome Icon="Undo" Width="10" Height="10"/>
@@ -63,10 +63,10 @@
 			<GroupBox Header="Terrain" Margin="0,0,0,10" BorderBrush="Black">
 				<StackPanel>
 					<CheckBox Margin="5,5,0,0"
-                      x:Name="TerrainGenerationCheckBox"
-                      Content="Enable terrain generation"
-                      IsChecked="True"
-                      AutomationProperties.Name="Enable terrain generation"/>
+                              x:Name="TerrainGenerationCheckBox"
+                              Content="Enable terrain generation"
+                              IsChecked="True"
+                              AutomationProperties.Name="Enable terrain generation"/>
 				</StackPanel>
 			</GroupBox>
 
@@ -74,20 +74,20 @@
 			<GroupBox Header="Trees" Margin="0,0,0,10" BorderBrush="Green">
 				<StackPanel>
 					<CheckBox Margin="5,5,0,5"
-                      x:Name="GrowForestCheckBox"
-                      Content="Grow forest"
-                      IsChecked="True"
-                      AutomationProperties.Name="Grow forest"
-                      Unchecked="GrowForestCheckBox_Unchecked"
-                      Checked="GrowForestCheckBox_Checked"/>
+                              x:Name="GrowForestCheckBox"
+                              Content="Grow forest"
+                              IsChecked="True"
+                              AutomationProperties.Name="Grow forest"
+                              Unchecked="GrowForestCheckBox_Unchecked"
+                              Checked="GrowForestCheckBox_Checked"/>
 
 					<CheckBox Margin="5,5,0,0"
-                      x:Name="PrefillCheckBox"
-                      Content="Prefill forest"
-                      IsChecked="False"
-                      AutomationProperties.Name="Prefill forest"
-                      Checked="PrefillCheckBox_Changed"
-                      Unchecked="PrefillCheckBox_Changed"/>
+                              x:Name="PrefillCheckBox"
+                              Content="Prefill forest"
+                              IsChecked="False"
+                              AutomationProperties.Name="Prefill forest"
+                              Checked="PrefillCheckBox_Changed"
+                              Unchecked="PrefillCheckBox_Changed"/>
 
 					<!-- TextBlock für Prefill density Wert -->
 					<TextBlock Margin="10,5,0,5"
@@ -96,13 +96,13 @@
                                   Path=Value,
                                   StringFormat=Prefill density: {0:F0}%}"/>
 					<Slider x:Name="PrefillDensitySlider"
-                Minimum="0"
-                Maximum="100"
-                Value="60"
-                TickFrequency="5"
-                IsSnapToTickEnabled="True"
-                AutomationProperties.Name="Prefill density"
-                IsEnabled="False"/>
+                            Minimum="0"
+                            Maximum="100"
+                            Value="60"
+                            TickFrequency="5"
+                            IsSnapToTickEnabled="True"
+                            AutomationProperties.Name="Prefill density"
+                            IsEnabled="False"/>
 				</StackPanel>
 			</GroupBox>
 
@@ -110,10 +110,10 @@
 			<GroupBox Header="Fire" Margin="0,0,0,10" BorderBrush="Red">
 				<StackPanel>
 					<CheckBox Margin="5,5,60,0"
-                      x:Name="PauseFireCheckBox"
-                      Content="Pause growing during fire"
-                      IsChecked="True"
-                      AutomationProperties.Name="Pause growing during fire"/>
+                              x:Name="PauseFireCheckBox"
+                              Content="Pause growing during fire"
+                              IsChecked="True"
+                              AutomationProperties.Name="Pause growing during fire"/>
 
 					<TextBlock
                         Text="{Binding ElementName=FireIntensitySlider,
@@ -138,16 +138,16 @@
            Text="{Binding ElementName=AirHumiditySlider,
                           Path=Value,
                           StringFormat=Air humidity: {0:F0}%}"
-           AutomationProperties.Name="Air humidity label"/>
+                          AutomationProperties.Name="Air humidity label"/>
 
 					<Slider x:Name="AirHumiditySlider"
-        Minimum="0"
-        Maximum="100"
-        Value="50"
-        TickFrequency="5"
-        IsSnapToTickEnabled="True"
-        AutomationProperties.Name="Air humidity"
-        AutomationProperties.HelpText="0% is very dry, 100% is very humid"/>
+                            Minimum="0"
+                            Maximum="100"
+                            Value="50"
+                            TickFrequency="5"
+                            IsSnapToTickEnabled="True"
+                            AutomationProperties.Name="Air humidity"
+                            AutomationProperties.HelpText="0% is very dry, 100% is very humid"/>
 
 					<!-- Air Temperature -->
 					<TextBlock Margin="10,5,0,0"
@@ -158,24 +158,24 @@
                        AutomationProperties.Name="Air temperature label"/>
 
 					<Slider x:Name="AirTemperatureSlider"
-                        Minimum="-10"
-                        Maximum="50"
-                        Value="30"
-                        TickFrequency="1"
-                        IsSnapToTickEnabled="True"
-                        AutomationProperties.Name="Air temperature"
-                        AutomationProperties.HelpText="Air temperature in degrees Celsius"/>
+                            Minimum="-10"
+                            Maximum="50"
+                            Value="30"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            AutomationProperties.Name="Air temperature"
+                            AutomationProperties.HelpText="Air temperature in degrees Celsius"/>
 
 					<!-- Abstand -->
 					<Rectangle Height="10"/>
 
 					<CheckBox Margin="5,5,0,0"
-                      x:Name="RandomWindDirectionCheckBox"
-                      Content="Random wind direction"
-                      IsChecked="False"
-                      AutomationProperties.Name="Random wind direction"
-                      Checked="RandomWindDirectionCheckBox_Changed"
-                      Unchecked="RandomWindDirectionCheckBox_Changed"/>
+                              x:Name="RandomWindDirectionCheckBox"
+                              Content="Random wind direction"
+                              IsChecked="False"
+                              AutomationProperties.Name="Random wind direction"
+                              Checked="RandomWindDirectionCheckBox_Changed"
+                              Unchecked="RandomWindDirectionCheckBox_Changed"/>
 
 					<TextBlock Margin="10,5,0,0"
                                Text="Wind direction (from)"
@@ -193,10 +193,10 @@
 
 					<!-- Random Wind Strength Checkbox -->
 					<CheckBox Margin="5,5,0,0"
-                      x:Name="RandomWindStrengthCheckBox"
-                      Content="Random wind strength"
-                      IsChecked="False"
-                      AutomationProperties.Name="Random wind strength"/>
+                              x:Name="RandomWindStrengthCheckBox"
+                              Content="Random wind strength"
+                              IsChecked="False"
+                              AutomationProperties.Name="Random wind strength"/>
 
 					<!-- TextBlock für Wind strength Wert -->
 					<TextBlock Margin="10,5,0,0"
@@ -205,15 +205,15 @@
                           Path=Value,
                           StringFormat=Wind strength: {0:P0}}"/>
 					<Slider x:Name="WindStrengthSlider"
-                        Minimum="0"
-                        Maximum="1"
-                        Value="0.7"
-                        TickFrequency="0.05"
-		                IsSnapToTickEnabled="True"
-                        SmallChange="0.05"
-                        LargeChange="0.1"
-                        AutomationProperties.Name="Wind strength"
-                        AutomationProperties.HelpText="0 is no wind, 1 is strong wind"/>
+                            Minimum="0"
+                            Maximum="1"
+                            Value="0.7"
+                            TickFrequency="0.05"
+		                    IsSnapToTickEnabled="True"
+                            SmallChange="0.05"
+                            LargeChange="0.1"
+                            AutomationProperties.Name="Wind strength"
+                            AutomationProperties.HelpText="0 is no wind, 1 is strong wind"/>
 				</StackPanel>
 			</GroupBox>
 		</StackPanel>
