@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:local="clr-namespace:TheSimulation"
         mc:Ignorable="d"
         Title="Forest fire graphics settings"
@@ -52,10 +53,17 @@
 		</GroupBox>
 
 		<!-- Apply Button -->
-		<Button Content="Apply" Grid.Row="3"
+		<Button Grid.Row="3"
 			Width="100" Height="40"
 			HorizontalAlignment="Center" VerticalAlignment="Center"
-			Margin="0,20" Click="ApplyGraphicsSettings"/>
+			Margin="0,20" Click="ApplyGraphicsSettings">
+			<Button.Content>
+				<StackPanel Orientation="Horizontal">
+					<fa:ImageAwesome Icon="Check" Width="10" Height="10"/>
+					<TextBlock Text="Apply" Margin="5,0,0,0"/>
+				</StackPanel>
+			</Button.Content>
+		</Button>
 	</Grid>
 
 </Window>
