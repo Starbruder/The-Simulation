@@ -34,8 +34,8 @@ public static class WindMapper
         if (windSpeed < 8.0) return BeaufortScale.ModerateBreeze;
         if (windSpeed < 10.8) return BeaufortScale.FreshBreeze;
         if (windSpeed < 13.9) return BeaufortScale.StrongBreeze;
-        if (windSpeed < 17.2) return BeaufortScale.Gale;
-        if (windSpeed < 20.8) return BeaufortScale.SevereGale;
+        if (windSpeed < 17.2) return BeaufortScale.StrongWind;
+        if (windSpeed < 20.8) return BeaufortScale.SevereWind;
         if (windSpeed < 24.5) return BeaufortScale.Storm;
         if (windSpeed < 28.5) return BeaufortScale.ViolentStorm;
         if (windSpeed < 32.7) return BeaufortScale.Hurricane;
