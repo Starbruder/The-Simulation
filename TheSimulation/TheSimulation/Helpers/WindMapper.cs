@@ -17,6 +17,31 @@ public static class WindMapper
         return new(x, y);
     }
 
+    public static BeaufortScale ConvertWindPercentStrenghToBeaufort(double windStrength)
+    {
+        // WindStrength ist ein Wert zwischen 0 und 1, daher multiplizieren wir mit 12, um den Bereich 0 bis 12 zu erhalten
+        var beaufortScale = (int)(windStrength * 12);
+        return (BeaufortScale)Math.Min(beaufortScale, (int)BeaufortScale.Hurricane); // Maximalwert Hurricane (Stufe 11)
+    }
+
+    private static BeaufortScale ConvertWindKmPerHourToBeaufortScale(double windSpeed)
+    {
+        // Windgeschwindigkeit in m/s bestimmt die Beaufort-Stufe
+        if (windSpeed < 0.3) return BeaufortScale.Calm;
+        if (windSpeed < 1.6) return BeaufortScale.LightAir;
+        if (windSpeed < 3.4) return BeaufortScale.LightBreeze;
+        if (windSpeed < 5.5) return BeaufortScale.GentleBreeze;
+        if (windSpeed < 8.0) return BeaufortScale.ModerateBreeze;
+        if (windSpeed < 10.8) return BeaufortScale.FreshBreeze;
+        if (windSpeed < 13.9) return BeaufortScale.StrongBreeze;
+        if (windSpeed < 17.2) return BeaufortScale.Gale;
+        if (windSpeed < 20.8) return BeaufortScale.SevereGale;
+        if (windSpeed < 24.5) return BeaufortScale.Storm;
+        if (windSpeed < 28.5) return BeaufortScale.ViolentStorm;
+        if (windSpeed < 32.7) return BeaufortScale.Hurricane;
+        return BeaufortScale.Hurricane;
+    }
+
     public static WindDirection ToWindDirection(this float angle)
     {
         angle = NormalizeWindAngleToMax360Degrees(angle);

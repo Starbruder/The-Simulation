@@ -923,7 +923,11 @@ public sealed partial class SimulationWindow : Window
 
     private void UpdateWindUI()
     {
-        // Windstärke im TextBlock anzeigen und den Wert als Prozent
-        WindStrengthText.Text = $"{windHelper.CurrentWindStrength * 100:F0}%";
+        var windStrength = windHelper.CurrentWindStrength;
+
+        var windStrengthReadablePercent = windStrength * 100;
+        var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
+
+        WindStrengthText.Text = $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)";
     }
 }

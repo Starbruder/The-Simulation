@@ -250,4 +250,14 @@ public sealed partial class MainWindow : Window
         RandomWindStrengthCheckBox.IsChecked = false;
         WindStrengthSlider.Value = 0.7;
     }
+
+    private void WindStrengthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        var windStrength = WindStrengthSlider.Value;
+
+        var windStrengthReadablePercent = windStrength * 100;
+        var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
+
+        WindStrengthText.Text = $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)";
+    }
 }

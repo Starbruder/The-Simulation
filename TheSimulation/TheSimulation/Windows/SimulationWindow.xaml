@@ -107,7 +107,7 @@
                        VerticalAlignment="Center"
                        Margin="16,0,0,0"/>
 			<TextBlock x:Name="WindStrengthText"
-                    Text="0%"
+                    Text="0% (0 Bft)"
                     Foreground="White"
                     VerticalAlignment="Center"
                     Margin="5,0,0,0" MinWidth="32"/>
