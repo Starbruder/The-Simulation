@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -17,7 +17,7 @@ public sealed partial class SimulationWindow : Window
     private readonly WindHelper windHelper;
     private readonly WindArrowVisualizer windVisualizer;
     private readonly ParticleGenerator particleGenerator;
-    private DispatcherTimer simulationTimer;
+    private readonly DispatcherTimer simulationTimer = new();
     private DateTime simulationStartTime;
 
     private readonly DispatcherTimer treeGrowthTimer = new();
@@ -57,7 +57,6 @@ public sealed partial class SimulationWindow : Window
     {
         // To get rid of the warning CS8618
         forestGrid = new ForestCellState[0, 0];
-        simulationTimer = new();
         terrainGrid = new TerrainCell[0, 0];
         screenFlash = new();
 
@@ -169,8 +168,6 @@ public sealed partial class SimulationWindow : Window
 
         windVisualizer.Draw();
         UpdateWindUI();
-
-        simulationTimer.Start();
     }
 
     private void InitializeScreenFlash()
@@ -202,10 +199,7 @@ public sealed partial class SimulationWindow : Window
 
         TimerVisualizer.UpdateTimerUI(SimulationTimeText, simulationStartTime);
 
-        simulationTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromSeconds(1)
-        };
+        simulationTimer.Interval = TimeSpan.FromSeconds(1);
 
         simulationTimer.Tick += (_, _) =>
         {
