@@ -74,7 +74,7 @@ public static class ChartVisualizer
 	/// <param name="color">Farbe der Durchschnittslinie.</param>
 	/// <returns>Eine <see cref="LineSeries"/> für die Durchschnittslinie.</returns>
 	public static LineSeries CreateAverageLine
-        (List<(TimeSpan Time, uint Grown, uint Burned)> history, string title, OxyColor color)
+        (List<(TimeSpan Time, uint Grown, uint Burned, double WindSpeed)> history, string title, OxyColor color)
     {
         var sum = 0f;
         foreach (var h in history)

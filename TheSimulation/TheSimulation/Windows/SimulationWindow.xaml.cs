@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -44,7 +44,7 @@ public sealed partial class SimulationWindow : Window
     private readonly HashSet<Cell> activeTrees = [];
     private readonly HashSet<Cell> growableCells = [];
 
-    private readonly List<(TimeSpan Time, uint Grown, uint Burned)> simulationHistory
+    private readonly List<(TimeSpan Time, uint Grown, uint Burned, double WindSpeed)> simulationHistory
         = [];
 
     private readonly List<FireEvent> fireEvents = [];
@@ -244,7 +244,10 @@ public sealed partial class SimulationWindow : Window
     private void RecordSimulationStats()
     {
         var elapsed = CalculateSimulationTime();
-        simulationHistory.Add((elapsed, totalGrownTrees, totalBurnedTrees));
+        var currentWindSpeed = windHelper.CurrentWindStrength;
+        var historySnapshot =
+            (elapsed, totalGrownTrees, totalBurnedTrees, currentWindSpeed);
+        simulationHistory.Add(historySnapshot);
     }
 
     private TimeSpan CalculateSimulationTime()

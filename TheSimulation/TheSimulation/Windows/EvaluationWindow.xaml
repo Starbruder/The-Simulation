@@ -20,6 +20,9 @@
 			<TextBlock x:Name="EvalTemperature" FontSize="16" Text="Air temperature: 0 °C"/>
 			<!-- Abstand -->
 			<Rectangle Height="5"/>
+			<TextBlock x:Name="EvalAverageWindSpeed" FontSize="16" Text="Average Wind Speed: 0% (0 Bft)"/>
+			<!-- Abstand -->
+			<Rectangle Height="5"/>
 			<TextBlock x:Name="EvalRuntime" FontSize="16" Text="Runtime: 00:00:00"/>
 		</StackPanel>
 

@@ -19,6 +19,16 @@ public sealed partial class EvaluationWindow : Window
         EvalHumidity.Text = $"Air Humidity: {data.AirHumidityPercentage * 100:F0} %";
         EvalTemperature.Text = $"Air Temperature: {data.AirTemperatureCelsius}°C";
 
+        var averageWindSpeed = data.History.Count > 0
+            ? data.History.Average(h => h.WindSpeed)
+            : 0.0;
+
+        var windStrength = WindMapper.ConvertWindPercentStrenghToBeaufort(averageWindSpeed);
+
+        EvalAverageWindSpeed.Text = data.History.Count > 0
+            ? $"Average Wind Speed: {averageWindSpeed:P0} ({(int)windStrength} Bft)"
+            : "Average Wind Speed: N/A";
+
         EvalRuntime.Text = $"Runtime: {data.Runtime:hh\\:mm\\:ss}";
 
         DrawCharts(data);

@@ -20,6 +20,6 @@ public sealed record Evaluation
     float AirHumidityPercentage,
     float AirTemperatureCelsius,
     TimeSpan Runtime,
-    List<(TimeSpan Time, uint Grown, uint Burned)> History,
+    List<(TimeSpan Time, uint Grown, uint Burned, double WindSpeed)> History,
     List<FireEvent> FireEvents
 );
