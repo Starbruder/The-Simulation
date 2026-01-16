@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace TheSimulation;
@@ -167,15 +167,7 @@ public sealed partial class MainWindow : Window
 
     private void PrefillCheckBox_Changed(object sender, RoutedEventArgs e)
     {
-        WhenPrefillOffDeactivateDensitySlider();
-    }
-
-    private void WhenPrefillOffDeactivateDensitySlider()
-    {
-        if (PrefillDensitySlider is not null)
-        {
-            PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? false;
-        }
+        PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? false;
     }
 
     private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
