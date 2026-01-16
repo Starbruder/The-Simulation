@@ -1,5 +1,12 @@
 ﻿namespace TheSimulation;
 
+/// <summary>
+/// Specifies the wind force levels according to the Beaufort scale.
+/// </summary>
+/// <remarks>The Beaufort scale is an internationally recognized system for estimating wind speed based on
+/// observed conditions at sea or on land. Each value in this enumeration corresponds to a specific range of wind speeds
+/// and descriptive terms, ranging from calm conditions to hurricane-force winds. This enumeration can be used to
+/// categorize wind conditions in meteorological, marine, or environmental applications.</remarks>
 public enum BeaufortScale
 {
     Calm = 0,               // Windstille, Flaute < 1 kn < 1 km/h 
