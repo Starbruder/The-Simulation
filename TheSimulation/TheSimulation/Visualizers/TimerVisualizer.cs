@@ -7,14 +7,16 @@ namespace TheSimulation;
 /// </summary>
 public static class TimerVisualizer
 {
-	/// <summary>
-	/// Updates the provided TextBlock with the elapsed time since the simulation started.
-	/// </summary>
-	/// <param name="target"></param>
-	/// <param name="simulationStartTime"></param>
-	public static void UpdateTimerUI(TextBlock target, DateTime simulationStartTime)
+    /// <summary>
+    /// Updates the provided TextBlock with a formatted string of the elapsed simulation time.
+    /// </summary>
+    /// <param name="target">The TextBlock to update.</param>
+    /// <param name="elapsed">The accumulated simulation time.</param>
+    public static void UpdateTimerUI(TextBlock target, TimeSpan elapsed)
     {
-        var elapsed = DateTime.Now - simulationStartTime;
-        target.Text = $"Runtime: {elapsed:hh\\:mm\\:ss}";
+        // We use TotalHours to ensure that if the simulation goes over 24h, 
+        // the display doesn't reset to 00.
+        int hours = (int)elapsed.TotalHours;
+        target.Text = $"Runtime: {hours:D2}:{elapsed.Minutes:D2}:{elapsed.Seconds:D2}";
     }
 }

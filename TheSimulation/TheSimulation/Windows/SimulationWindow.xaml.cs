@@ -18,7 +18,7 @@ public sealed partial class SimulationWindow : Window
     private readonly WindArrowVisualizer windVisualizer;
     private readonly ParticleGenerator particleGenerator;
     private readonly DispatcherTimer simulationTimer = new();
-    private DateTime simulationStartTime;
+    private TimeSpan accumulatedSimulationTime = TimeSpan.Zero;
 
     private readonly DispatcherTimer treeGrowthTimer = new();
     private readonly DispatcherTimer igniteTimer = new();
@@ -126,10 +126,9 @@ public sealed partial class SimulationWindow : Window
             forestGrid[x, y] = ForestCellState.Burning;
             UpdateTreeColor(cell, Brushes.Red);
 
-            var elapsed = DateTime.Now - simulationStartTime;
             fireEvents.Add(new FireEvent(
                 FireEventType.ManualIgnition,
-                elapsed
+                accumulatedSimulationTime
             ));
         }
     }
@@ -195,9 +194,9 @@ public sealed partial class SimulationWindow : Window
 
     private void InitializeSimulationTimer()
     {
-        SetAndCalculateStartTime();
-
-        TimerVisualizer.UpdateTimerUI(SimulationTimeText, simulationStartTime);
+        // Add a negative second to let the timer start at 00:00:00
+        accumulatedSimulationTime = accumulatedSimulationTime.Add(TimeSpan.FromSeconds(-1));
+        TimerVisualizer.UpdateTimerUI(SimulationTimeText, accumulatedSimulationTime);
 
         simulationTimer.Interval = TimeSpan.FromSeconds(1);
 
@@ -212,7 +211,9 @@ public sealed partial class SimulationWindow : Window
                 return;
             }
 
-            TimerVisualizer.UpdateTimerUI(SimulationTimeText, simulationStartTime);
+            accumulatedSimulationTime =
+                accumulatedSimulationTime.Add(simulationTimer.Interval);
+            TimerVisualizer.UpdateTimerUI(SimulationTimeText, accumulatedSimulationTime);
             RecordSimulationStats();
         };
     }
@@ -250,10 +251,7 @@ public sealed partial class SimulationWindow : Window
         simulationHistory.Add(historySnapshot);
     }
 
-    private TimeSpan CalculateSimulationTime()
-    {
-        return DateTime.Now - simulationStartTime;
-    }
+    private TimeSpan CalculateSimulationTime() => accumulatedSimulationTime;
 
     private void PauseResume_Click(object sender, RoutedEventArgs e)
     {
@@ -283,20 +281,13 @@ public sealed partial class SimulationWindow : Window
                 simulationConfig.EnvironmentConfig.AtmosphereConfig.AirHumidityPercentage,
             AirTemperatureCelsius:
                 simulationConfig.EnvironmentConfig.AtmosphereConfig.AirTemperatureCelsius,
-            Runtime: DateTime.Now - simulationStartTime,
+            Runtime: accumulatedSimulationTime,
             History: new(simulationHistory),
             FireEvents: new(fireEvents)
         );
 
         var evalWindow = new EvaluationWindow(data);
         evalWindow.Show();
-    }
-
-    private void SetAndCalculateStartTime()
-    {
-        // Damit bei erstem Tick 1 Sekunden angezeigt werden.
-        var time = DateTime.Now - TimeSpan.FromSeconds(1);
-        simulationStartTime = time;
     }
 
     private void InitializeGrid()
@@ -811,10 +802,9 @@ public sealed partial class SimulationWindow : Window
         {
             ShowLightning(cell);
 
-            var elapsed = DateTime.Now - simulationStartTime;
             fireEvents.Add(new(
                 FireEventType.Lightning,
-                elapsed
+                accumulatedSimulationTime
             ));
         }
 
