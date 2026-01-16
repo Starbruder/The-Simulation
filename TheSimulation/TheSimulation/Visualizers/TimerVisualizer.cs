@@ -16,7 +16,7 @@ public static class TimerVisualizer
     {
         // We use TotalHours to ensure that if the simulation goes over 24h, 
         // the display doesn't reset to 00.
-        int hours = (int)elapsed.TotalHours;
+        var hours = (int)elapsed.TotalHours;
         target.Text = $"Runtime: {hours:D2}:{elapsed.Minutes:D2}:{elapsed.Seconds:D2}";
     }
 }
