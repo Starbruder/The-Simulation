@@ -5,6 +5,9 @@ using System.Windows.Threading;
 
 namespace TheSimulation;
 
+/// <summary>
+/// Repräsentiert den gesamten Simulationsprozess einer Waldbrand-Simulation.
+/// </summary>
 public sealed class Simulation
 {
     private Canvas ForestCanvas { get; }
