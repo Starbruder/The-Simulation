@@ -912,4 +912,16 @@ public sealed partial class SimulationWindow : Window
 
         WindStrengthText.Text = $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)";
     }
+
+    // Stop timers when window is closed protection against memory leaks
+    protected override void OnClosed(EventArgs e)
+    {
+        base.OnClosed(e);
+
+        simulationTimer.Stop();
+        treeGrowthTimer.Stop();
+        igniteTimer.Stop();
+        fireTimer.Stop();
+        windUpdateTimer.Stop();
+    }
 }
