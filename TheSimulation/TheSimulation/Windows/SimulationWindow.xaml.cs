@@ -35,7 +35,7 @@ public sealed partial class SimulationWindow : Window
     private float cachedHumidityEffect;
 
     private bool isPaused = false;
-    private bool IsAnyFireActiveThenPause = false;
+    private bool isFireActiveThenPause = false;
 
     private uint totalGrownTrees = 0;
     private uint totalBurnedTrees = 0;
@@ -469,7 +469,7 @@ public sealed partial class SimulationWindow : Window
     private void GrowStep()
     {
         // Wenn irgendwo Feuer brennt → überspringen
-        if (simulationConfig.FireConfig.PauseDuringFire && IsAnyFireActiveThenPause)
+        if (simulationConfig.FireConfig.PauseDuringFire && isFireActiveThenPause)
         {
             return;
         }
@@ -575,7 +575,6 @@ public sealed partial class SimulationWindow : Window
     {
         windHelper.RandomizeAndUpdateWind();
 
-        // Setzen von toIgnite und toBurnDown
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
 
@@ -593,8 +592,9 @@ public sealed partial class SimulationWindow : Window
 
             isFireStepActive = true;
 
-            // Berechne die Chancen für die benachbarten Zellen nur einmal
-            foreach (var neighbor in GetNeighbors(burningCell))
+            var neighbors = GetIgnitableNeighbors(burningCell);
+
+            foreach (var neighbor in neighbors)
             {
                 if (forestGrid[neighbor.X, neighbor.Y] != ForestCellState.Tree)
                 {
@@ -608,7 +608,6 @@ public sealed partial class SimulationWindow : Window
                     fireSpreadChances[neighbor] = value;
                 }
 
-                // Zufällige Zahl ist kleiner als die Berechnete Chance?: ignitiere den Baum
                 if (randomHelper.NextDouble() < value)
                 {
                     toIgnite.Add(neighbor);
@@ -624,7 +623,7 @@ public sealed partial class SimulationWindow : Window
         // Brandzerstörung
         BurnDownTrees(toBurnDown);
 
-        IsAnyFireActiveThenPause = isFireStepActive;
+        isFireActiveThenPause = isFireStepActive;
     }
 
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
@@ -727,7 +726,7 @@ public sealed partial class SimulationWindow : Window
         UpdateTreeUI();
     }
 
-    private IEnumerable<Cell> GetNeighbors(Cell cell)
+    private IEnumerable<Cell> GetIgnitableNeighbors(Cell cell)
     {
         for (var dx = -1; dx <= 1; dx++)
         {
@@ -735,7 +734,7 @@ public sealed partial class SimulationWindow : Window
             {
                 if (dx == 0 && dy == 0)
                 {
-                    continue; // die Zelle selbst überspringen
+                    continue;
                 }
 
                 var nx = cell.X + dx;
