@@ -51,14 +51,13 @@ public sealed partial class SimulationWindow : Window
 
     private TerrainCell[,] terrainGrid;
 
-    private readonly Rectangle screenFlash;
+    private readonly Rectangle screenFlash = new();
 
     public SimulationWindow(SimulationConfig simulationConfig)
     {
         // To get rid of the warning CS8618
         forestGrid = new ForestCellState[0, 0];
         terrainGrid = new TerrainCell[0, 0];
-        screenFlash = new();
 
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
