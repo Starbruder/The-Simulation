@@ -51,7 +51,7 @@ public sealed partial class SimulationWindow : Window
 
     private TerrainCell[,] terrainGrid;
 
-    private Rectangle screenFlash;
+    private readonly Rectangle screenFlash;
 
     public SimulationWindow(SimulationConfig simulationConfig)
     {
@@ -171,13 +171,9 @@ public sealed partial class SimulationWindow : Window
 
     private void InitializeScreenFlash()
     {
-        screenFlash = new Rectangle
-        {
-            Width = ForestCanvas.ActualWidth,
-            Height = ForestCanvas.ActualHeight,
-            Fill = Brushes.White,
-            Opacity = 0
-        };
+        screenFlash.Width = ForestCanvas.ActualWidth;
+        screenFlash.Height = ForestCanvas.ActualHeight;
+        screenFlash.Fill = Brushes.White;
 
         Panel.SetZIndex(screenFlash, int.MaxValue);
 
