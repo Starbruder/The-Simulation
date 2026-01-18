@@ -48,7 +48,7 @@ public sealed class ForestFireSimulation
     private uint totalGrownTrees = 0;
     private uint totalBurnedTrees = 0;
 
-    private readonly Dictionary<Cell, Ellipse> treeElements = [];
+    private readonly Dictionary<Cell, Shape> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
     private readonly HashSet<Cell> growableCells = [];
 
@@ -352,7 +352,7 @@ public sealed class ForestFireSimulation
             var batch = allCells.GetRange(loaded, count);
             loaded += count;
 
-            // UI-Thread zum Hinzufügen der Ellipsen nutzen
+            // UI-Thread zum Hinzufügen der TreeShapes nutzen
             await ForestCanvas.Dispatcher.InvokeAsync(() =>
             {
                 foreach (var cell in batch)
@@ -510,15 +510,17 @@ public sealed class ForestFireSimulation
 
         var color = GetTreeColor(cell);
 
-        var tree = new Ellipse
-        {
-            Width = simulationConfig.TreeConfig.Size,
-            Height = simulationConfig.TreeConfig.Size,
-            Fill = color,
-            Tag = cell
-        };
+        var shape = simulationConfig.TreeConfig.TreeShape;
 
-        Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
+		Type shapeType = simulationConfig.TreeConfig.TreeShape.GetType();
+		var tree = (Shape)Activator.CreateInstance(shapeType)!;
+
+		tree.Width = simulationConfig.TreeConfig.Size;
+		tree.Height = simulationConfig.TreeConfig.Size;
+		tree.Fill = color;
+		tree.Tag = cell;
+
+		Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
         Canvas.SetTop(tree, cell.Y * simulationConfig.TreeConfig.Size);
         ForestCanvas.Children.Add(tree);
 
@@ -687,7 +689,7 @@ public sealed class ForestFireSimulation
         UpdateTreeUI();
     }
 
-    private void UpdateGridForBurnedDownTree(Cell cell, Ellipse tree)
+    private void UpdateGridForBurnedDownTree(Cell cell, Shape tree)
     {
         if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
         {

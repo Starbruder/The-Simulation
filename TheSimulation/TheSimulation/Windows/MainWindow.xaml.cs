@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace TheSimulation;
 
@@ -42,7 +43,8 @@ public sealed partial class MainWindow : Window
             MaxCount: 50_000,
             ForestDensity: 0.6f,
             Size: 7,
-            AllowRegrowForest: regrowForest
+            AllowRegrowForest: regrowForest,
+            TreeShape: new Ellipse()
         );
 
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
