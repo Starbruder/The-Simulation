@@ -161,7 +161,8 @@ public sealed class ForestFireSimulation
         InitializeIgniteTimer();
         InitializeFireTimer();
 
-        SetSimulationSpeed(SimulationSpeed.Normal);
+        const SimulationSpeed startSimulationSpeed = SimulationSpeed.Normal;
+        SetSimulationSpeed(startSimulationSpeed);
 
         if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
             simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
