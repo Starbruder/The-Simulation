@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Diagnostics;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -388,7 +389,18 @@ public sealed class ForestFireSimulation
 
     private void InitializeIgniteTimer()
     {
-        igniteTimer.Tick += (_, _) => IgniteRandomCell();
+        igniteTimer.Tick += async (_, _) =>
+        {
+            try
+            {
+                await IgniteRandomCell();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                StopOrPauseSimulation();
+            }
+        };
     }
 
     private void InitializeFireTimer()
@@ -742,7 +754,7 @@ public sealed class ForestFireSimulation
         }
     }
 
-    private void IgniteRandomCell()
+    private async Task IgniteRandomCell()
     {
         var minChanceToHitTree = CalculateCurrentTreeDensityPercent() / 100;
 
@@ -750,7 +762,7 @@ public sealed class ForestFireSimulation
 
         if (simulationConfig.VisualEffectsConfig.ShowLightning)
         {
-            ShowLightning(cell);
+            await ShowLightning(cell);
 
             fireEvents.Add(new(
                 FireEventType.Lightning,
@@ -776,7 +788,7 @@ public sealed class ForestFireSimulation
         return randomHelper.NextCell(cols, rows);
     }
 
-    private async void ShowLightning(Cell cell)
+    private async Task ShowLightning(Cell cell)
     {
         var lightningCell = new Ellipse
         {
