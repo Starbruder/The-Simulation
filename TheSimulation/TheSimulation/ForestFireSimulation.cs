@@ -8,7 +8,7 @@ namespace TheSimulation;
 /// <summary>
 /// Repräsentiert den gesamten Simulationsprozess einer Waldbrand-Simulation.
 /// </summary>
-public sealed class Simulation
+public sealed class ForestFireSimulation
 {
     private Canvas ForestCanvas { get; }
 
@@ -60,7 +60,7 @@ public sealed class Simulation
 
     private readonly Rectangle screenFlash = new();
 
-    public Simulation(SimulationConfig simulationConfig, Canvas ForestCanvas)
+    public ForestFireSimulation(SimulationConfig simulationConfig, Canvas ForestCanvas)
     {
         // To get rid of the warning CS8618
         forestGrid = new ForestCellState[0, 0];

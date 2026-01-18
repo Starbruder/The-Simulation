@@ -7,14 +7,14 @@ namespace TheSimulation;
 /// </summary>
 public sealed partial class SimulationWindow : Window
 {
-    private readonly Simulation simulation;
+    private readonly ForestFireSimulation simulation;
 
     public SimulationWindow(SimulationConfig simulationConfig)
     {
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
 
-        simulation = new Simulation(simulationConfig, ForestCanvas)
+        simulation = new ForestFireSimulation(simulationConfig, ForestCanvas)
         {
             UpdateSimulationTimeText = text => SimulationTimeText.Text = text,
             UpdateTreeDensityText = text => TreeDensityText.Text = text,
