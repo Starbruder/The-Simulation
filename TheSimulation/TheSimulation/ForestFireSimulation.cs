@@ -357,10 +357,12 @@ public sealed class ForestFireSimulation
             {
                 foreach (var cell in batch)
                 {
-                    AddTree(cell);
+                    AddTreeWithoutUIUpdate(cell);
                 }
             });
         }
+
+        UpdateTreeUI();
     }
 
     private void ShuffleCells(List<Cell> allCells)
@@ -506,11 +508,15 @@ public sealed class ForestFireSimulation
 
     private void AddTree(Cell cell)
     {
+        AddTreeWithoutUIUpdate(cell);
+        UpdateTreeUI();
+    }
+
+    private void AddTreeWithoutUIUpdate(Cell cell)
+    {
         forestGrid[cell.X, cell.Y] = ForestCellState.Tree;
 
-        var shapeType = simulationConfig.TreeConfig.TreeShape.GetType();
-        var tree = (Shape)Activator.CreateInstance(shapeType);
-
+        var tree = CreateTreeShape();
         var color = GetTreeColor(cell);
 
         tree.Width = simulationConfig.TreeConfig.Size;
@@ -526,7 +532,12 @@ public sealed class ForestFireSimulation
         activeTrees.Add(cell);
 
         totalGrownTrees++;
-        UpdateTreeUI();
+    }
+
+    private Shape CreateTreeShape()
+    {
+        var shapeType = simulationConfig.TreeConfig.TreeShape.GetType();
+        return (Shape)Activator.CreateInstance(shapeType);
     }
 
     private Brush GetTreeColor(Cell cell)
