@@ -1,4 +1,5 @@
-﻿using OxyPlot;
+﻿using Microsoft.Win32;
+using OxyPlot;
 using System.Windows;
 
 namespace TheSimulation;
@@ -94,5 +95,38 @@ public sealed partial class EvaluationWindow : Window
         );
 
         ActiveTreesPlot.Model = model;
+    }
+
+    private void ExportCsv_Click(object sender, RoutedEventArgs e)
+    {
+        if (data.History.Count == 0)
+        {
+            MessageBox.Show("No simulation data available to export.", "Export failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Title = "Export simulation evaluation",
+            Filter = "CSV files (*.csv)|*.csv",
+            FileName = $"ForestFireEvaluation_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+        };
+
+        // Diese Zeile sorgt dafür, dass: kein Export passiert, wenn der Nutzer abbricht
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        try
+        {
+            EvaluationExporter.ExportCsv(data, dialog.FileName);
+
+            MessageBox.Show("CSV export completed successfully.", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Export error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }
