@@ -607,12 +607,12 @@ public sealed class ForestFireSimulation
         // ❌ kein Feuer auf Wasser oder Felsen
         //if (terrain.Type != TerrainType.Soil)
         //{
-        //    return 0.0;
+        //    return 0;
         //}
         //}
 
         var baseChance =
-        simulationConfig.FireConfig.SpreadChancePercent / 100.0;
+            simulationConfig.FireConfig.SpreadChancePercent / 100;
 
         var windEffect =
             windHelper.CalculateWindEffect(burningCell, neighbor);

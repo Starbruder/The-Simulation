@@ -22,7 +22,7 @@ public sealed partial class EvaluationWindow : Window
 
         var averageWindSpeed = data.History.Count > 0
             ? data.History.Average(h => h.WindSpeed)
-            : 0.0;
+            : 0;
 
         var windStrength = WindMapper.ConvertWindPercentStrenghToBeaufort(averageWindSpeed);
 
