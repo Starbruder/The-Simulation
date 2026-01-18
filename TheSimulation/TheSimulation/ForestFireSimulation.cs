@@ -48,7 +48,7 @@ public sealed class ForestFireSimulation
     private uint totalGrownTrees = 0;
     private uint totalBurnedTrees = 0;
 
-    private readonly Dictionary<Cell, Ellipse> treeElements = [];
+    private readonly Dictionary<Cell, Rectangle> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
     private readonly HashSet<Cell> growableCells = [];
 
@@ -352,7 +352,7 @@ public sealed class ForestFireSimulation
             var batch = allCells.GetRange(loaded, count);
             loaded += count;
 
-            // UI-Thread zum Hinzufügen der Ellipsen nutzen
+            // UI-Thread zum Hinzufügen der Rectanglen nutzen
             await ForestCanvas.Dispatcher.InvokeAsync(() =>
             {
                 foreach (var cell in batch)
@@ -510,7 +510,7 @@ public sealed class ForestFireSimulation
 
         var color = GetTreeColor(cell);
 
-        var tree = new Ellipse
+        var tree = new Rectangle
         {
             Width = simulationConfig.TreeConfig.Size,
             Height = simulationConfig.TreeConfig.Size,
@@ -687,7 +687,7 @@ public sealed class ForestFireSimulation
         UpdateTreeUI();
     }
 
-    private void UpdateGridForBurnedDownTree(Cell cell, Ellipse tree)
+    private void UpdateGridForBurnedDownTree(Cell cell, Rectangle tree)
     {
         if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
         {
@@ -794,7 +794,7 @@ public sealed class ForestFireSimulation
 
     private async Task ShowLightning(Cell cell)
     {
-        var lightningCell = new Ellipse
+        var lightningCell = new Rectangle
         {
             Width = simulationConfig.TreeConfig.Size,
             Height = simulationConfig.TreeConfig.Size,

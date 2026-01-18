@@ -77,7 +77,7 @@ public sealed class ParticleGenerator
     /// </param>
     public void SpawnParticle(Point position, Brush color, double size = 3, double lifetime = 1)
     {
-        var ellipse = new Ellipse
+        var particle = new Ellipse
         {
             Width = size,
             Height = size,
@@ -85,14 +85,14 @@ public sealed class ParticleGenerator
             Opacity = 1
         };
 
-        Canvas.SetLeft(ellipse, position.X);
-        Canvas.SetTop(ellipse, position.Y);
-        canvas.Children.Add(ellipse);
+        Canvas.SetLeft(particle, position.X);
+        Canvas.SetTop(particle, position.Y);
+        canvas.Children.Add(particle);
 
         // zufällige Bewegung
         var velocity = new Vector(randomHelper.NextDouble() * 2 - 1, -(randomHelper.NextDouble() * 2)); // nach oben
 
-        particles.Add(new(ellipse, velocity, lifetime));
+        particles.Add(new(particle, velocity, lifetime));
     }
 
     /// <summary>
