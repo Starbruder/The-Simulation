@@ -508,19 +508,17 @@ public sealed class ForestFireSimulation
     {
         forestGrid[cell.X, cell.Y] = ForestCellState.Tree;
 
+        var shapeType = simulationConfig.TreeConfig.TreeShape.GetType();
+        var tree = (Shape)Activator.CreateInstance(shapeType);
+
         var color = GetTreeColor(cell);
 
-        var shape = simulationConfig.TreeConfig.TreeShape;
+        tree.Width = simulationConfig.TreeConfig.Size;
+        tree.Height = simulationConfig.TreeConfig.Size;
+        tree.Fill = color;
+        tree.Tag = cell;
 
-		Type shapeType = simulationConfig.TreeConfig.TreeShape.GetType();
-		var tree = (Shape)Activator.CreateInstance(shapeType)!;
-
-		tree.Width = simulationConfig.TreeConfig.Size;
-		tree.Height = simulationConfig.TreeConfig.Size;
-		tree.Fill = color;
-		tree.Tag = cell;
-
-		Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
+        Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
         Canvas.SetTop(tree, cell.Y * simulationConfig.TreeConfig.Size);
         ForestCanvas.Children.Add(tree);
 

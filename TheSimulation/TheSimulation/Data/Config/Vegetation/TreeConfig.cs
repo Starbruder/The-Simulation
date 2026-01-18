@@ -1,4 +1,6 @@
-﻿namespace TheSimulation;
+﻿using System.Windows.Shapes;
+
+namespace TheSimulation;
 
 /// <summary>
 /// Represents configuration settings for a tree structure, including maximum count, forest density, and size
@@ -8,10 +10,12 @@
 /// <param name="ForestDensity">The density of the forest, expressed as a floating-point value. Higher values indicate a denser forest.</param>
 /// <param name="Size">The overall size of the tree structure, specified as a non-negative integer.</param>
 /// <param name="AllowRegrowForest">Indicates whether trees are allowed to regrow after being destroyed.</param>
+/// <param name="TreeShape">The geometric shape representing the tree structure how it should be displayed.</param>
 public sealed record TreeConfig
 (
     uint MaxCount,
     float ForestDensity,
     uint Size,
-    bool AllowRegrowForest
+    bool AllowRegrowForest,
+    Shape TreeShape
 );
