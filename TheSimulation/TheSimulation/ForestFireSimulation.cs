@@ -516,13 +516,7 @@ public sealed class ForestFireSimulation
     {
         forestGrid[cell.X, cell.Y] = ForestCellState.Tree;
 
-        var tree = CreateTreeShape();
-        var color = GetTreeColor(cell);
-
-        tree.Width = simulationConfig.TreeConfig.Size;
-        tree.Height = simulationConfig.TreeConfig.Size;
-        tree.Fill = color;
-        tree.Tag = cell;
+        var tree = CreateTreeShape(cell);
 
         Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
         Canvas.SetTop(tree, cell.Y * simulationConfig.TreeConfig.Size);
@@ -534,10 +528,29 @@ public sealed class ForestFireSimulation
         totalGrownTrees++;
     }
 
-    private Shape CreateTreeShape()
+    private Shape CreateTreeShape(Cell cell)
     {
-        var shapeType = simulationConfig.TreeConfig.TreeShape.GetType();
-        return (Shape)Activator.CreateInstance(shapeType);
+        var size = simulationConfig.TreeConfig.Size;
+        var color = GetTreeColor(cell);
+
+        return simulationConfig.TreeConfig.TreeShape switch
+        {
+            Ellipse => new Ellipse
+            {
+                Width = size,
+                Height = size,
+                Fill = color,
+                Tag = cell
+            },
+            Rectangle => new Rectangle
+            {
+                Width = size,
+                Height = size,
+                Fill = color,
+                Tag = cell
+            },
+            _ => throw new NotSupportedException("Unsupported tree shape")
+        };
     }
 
     private Brush GetTreeColor(Cell cell)
