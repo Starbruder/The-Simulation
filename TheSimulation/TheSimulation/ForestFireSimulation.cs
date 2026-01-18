@@ -52,8 +52,7 @@ public sealed class ForestFireSimulation
     private readonly HashSet<Cell> activeTrees = [];
     private readonly HashSet<Cell> growableCells = [];
 
-    private readonly List<(TimeSpan Time, uint Grown, uint Burned, double WindSpeed)> simulationHistory
-        = [];
+    private readonly List<SimulationSnapshot> simulationHistory = [];
 
     private readonly List<FireEvent> fireEvents = [];
 
@@ -253,10 +252,15 @@ public sealed class ForestFireSimulation
 
     private void RecordSimulationStats()
     {
-        var elapsed = CalculateSimulationTime();
+        var elapsedTime = CalculateSimulationTime();
         var currentWindSpeed = windHelper.CurrentWindStrength;
-        var historySnapshot =
-            (elapsed, totalGrownTrees, totalBurnedTrees, currentWindSpeed);
+        var historySnapshot = new SimulationSnapshot
+        (
+            elapsedTime,
+            totalGrownTrees,
+            totalBurnedTrees,
+            currentWindSpeed
+        );
         simulationHistory.Add(historySnapshot);
     }
 
