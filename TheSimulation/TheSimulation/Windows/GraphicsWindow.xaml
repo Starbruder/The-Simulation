@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:TheSimulation"
         mc:Ignorable="d"
         Title="Forest fire graphics settings"
-        Height="450" Width="750"
+        Height="520" Width="750"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
 
@@ -73,6 +73,10 @@
 		<GroupBox Header="Tree Effects" Grid.Row="2" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 			<StackPanel>
 				<CheckBox x:Name="BurnedTreeCheckBox" Content="Show Burned Trees" Margin="10"/>
+				<ComboBox x:Name="TreeShapeComboBox" Margin="10">
+					<ComboBoxItem Content="Ellipse"/>
+					<ComboBoxItem Content="Rectangle"/>
+				</ComboBox>
 			</StackPanel>
 		</GroupBox>
 

@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
 
 namespace TheSimulation;
 
@@ -9,7 +8,7 @@ namespace TheSimulation;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
-    private readonly GraphicsSettings settings = new();
+    private readonly GraphicsSettings graphicsSettings = new();
 
     public MainWindow()
     {
@@ -44,7 +43,7 @@ public sealed partial class MainWindow : Window
             ForestDensity: 0.6f,
             Size: 7,
             AllowRegrowForest: regrowForest,
-            TreeShape: new Ellipse()
+            TreeShape: graphicsSettings.TreeShape
         );
 
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
@@ -62,11 +61,11 @@ public sealed partial class MainWindow : Window
 
         var effectsConfig = new VisualEffectsConfig
         (
-            settings.ShowLightning,
-            settings.ShowBoltFlashes,
-            settings.ShowFireParticles,
-            settings.ShowSmokeParticles,
-            settings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
+            graphicsSettings.ShowLightning,
+            graphicsSettings.ShowBoltFlashes,
+            graphicsSettings.ShowFireParticles,
+            graphicsSettings.ShowSmokeParticles,
+            graphicsSettings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
         );
 
         var useTerrainGeneration = TerrainGenerationCheckBox.IsChecked ?? true;
@@ -202,7 +201,7 @@ public sealed partial class MainWindow : Window
 
     private void OpenGraphicsSettingsWindow(object sender, RoutedEventArgs e)
     {
-        var graphicsSettingsWindow = new GraphicsWindow(settings);
+        var graphicsSettingsWindow = new GraphicsWindow(graphicsSettings);
         graphicsSettingsWindow.ShowDialog();
     }
 
