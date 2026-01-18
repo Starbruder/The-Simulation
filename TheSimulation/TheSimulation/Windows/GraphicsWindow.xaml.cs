@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Shapes;
 
 namespace TheSimulation;
 
@@ -23,8 +24,8 @@ public sealed partial class GraphicsWindow : Window
         BurnedTreeCheckBox.IsChecked = settings.ShowBurnedDownTrees;
         TreeShapeComboBox.SelectedIndex = settings.TreeShape switch
         {
-            System.Windows.Shapes.Ellipse => 0,
-            System.Windows.Shapes.Rectangle => 1,
+            Ellipse => 0,
+            Rectangle => 1,
             _ => 0
         };
     }
@@ -45,9 +46,9 @@ public sealed partial class GraphicsWindow : Window
         settings.ShowBurnedDownTrees = showBurnedDownTrees;
         settings.TreeShape = selectedTreeShapeIndex switch
         {
-            0 => new System.Windows.Shapes.Ellipse(),
-            1 => new System.Windows.Shapes.Rectangle(),
-            _ => new System.Windows.Shapes.Ellipse()
+            0 => new Ellipse(),
+            1 => new Rectangle(),
+            _ => new Ellipse()
         };
 
         Close();
