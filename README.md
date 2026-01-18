@@ -53,6 +53,16 @@ The goal is to provide an intuitive and visual understanding of how environmenta
   - Wind strengh
   - Runtime
 
+### Evaluation & Export
+- Simulation history can now be **exported as CSV** for analysis.
+- Exported CSV includes the following columns:
+  - **TimeSeconds** → simulation time in seconds
+  - **TotalGrown** → total grown trees
+  - **TotalBurned** → total burned trees
+  - **ActiveTrees** → currently active trees (Grown – Burned)
+  - **WindSpeed** → wind speed in percent
+  - **WindBft** → wind strength according to the Beaufort scale
+
 ### UI & Visualization
 - Clear, minimalistic interface
 - Color-coded grid:
