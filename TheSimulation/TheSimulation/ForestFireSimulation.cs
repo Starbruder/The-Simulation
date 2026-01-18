@@ -497,11 +497,11 @@ public sealed class ForestFireSimulation
         // bergauf → Bonus
         if (delta > 0)
         {
-            return 1.0 + delta * 2.0;
+            return 1 + delta * 2;
         }
 
         // bergab → Malus
-        return 1.0 + delta; // delta ist negativ
+        return 1 + delta; // delta ist negativ
     }
 
     private void AddTree(Cell cell)
@@ -590,10 +590,8 @@ public sealed class ForestFireSimulation
             toBurnDown.Add(burningCell);
         }
 
-        // Zündung von Zellen
         SpreadFire(toIgnite);
 
-        // Brandzerstörung
         BurnDownTrees(toBurnDown);
 
         isFireActiveThenPause = isFireStepActive;
@@ -675,28 +673,30 @@ public sealed class ForestFireSimulation
 
     private void BurnDownTree(Cell cell)
     {
-        // Grid aktualisieren
         forestGrid[cell.X, cell.Y] = ForestCellState.Empty;
 
         if (treeElements.TryGetValue(cell, out var tree))
         {
             totalBurnedTrees++;
-
-            if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
-            {
-                tree.Fill = Brushes.Gray;
-            }
-            else
-            {
-                ForestCanvas.Children.Remove(tree);
-                treeElements.Remove(cell);
-            }
+            UpdateGridForBurnedDownTree(cell, tree);
         }
 
         activeTrees.Remove(cell);
         growableCells.Add(cell);
 
         UpdateTreeUI();
+    }
+
+    private void UpdateGridForBurnedDownTree(Cell cell, Ellipse tree)
+    {
+        if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
+        {
+            tree.Fill = Brushes.Gray;
+            return;
+        }
+
+        ForestCanvas.Children.Remove(tree);
+        treeElements.Remove(cell);
     }
 
     private IEnumerable<Cell> GetIgnitableNeighbors(Cell cell)
@@ -788,7 +788,6 @@ public sealed class ForestFireSimulation
         {
             return randomHelper.NextCell(activeTrees);
         }
-
 
         return randomHelper.NextCell(cols, rows);
     }
