@@ -2,6 +2,7 @@
 
 /// <summary>
 /// <see cref="SimulationSnapshot"/> ist ein <see langword="public"/> <see langword="record"/>, das einen bestimmten Zeitpunkt in der Simulation darstellt.
+/// Einen History-Eintrag mit Zeit, gewachsenen und verbrannten Bäumen, um die Charts darzustellen in der Auswertung.
 /// </summary>
 /// <param name="Time"></param>
 /// <param name="Grown"></param>
