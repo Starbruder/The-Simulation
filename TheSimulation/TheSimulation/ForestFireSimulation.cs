@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -12,6 +13,12 @@ namespace TheSimulation;
 public sealed class ForestFireSimulation
 {
     private Canvas ForestCanvas { get; }
+    private readonly VisualHost visualHost;
+    private readonly DrawingVisual forestVisual = new();
+
+    private readonly Brush treeBrush = Brushes.Green;
+    private readonly Brush burningBrush = Brushes.Red;
+    private readonly Brush burnedBrush = Brushes.Gray;
 
     private readonly SimulationConfig simulationConfig;
 
@@ -48,7 +55,7 @@ public sealed class ForestFireSimulation
     private uint totalGrownTrees = 0;
     private uint totalBurnedTrees = 0;
 
-    private readonly Dictionary<Cell, Rectangle> treeElements = [];
+    //private readonly Dictionary<Cell, Rectangle> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
     private readonly HashSet<Cell> growableCells = [];
 
@@ -65,6 +72,10 @@ public sealed class ForestFireSimulation
         // To get rid of the warning CS8618
         forestGrid = new ForestCellState[0, 0];
         terrainGrid = new TerrainCell[0, 0];
+
+        visualHost = new VisualHost();
+        ForestCanvas.Children.Add(visualHost);
+        visualHost.AddVisual(forestVisual);
 
         this.ForestCanvas = ForestCanvas;
 
@@ -124,12 +135,10 @@ public sealed class ForestFireSimulation
             return;
         }
 
-        var cell = new Cell(x, y);
-
         if (forestGrid[x, y] == ForestCellState.Tree)
         {
             forestGrid[x, y] = ForestCellState.Burning;
-            UpdateTreeColor(cell, Brushes.Red);
+            RedrawForest();
 
             fireEvents.Add(new FireEvent(
                 FireEventType.ManualIgnition,
@@ -186,13 +195,13 @@ public sealed class ForestFireSimulation
         ForestCanvas.Children.Add(screenFlash);
     }
 
-    private void CacheEnvironmentFactors()
-    {
-        cachedTemperatureEffect =
-            TemperatureHelper.CalculateTemperatureEffect(simulationConfig.EnvironmentConfig.AtmosphereConfig);
-        cachedHumidityEffect =
-            1 - simulationConfig.EnvironmentConfig.AtmosphereConfig.AirHumidityPercentage;
-    }
+    //private void CacheEnvironmentFactors()
+    //{
+    //    cachedTemperatureEffect =
+    //        TemperatureHelper.CalculateTemperatureEffect(simulationConfig.EnvironmentConfig.AtmosphereConfig);
+    //    cachedHumidityEffect =
+    //        1 - simulationConfig.EnvironmentConfig.AtmosphereConfig.AirHumidityPercentage;
+    //}
 
     private void InitializeSimulationTimer()
     {
@@ -287,47 +296,47 @@ public sealed class ForestFireSimulation
         evalWindow.Show();
     }
 
-    private void InitializeGrid()
-    {
-        cols = (int)(ForestCanvas.ActualWidth / simulationConfig.TreeConfig.Size);
-        rows = (int)(ForestCanvas.ActualHeight / simulationConfig.TreeConfig.Size);
+    //private void InitializeGrid()
+    //{
+    //    cols = (int)(ForestCanvas.ActualWidth / simulationConfig.TreeConfig.Size);
+    //    rows = (int)(ForestCanvas.ActualHeight / simulationConfig.TreeConfig.Size);
 
-        forestGrid = new ForestCellState[cols, rows];
+    //    forestGrid = new ForestCellState[cols, rows];
 
-        cachedMaxTreesPossible = CalculateMaxTreesPossible();
+    //    cachedMaxTreesPossible = CalculateMaxTreesPossible();
 
-        if (simulationConfig.TerrainConfig.UseTerrainGeneration)
-        {
-            terrainGrid = new TerrainCell[cols, rows];
-            GenerateTerrain();
-        }
+    //    if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+    //    {
+    //        terrainGrid = new TerrainCell[cols, rows];
+    //        GenerateTerrain();
+    //    }
 
-        InitializeGrowableCells();
-    }
+    //    InitializeGrowableCells();
+    //}
 
-    private void InitializeGrowableCells()
-    {
-        growableCells.Clear();
+    //private void InitializeGrowableCells()
+    //{
+    //    growableCells.Clear();
 
-        for (var x = 0; x < cols; x++)
-        {
-            for (var y = 0; y < rows; y++)
-            {
-                if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
-                {
-                    growableCells.Add(new(x, y));
-                    continue;
-                }
+    //    for (var x = 0; x < cols; x++)
+    //    {
+    //        for (var y = 0; y < rows; y++)
+    //        {
+    //            if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
+    //            {
+    //                growableCells.Add(new(x, y));
+    //                continue;
+    //            }
 
-                var terrain = terrainGrid[x, y];
+    //            var terrain = terrainGrid[x, y];
 
-                if (terrain.Type == TerrainType.Soil)
-                {
-                    growableCells.Add(new(x, y));
-                }
-            }
-        }
-    }
+    //            if (terrain.Type == TerrainType.Soil)
+    //            {
+    //                growableCells.Add(new(x, y));
+    //            }
+    //        }
+    //    }
+    //}
 
     private async Task PrefillForest()
     {
@@ -439,53 +448,53 @@ public sealed class ForestFireSimulation
         windVisualizer?.Draw();
     }
 
-    private void GrowStep()
-    {
-        // Wenn irgendwo Feuer brennt → überspringen
-        if (simulationConfig.FireConfig.PauseDuringFire && isFireActiveThenPause)
-        {
-            return;
-        }
+    //private void GrowStep()
+    //{
+    //    // Wenn irgendwo Feuer brennt → überspringen
+    //    if (simulationConfig.FireConfig.PauseDuringFire && isFireActiveThenPause)
+    //    {
+    //        return;
+    //    }
 
-        // Zielanzahl anhand der Dichte oder Maximalanzahl
-        var targetTrees = (int)(cols * rows * simulationConfig.TreeConfig.ForestDensity);
+    //    // Zielanzahl anhand der Dichte oder Maximalanzahl
+    //    var targetTrees = (int)(cols * rows * simulationConfig.TreeConfig.ForestDensity);
 
-        if (activeTrees.Count >= targetTrees ||
-            activeTrees.Count >= simulationConfig.TreeConfig.MaxCount)
-        {
-            return;
-        }
+    //    if (activeTrees.Count >= targetTrees ||
+    //        activeTrees.Count >= simulationConfig.TreeConfig.MaxCount)
+    //    {
+    //        return;
+    //    }
 
-        var cell = randomHelper.NextCell(growableCells);
-        growableCells.Remove(cell);
+    //    var cell = randomHelper.NextCell(growableCells);
+    //    growableCells.Remove(cell);
 
-        if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
-        {
-            AddTree(cell);
-            return;
-        }
+    //    if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
+    //    {
+    //        AddTree(cell);
+    //        return;
+    //    }
 
-        // 🌍 TOPOGRAPHIE-LOGIK
-        var terrain = terrainGrid[cell.X, cell.Y];
+    //    // 🌍 TOPOGRAPHIE-LOGIK
+    //    var terrain = terrainGrid[cell.X, cell.Y];
 
-        // ❌ kein Baum auf Wasser oder Felsen (needs to be uncommented later when impl.)
-        //if (terrain.Type != TerrainType.Soil)
-        //{
-        //    return;
-        //}
+    //    // ❌ kein Baum auf Wasser oder Felsen (needs to be uncommented later when impl.)
+    //    //if (terrain.Type != TerrainType.Soil)
+    //    //{
+    //    //    return;
+    //    //}
 
-        // ⛰️ Höhenabhängige Wachstumswahrscheinlichkeit
-        // je höher, desto unwahrscheinlicher
-        var heightPenalty = terrain.Elevation; // 0.0 – 1.0
-        const double HeightPenaltyFactor = 0.7;
-        if (randomHelper.NextDouble() < heightPenalty * HeightPenaltyFactor)
-        {
-            return;
-        }
+    //    // ⛰️ Höhenabhängige Wachstumswahrscheinlichkeit
+    //    // je höher, desto unwahrscheinlicher
+    //    var heightPenalty = terrain.Elevation; // 0.0 – 1.0
+    //    const double HeightPenaltyFactor = 0.7;
+    //    if (randomHelper.NextDouble() < heightPenalty * HeightPenaltyFactor)
+    //    {
+    //        return;
+    //    }
 
-        // Baum wächst
-        AddTree(cell);
-    }
+    //    // Baum wächst
+    //    AddTree(cell);
+    //}
 
     private double CalculateSlopeEffect(Cell from, Cell to)
     {
@@ -510,20 +519,21 @@ public sealed class ForestFireSimulation
 
         var color = GetTreeColor(cell);
 
-        var tree = new Rectangle
-        {
-            Width = simulationConfig.TreeConfig.Size,
-            Height = simulationConfig.TreeConfig.Size,
-            Fill = color,
-            Tag = cell
-        };
+        //var tree = new Rectangle
+        //{
+        //    Width = simulationConfig.TreeConfig.Size,
+        //    Height = simulationConfig.TreeConfig.Size,
+        //    Fill = color,
+        //    Tag = cell
+        //};
 
-        Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
-        Canvas.SetTop(tree, cell.Y * simulationConfig.TreeConfig.Size);
-        ForestCanvas.Children.Add(tree);
+        //Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
+        //Canvas.SetTop(tree, cell.Y * simulationConfig.TreeConfig.Size);
+        //ForestCanvas.Children.Add(tree);
 
-        treeElements[cell] = tree;
+        //treeElements[cell] = tree;
         activeTrees.Add(cell);
+        growableCells.Remove(cell);
 
         totalGrownTrees++;
         UpdateTreeUI();
@@ -544,58 +554,58 @@ public sealed class ForestFireSimulation
         return color;
     }
 
-    private void FireStep()
-    {
-        windHelper.RandomizeAndUpdateWind();
+    //private void FireStep()
+    //{
+    //    windHelper.RandomizeAndUpdateWind();
 
-        var toIgnite = new HashSet<Cell>();
-        var toBurnDown = new List<Cell>();
+    //    var toIgnite = new HashSet<Cell>();
+    //    var toBurnDown = new List<Cell>();
 
-        var isFireStepActive = false;
+    //    var isFireStepActive = false;
 
-        // Berechnung Wind-Effekt und Verbreitungschancen für alle Zellen im Brandzustand
-        var fireSpreadChances = new Dictionary<Cell, double>();
+    //    // Berechnung Wind-Effekt und Verbreitungschancen für alle Zellen im Brandzustand
+    //    var fireSpreadChances = new Dictionary<Cell, double>();
 
-        foreach (var burningCell in treeElements.Keys)
-        {
-            if (forestGrid[burningCell.X, burningCell.Y] != ForestCellState.Burning)
-            {
-                continue;
-            }
+    //    foreach (var burningCell in treeElements.Keys)
+    //    {
+    //        if (forestGrid[burningCell.X, burningCell.Y] != ForestCellState.Burning)
+    //        {
+    //            continue;
+    //        }
 
-            isFireStepActive = true;
+    //        isFireStepActive = true;
 
-            var neighbors = GetIgnitableNeighbors(burningCell);
+    //        var neighbors = GetIgnitableNeighbors(burningCell);
 
-            foreach (var neighbor in neighbors)
-            {
-                if (forestGrid[neighbor.X, neighbor.Y] != ForestCellState.Tree)
-                {
-                    continue;
-                }
+    //        foreach (var neighbor in neighbors)
+    //        {
+    //            if (forestGrid[neighbor.X, neighbor.Y] != ForestCellState.Tree)
+    //            {
+    //                continue;
+    //            }
 
-                // Wenn die Chance noch nicht berechnet wurde, berechne sie jetzt
-                if (!fireSpreadChances.TryGetValue(neighbor, out var value))
-                {
-                    value = CalculateFireSpreadChance(burningCell, neighbor);
-                    fireSpreadChances[neighbor] = value;
-                }
+    //            // Wenn die Chance noch nicht berechnet wurde, berechne sie jetzt
+    //            if (!fireSpreadChances.TryGetValue(neighbor, out var value))
+    //            {
+    //                value = CalculateFireSpreadChance(burningCell, neighbor);
+    //                fireSpreadChances[neighbor] = value;
+    //            }
 
-                if (randomHelper.NextDouble() < value)
-                {
-                    toIgnite.Add(neighbor);
-                }
-            }
+    //            if (randomHelper.NextDouble() < value)
+    //            {
+    //                toIgnite.Add(neighbor);
+    //            }
+    //        }
 
-            toBurnDown.Add(burningCell);
-        }
+    //        toBurnDown.Add(burningCell);
+    //    }
 
-        SpreadFire(toIgnite);
+    //    SpreadFire(toIgnite);
 
-        BurnDownTrees(toBurnDown);
+    //    BurnDownTrees(toBurnDown);
 
-        isFireActiveThenPause = isFireStepActive;
-    }
+    //    isFireActiveThenPause = isFireStepActive;
+    //}
 
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
     {
@@ -642,7 +652,7 @@ public sealed class ForestFireSimulation
         foreach (var burningCell in toIgnite)
         {
             forestGrid[burningCell.X, burningCell.Y] = ForestCellState.Burning;
-            UpdateTreeColor(burningCell, Brushes.Red);
+            //UpdateTreeColor(burningCell, Brushes.Red);
 
             SpawnFireEffect(burningCell);
         }
@@ -671,33 +681,33 @@ public sealed class ForestFireSimulation
         }
     }
 
-    private void BurnDownTree(Cell cell)
-    {
-        forestGrid[cell.X, cell.Y] = ForestCellState.Empty;
+    //private void BurnDownTree(Cell cell)
+    //{
+    //    forestGrid[cell.X, cell.Y] = ForestCellState.Empty;
 
-        if (treeElements.TryGetValue(cell, out var tree))
-        {
-            totalBurnedTrees++;
-            UpdateGridForBurnedDownTree(cell, tree);
-        }
+    //    if (treeElements.TryGetValue(cell, out var tree))
+    //    {
+    //        totalBurnedTrees++;
+    //        //UpdateGridForBurnedDownTree(cell, tree);
+    //    }
 
-        activeTrees.Remove(cell);
-        growableCells.Add(cell);
+    //    activeTrees.Remove(cell);
+    //    growableCells.Add(cell);
 
-        UpdateTreeUI();
-    }
+    //    UpdateTreeUI();
+    //}
 
-    private void UpdateGridForBurnedDownTree(Cell cell, Rectangle tree)
-    {
-        if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
-        {
-            tree.Fill = Brushes.Gray;
-            return;
-        }
+    //private void UpdateGridForBurnedDownTree(Cell cell, Rectangle tree)
+    //{
+    //    if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
+    //    {
+    //        tree.Fill = Brushes.Gray;
+    //        return;
+    //    }
 
-        ForestCanvas.Children.Remove(tree);
-        treeElements.Remove(cell);
-    }
+    //    ForestCanvas.Children.Remove(tree);
+    //    treeElements.Remove(cell);
+    //}
 
     private IEnumerable<Cell> GetIgnitableNeighbors(Cell cell)
     {
@@ -721,13 +731,13 @@ public sealed class ForestFireSimulation
         }
     }
 
-    private void UpdateTreeColor(Cell cell, Brush color)
-    {
-        if (treeElements.TryGetValue(cell, out var tree))
-        {
-            tree.Fill = color;
-        }
-    }
+    //private void UpdateTreeColor(Cell cell, Brush color)
+    //{
+    //    if (treeElements.TryGetValue(cell, out var tree))
+    //    {
+    //        tree.Fill = color;
+    //    }
+    //}
 
     private void GenerateTerrain()
     {
@@ -759,28 +769,28 @@ public sealed class ForestFireSimulation
         }
     }
 
-    private async Task IgniteRandomCell()
-    {
-        var minChanceToHitTree = CalculateCurrentTreeDensityPercent() / 100;
+    //private async Task IgniteRandomCell()
+    //{
+    //    var minChanceToHitTree = CalculateCurrentTreeDensityPercent() / 100;
 
-        var cell = GetCellByChance(minChanceToHitTree);
+    //    var cell = GetCellByChance(minChanceToHitTree);
 
-        if (simulationConfig.VisualEffectsConfig.ShowLightning)
-        {
-            await ShowLightning(cell);
+    //    if (simulationConfig.VisualEffectsConfig.ShowLightning)
+    //    {
+    //        await ShowLightning(cell);
 
-            fireEvents.Add(new(
-                FireEventType.Lightning,
-                accumulatedSimulationTime
-            ));
-        }
+    //        fireEvents.Add(new(
+    //            FireEventType.Lightning,
+    //            accumulatedSimulationTime
+    //        ));
+    //    }
 
-        if (forestGrid[cell.X, cell.Y] == ForestCellState.Tree)
-        {
-            forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
-            UpdateTreeColor(cell, Brushes.Red);
-        }
-    }
+    //    if (forestGrid[cell.X, cell.Y] == ForestCellState.Tree)
+    //    {
+    //        forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
+    //        UpdateTreeColor(cell, Brushes.Red);
+    //    }
+    //}
 
     private Cell GetCellByChance(double minChanceToHitTree)
     {
@@ -865,15 +875,15 @@ public sealed class ForestFireSimulation
     private int CalculateMaxTreesPossible()
         => Math.Max(1, (int)(cols * rows * simulationConfig.TreeConfig.ForestDensity));
 
-    private void UpdateTreeUI()
-    {
-        UpdateTreeDensityText?.Invoke(
-            $"{activeTrees.Count} / {cachedMaxTreesPossible} ({CalculateCurrentTreeDensityPercent():F0}%)"
-        );
+    //private void UpdateTreeUI()
+    //{
+    //    UpdateTreeDensityText?.Invoke(
+    //        $"{activeTrees.Count} / {cachedMaxTreesPossible} ({CalculateCurrentTreeDensityPercent():F0}%)"
+    //    );
 
-        UpdateTotalGrownTreesText?.Invoke(totalGrownTrees.ToString());
-        UpdateTotalBurnedTreesText?.Invoke(totalBurnedTrees.ToString());
-    }
+    //    UpdateTotalGrownTreesText?.Invoke(totalGrownTrees.ToString());
+    //    UpdateTotalBurnedTreesText?.Invoke(totalBurnedTrees.ToString());
+    //}
 
     private void UpdateWindUI()
     {
@@ -885,5 +895,234 @@ public sealed class ForestFireSimulation
         UpdateWindStrengthText?.Invoke(
             $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)"
         );
+    }
+
+    // ─────────────────────────────────────────────
+    // INITIALIZATION
+    // ─────────────────────────────────────────────
+
+    private void InitializeSimulation()
+    {
+        CacheEnvironmentFactors();
+        InitializeGrid();
+        InitializeTimers();
+        RedrawForest();
+        StartSimulation();
+    }
+
+    private void CacheEnvironmentFactors()
+    {
+        cachedTemperatureEffect =
+            TemperatureHelper.CalculateTemperatureEffect(
+                simulationConfig.EnvironmentConfig.AtmosphereConfig);
+
+        cachedHumidityEffect =
+            1 - simulationConfig.EnvironmentConfig.AtmosphereConfig.AirHumidityPercentage;
+    }
+
+    private void InitializeGrid()
+    {
+        cols = (int)(ForestCanvas.ActualWidth / simulationConfig.TreeConfig.Size);
+        rows = (int)(ForestCanvas.ActualHeight / simulationConfig.TreeConfig.Size);
+
+        forestGrid = new ForestCellState[cols, rows];
+        terrainGrid = new TerrainCell[cols, rows];
+
+        cachedMaxTreesPossible = cols * rows;
+
+        InitializeGrowableCells();
+    }
+
+    private void InitializeGrowableCells()
+    {
+        growableCells.Clear();
+
+        for (int x = 0; x < cols; x++)
+            for (int y = 0; y < rows; y++)
+                growableCells.Add(new Cell(x, y));
+    }
+
+    private void InitializeTimers()
+    {
+        simulationTimer.Interval = TimeSpan.FromSeconds(1);
+        simulationTimer.Tick += (_, _) =>
+        {
+            accumulatedSimulationTime += simulationTimer.Interval;
+            UpdateSimulationTimeText?.Invoke(
+                $"Runtime: {accumulatedSimulationTime:hh\\:mm\\:ss}");
+        };
+
+        treeGrowthTimer.Interval = TimeSpan.FromMilliseconds(300);
+        treeGrowthTimer.Tick += (_, _) => GrowStep();
+
+        igniteTimer.Interval = TimeSpan.FromSeconds(3);
+        igniteTimer.Tick += async (_, _) => await IgniteRandomCell();
+
+        fireTimer.Interval = TimeSpan.FromMilliseconds(300);
+        fireTimer.Tick += (_, _) => FireStep();
+    }
+
+    private void StartSimulation()
+    {
+        simulationTimer.Start();
+        treeGrowthTimer.Start();
+        igniteTimer.Start();
+        fireTimer.Start();
+
+        windVisualizer.Draw();
+    }
+
+    // ─────────────────────────────────────────────
+    // RENDERING
+    // ─────────────────────────────────────────────
+
+    private void RedrawForest()
+    {
+        using var dc = forestVisual.RenderOpen();
+        double size = simulationConfig.TreeConfig.Size;
+        double radius = size / 2.0;
+
+        for (int x = 0; x < cols; x++)
+        {
+            for (int y = 0; y < rows; y++)
+            {
+                Brush brush = null;
+
+                switch (forestGrid[x, y])
+                {
+                    case ForestCellState.Tree:
+                        brush = Brushes.Green;
+                        break;
+                    case ForestCellState.Burning:
+                        brush = Brushes.Red;
+                        break;
+                    case ForestCellState.Empty:
+                        continue; // nichts zeichnen
+                }
+
+                // Mittelpunkt der Ellipse
+                var center = new Point(x * size + radius, y * size + radius);
+
+                dc.DrawEllipse(brush, null, center, radius, radius);
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    // SIMULATION LOGIC
+    // ─────────────────────────────────────────────
+
+    private void GrowStep()
+    {
+        if (activeTrees.Count >= simulationConfig.TreeConfig.MaxCount)
+            return;
+
+        if (!growableCells.Any())
+            return;
+
+        var cell = randomHelper.NextCell(growableCells);
+        growableCells.Remove(cell);
+
+        forestGrid[cell.X, cell.Y] = ForestCellState.Tree;
+        activeTrees.Add(cell);
+
+        totalGrownTrees++;
+        UpdateTreeUI();
+        RedrawForest();
+    }
+
+    private void FireStep()
+    {
+        var toIgnite = new HashSet<Cell>();
+        var toBurnDown = new List<Cell>();
+
+        foreach (var cell in activeTrees)
+        {
+            if (forestGrid[cell.X, cell.Y] != ForestCellState.Burning)
+                continue;
+
+            foreach (var n in GetNeighbors(cell))
+            {
+                if (forestGrid[n.X, n.Y] == ForestCellState.Tree &&
+                    randomHelper.NextDouble() < simulationConfig.FireConfig.SpreadChancePercent / 100)
+                {
+                    toIgnite.Add(n);
+                }
+            }
+
+            toBurnDown.Add(cell);
+        }
+
+        foreach (var c in toIgnite)
+            forestGrid[c.X, c.Y] = ForestCellState.Burning;
+
+        foreach (var c in toBurnDown)
+        {
+            forestGrid[c.X, c.Y] = ForestCellState.Empty;
+            activeTrees.Remove(c);
+            growableCells.Add(c);
+            totalBurnedTrees++;
+        }
+
+        if (toIgnite.Count > 0 || toBurnDown.Count > 0)
+            RedrawForest();
+
+        UpdateTreeUI();
+    }
+
+    private async Task IgniteRandomCell()
+    {
+        if (!activeTrees.Any())
+            return;
+
+        var cell = randomHelper.NextCell(activeTrees);
+        forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
+        RedrawForest();
+
+        await Task.CompletedTask;
+    }
+
+    private IEnumerable<Cell> GetNeighbors(Cell cell)
+    {
+        for (int dx = -1; dx <= 1; dx++)
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                if (dx == 0 && dy == 0)
+                    continue;
+
+                int nx = cell.X + dx;
+                int ny = cell.Y + dy;
+
+                if (nx >= 0 && ny >= 0 && nx < cols && ny < rows)
+                    yield return new Cell(nx, ny);
+            }
+    }
+
+    private void UpdateTreeUI()
+    {
+        UpdateTreeDensityText?.Invoke(
+            $"{activeTrees.Count} / {cachedMaxTreesPossible}");
+
+        UpdateTotalGrownTreesText?.Invoke(totalGrownTrees.ToString());
+        UpdateTotalBurnedTreesText?.Invoke(totalBurnedTrees.ToString());
+    }
+
+    private void BurnDownTree(Cell cell)
+    {
+        // Status ändern
+        forestGrid[cell.X, cell.Y] = ForestCellState.Empty;
+
+        // Statistik aktualisieren
+        totalBurnedTrees++;
+
+        // Baum aus aktiven Listen entfernen / wieder wachstumsfähig machen
+        activeTrees.Remove(cell);
+        growableCells.Add(cell);
+
+        // UI aktualisieren (z.B. Zähler)
+        UpdateTreeUI();
+
+        // Das komplette Raster neu zeichnen
+        RedrawForest();
     }
 }
