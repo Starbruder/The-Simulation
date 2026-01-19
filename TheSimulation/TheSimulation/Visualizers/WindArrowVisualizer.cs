@@ -219,7 +219,7 @@ public sealed class WindArrowVisualizer
             canvas.Children.Add(element);
         }
 
-        Canvas.SetZIndex(element, OverlayZIndex);
+        Panel.SetZIndex(element, OverlayZIndex);
     }
 
     /// <summary>
