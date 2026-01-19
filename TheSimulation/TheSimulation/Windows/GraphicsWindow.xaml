@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:TheSimulation"
         mc:Ignorable="d"
         Title="Forest fire graphics settings"
-        Height="520" Width="750"
+        Height="620" Width="750"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
 
@@ -50,6 +50,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
@@ -61,8 +62,15 @@
 			</StackPanel>
 		</GroupBox>
 
+		<!-- Fire -->
+		<GroupBox Header="Fire" Grid.Row="1" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Red">
+			<StackPanel>
+				<CheckBox Margin="10" x:Name="FlameAnimationsCheckBox" Content="Show flame animations"/>
+			</StackPanel>
+		</GroupBox>
+
 		<!-- Partikeleffekte GroupBox -->
-		<GroupBox Header="Particle Effects" Grid.Row="1" Style="{StaticResource CustomGroupBoxStyle}">
+		<GroupBox Header="Particle Effects" Grid.Row="2" Style="{StaticResource CustomGroupBoxStyle}">
 			<StackPanel>
 				<CheckBox x:Name="FireSparksCheckBox" Content="Show Sparks" Margin="10"/>
 				<CheckBox x:Name="SmokeCheckBox" Content="Show Smoke" Margin="10"/>
@@ -70,7 +78,7 @@
 		</GroupBox>
 
 		<!-- Baumeffekte GroupBox -->
-		<GroupBox Header="Tree Effects" Grid.Row="2" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
+		<GroupBox Header="Tree Effects" Grid.Row="3" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 			<StackPanel>
 				<CheckBox x:Name="BurnedTreeCheckBox" Content="Show Burned Trees" Margin="10"/>
 				<ComboBox x:Name="TreeShapeComboBox" Margin="10">
@@ -81,7 +89,7 @@
 		</GroupBox>
 
 		<!-- Apply Button -->
-		<Button Grid.Row="3" Style="{StaticResource CustomButtonStyle}" Click="ApplyGraphicsSettings">
+		<Button Grid.Row="4" Style="{StaticResource CustomButtonStyle}" Click="ApplyGraphicsSettings">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
 					<fa:ImageAwesome Icon="Check" Width="15" Height="15" Margin="0,0,5,0"/>

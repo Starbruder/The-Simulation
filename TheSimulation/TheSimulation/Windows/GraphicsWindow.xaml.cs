@@ -21,6 +21,7 @@ public sealed partial class GraphicsWindow : Window
         BoltFlashCheckBox.IsChecked = settings.ShowBoltFlashes;
         FireSparksCheckBox.IsChecked = settings.ShowFireParticles;
         SmokeCheckBox.IsChecked = settings.ShowSmokeParticles;
+        FlameAnimationsCheckBox.IsChecked = settings.ShowFlamesOnTrees;
         BurnedTreeCheckBox.IsChecked = settings.ShowBurnedDownTrees;
         TreeShapeComboBox.SelectedIndex = settings.TreeShape switch
         {
@@ -36,6 +37,7 @@ public sealed partial class GraphicsWindow : Window
         var boltFlashesEnabled = BoltFlashCheckBox.IsChecked ?? false;
         var fireSparksEnabled = FireSparksCheckBox.IsChecked ?? true;
         var smokeEnabled = SmokeCheckBox.IsChecked ?? true;
+        var flameAnimationsEnabled = FlameAnimationsCheckBox.IsChecked ?? true;
         var showBurnedDownTrees = BurnedTreeCheckBox.IsChecked ?? false;
         var selectedTreeShapeIndex = TreeShapeComboBox.SelectedIndex;
 
@@ -43,6 +45,7 @@ public sealed partial class GraphicsWindow : Window
         settings.ShowBoltFlashes = boltFlashesEnabled;
         settings.ShowFireParticles = fireSparksEnabled;
         settings.ShowSmokeParticles = smokeEnabled;
+        settings.ShowFlamesOnTrees = flameAnimationsEnabled;
         settings.ShowBurnedDownTrees = showBurnedDownTrees;
         settings.TreeShape = selectedTreeShapeIndex switch
         {
