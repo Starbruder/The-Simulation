@@ -13,4 +13,14 @@ public static class Colors
             Brushes.ForestGreen  // Tanne
         ];
     }
+
+    public static Brush[] FireColors
+    {
+        get => [
+            Brushes.OrangeRed,
+            Brushes.DarkOrange,
+            Brushes.Red,
+            Brushes.Firebrick
+        ];
+    }
 }

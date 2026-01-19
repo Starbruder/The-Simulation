@@ -21,14 +21,6 @@ public sealed class ParticleGenerator
     private readonly DispatcherTimer updateTimer;
     private readonly RandomHelper randomHelper = new();
 
-    public static readonly Brush[] FireColors =
-    [
-        Brushes.OrangeRed,
-        Brushes.DarkOrange,
-        Brushes.Red,
-        Brushes.Firebrick
-    ];
-
     /// <summary>
     /// Initializes a new instance of the ParticleGenerator class that renders animated particles on the specified canvas at a given update interval.
     /// </summary>
@@ -112,7 +104,7 @@ public sealed class ParticleGenerator
         cell.X * simulationConfig.TreeConfig.Size,
         cell.Y * simulationConfig.TreeConfig.Size);
 
-        var fireColors = FireColors;
+        var fireColors = Colors.FireColors;
         var color = fireColors[randomHelper.NextInt(0, fireColors.Length)];
 
         SpawnParticle(
