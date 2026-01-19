@@ -51,6 +51,7 @@ public sealed class ForestFireSimulation
     private readonly Dictionary<Cell, Shape> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
     private readonly HashSet<Cell> growableCells = [];
+    private readonly HashSet<Cell> burningTrees = [];
 
     private readonly List<SimulationSnapshot> simulationHistory = [];
 
@@ -126,16 +127,25 @@ public sealed class ForestFireSimulation
 
         var cell = new Cell(x, y);
 
-        if (forestGrid[x, y] == ForestCellState.Tree)
-        {
-            forestGrid[x, y] = ForestCellState.Burning;
-            UpdateTreeColor(cell, Brushes.Red);
+        IgniteTree(cell);
+        fireEvents.Add(new FireEvent(
+            FireEventType.ManualIgnition,
+            accumulatedSimulationTime
+        ));
+    }
 
-            fireEvents.Add(new FireEvent(
-                FireEventType.ManualIgnition,
-                accumulatedSimulationTime
-            ));
+    private void IgniteTree(Cell cell)
+    {
+        if (forestGrid[cell.X, cell.Y] != ForestCellState.Tree)
+        {
+            return;
         }
+
+        forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
+        burningTrees.Add(cell);
+        UpdateTreeColor(cell, Brushes.Red);
+
+        SpawnFireEffect(cell);
     }
 
     private async Task InitializeSimulationAsync()
@@ -570,42 +580,28 @@ public sealed class ForestFireSimulation
 
     private void FireStep()
     {
+        if (burningTrees.Count == 0)
+        {
+            isFireActiveThenPause = false;
+            return;
+        }
+
         windHelper.RandomizeAndUpdateWind();
 
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
 
-        var isFireStepActive = false;
-
-        // Berechnung Wind-Effekt und Verbreitungschancen für alle Zellen im Brandzustand
-        var fireSpreadChances = new Dictionary<Cell, double>();
-
-        foreach (var burningCell in treeElements.Keys)
+        foreach (var burningCell in burningTrees)
         {
-            if (forestGrid[burningCell.X, burningCell.Y] != ForestCellState.Burning)
-            {
-                continue;
-            }
-
-            isFireStepActive = true;
-
-            var neighbors = GetIgnitableNeighbors(burningCell);
-
-            foreach (var neighbor in neighbors)
+            foreach (var neighbor in GetIgnitableNeighbors(burningCell))
             {
                 if (forestGrid[neighbor.X, neighbor.Y] != ForestCellState.Tree)
                 {
                     continue;
                 }
 
-                // Wenn die Chance noch nicht berechnet wurde, berechne sie jetzt
-                if (!fireSpreadChances.TryGetValue(neighbor, out var value))
-                {
-                    value = CalculateFireSpreadChance(burningCell, neighbor);
-                    fireSpreadChances[neighbor] = value;
-                }
-
-                if (randomHelper.NextDouble() < value)
+                var chance = CalculateFireSpreadChance(burningCell, neighbor);
+                if (randomHelper.NextDouble() < chance)
                 {
                     toIgnite.Add(neighbor);
                 }
@@ -615,10 +611,9 @@ public sealed class ForestFireSimulation
         }
 
         SpreadFire(toIgnite);
-
         BurnDownTrees(toBurnDown);
 
-        isFireActiveThenPause = isFireStepActive;
+        isFireActiveThenPause = burningTrees.Count > 0;
     }
 
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
@@ -665,10 +660,7 @@ public sealed class ForestFireSimulation
     {
         foreach (var burningCell in toIgnite)
         {
-            forestGrid[burningCell.X, burningCell.Y] = ForestCellState.Burning;
-            UpdateTreeColor(burningCell, Brushes.Red);
-
-            SpawnFireEffect(burningCell);
+            IgniteTree(burningCell);
         }
     }
 
@@ -698,6 +690,7 @@ public sealed class ForestFireSimulation
     private void BurnDownTree(Cell cell)
     {
         forestGrid[cell.X, cell.Y] = ForestCellState.Empty;
+        burningTrees.Remove(cell);
 
         if (treeElements.TryGetValue(cell, out var tree))
         {
@@ -799,11 +792,7 @@ public sealed class ForestFireSimulation
             ));
         }
 
-        if (forestGrid[cell.X, cell.Y] == ForestCellState.Tree)
-        {
-            forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
-            UpdateTreeColor(cell, Brushes.Red);
-        }
+        IgniteTree(cell);
     }
 
     private Cell GetCellByChance(double minChanceToHitTree)
