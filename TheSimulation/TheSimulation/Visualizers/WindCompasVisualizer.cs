@@ -17,7 +17,8 @@ namespace TheSimulation;
 /// </remarks>
 public sealed class WindCompasVisualizer
 {
-    private readonly Canvas canvas;
+	// --- Hauptpfeil für Windrichtung ---
+	private readonly Canvas canvas;
     private readonly WindConfig config;
     private readonly WindHelper windHelper;
 
@@ -42,7 +43,7 @@ public sealed class WindCompasVisualizer
     private TextBlock southText;
     private TextBlock westText;
 
-    private const double CompassMargin = 20;  // Abstand vom Canvas-Rand
+    private const double CompassMargin = 20;
     private const double CompassRadius = 50;
     private const double LabelInset = 10;     // Abstand Himmelsrichtungen zum Kreisrand
 
@@ -89,9 +90,13 @@ public sealed class WindCompasVisualizer
 
         // --- neuen Kompass hinzufügen ---
         if (canvas.IsLoaded)
+        {
             CreateCompass();
+        }
         else
+        {
             canvas.Loaded += (s, e) => CreateCompass();
+        }
 
         // Optional: bei Größenänderung Canvas neu zeichnen
         canvas.SizeChanged += (s, e) => CreateCompass();
@@ -141,7 +146,9 @@ public sealed class WindCompasVisualizer
         var windVector = GetWindVector();
 
         if (windVector.Length == 0)
+        {
             return;
+        }
 
         windVector.Normalize();
         var length = 10 + BaseLength * windHelper.CurrentWindStrength;
@@ -154,9 +161,8 @@ public sealed class WindCompasVisualizer
         // roter Pfeil (entgegengesetzt)
         var oppEndX = centerX - windVector.X * length;
         var oppEndY = centerY - windVector.Y * length;
-        DrawArrow(centerX, centerY, oppEndX, oppEndY, arrowOpposite, arrowHeadOpposite, arrowHeadPointsOpposite, new Vector(-windVector.X, -windVector.Y));
+        DrawArrow(centerX, centerY, oppEndX, oppEndY, arrowOpposite, arrowHeadOpposite, arrowHeadPointsOpposite, new(-windVector.X, -windVector.Y));
     }
-
 
     /// <summary>
     /// Draws an arrow from the specified starting coordinates to the specified ending coordinates.
@@ -165,7 +171,7 @@ public sealed class WindCompasVisualizer
     /// <param name="startY">The Y-coordinate of the starting point of the arrow.</param>
     /// <param name="endX">The X-coordinate of the ending point of the arrow.</param>
     /// <param name="endY">The Y-coordinate of the ending point of the arrow.</param>
-    private void DrawArrow(double startX, double startY, double endX, double endY,
+    private static void DrawArrow(double startX, double startY, double endX, double endY,
                        Line line, Polygon head, PointCollection headPoints, Vector direction)
     {
         line.X1 = startX;
@@ -177,9 +183,10 @@ public sealed class WindCompasVisualizer
 
         headPoints.Clear();
         foreach (var p in points)
+        {
             headPoints.Add(p);
+        }
     }
-
 
     /// <summary>
     /// Calculates and updates the points that define the arrowhead at the specified end position and direction.
@@ -244,8 +251,8 @@ public sealed class WindCompasVisualizer
     /// </returns>
     private (double x, double y) GetCompassCenter()
     {
-        double centerX = canvas.ActualWidth - CompassRadius - CompassMargin;
-        double centerY = CompassRadius + CompassMargin;
+        var centerX = canvas.ActualWidth - CompassRadius - CompassMargin;
+        var centerY = CompassRadius + CompassMargin;
         return (centerX, centerY);
     }
 
@@ -304,8 +311,7 @@ public sealed class WindCompasVisualizer
         var centerY = CompassRadius + CompassMargin;
 
         // Kreis zeichnen
-        if (compassCircle == null)
-            compassCircle = new Ellipse();
+        compassCircle ??= new();
 
         compassCircle.Width = CompassRadius * 2;
         compassCircle.Height = CompassRadius * 2;
@@ -334,7 +340,7 @@ public sealed class WindCompasVisualizer
                 Foreground = Brushes.Gray,
                 FontWeight = FontWeights.Bold,
                 IsHitTestVisible = false,
-                RenderTransformOrigin = new Point(0.5, 0.5)
+                RenderTransformOrigin = new(0.5, 0.5)
             };
             AddToCanvas(existing);
         }
@@ -343,13 +349,13 @@ public sealed class WindCompasVisualizer
             existing.Text = text;
         }
 
-        double angleRad = angleDegrees * Math.PI / 180;
+        var angleRad = angleDegrees * Math.PI / 180;
 
-        double adjustedRadius = radius - LabelInset;  // innen im Kreis
-        double x = centerX + adjustedRadius * Math.Cos(angleRad);
-        double y = centerY + adjustedRadius * Math.Sin(angleRad);
+        var adjustedRadius = radius - LabelInset;  // innen im Kreis
+        var x = centerX + adjustedRadius * Math.Cos(angleRad);
+        var y = centerY + adjustedRadius * Math.Sin(angleRad);
 
-        existing.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        existing.Measure(new(double.PositiveInfinity, double.PositiveInfinity));
         var size = existing.DesiredSize;
 
         Canvas.SetLeft(existing, x - size.Width / 2);
