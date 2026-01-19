@@ -15,8 +15,8 @@ public sealed class WindCompassVisualizer
     private readonly WindConfig config;
     private readonly WindHelper windHelper;
 
-    private readonly Arrow mainArrow;
-    private readonly Arrow oppositeArrow;
+    private readonly WindArrow mainArrow;
+    private readonly WindArrow oppositeArrow;
 
     /// <summary>
     /// The Z-index used to ensure the overlay appears above other canvas elements.
@@ -45,8 +45,8 @@ public sealed class WindCompassVisualizer
         this.config = config;
         this.windHelper = windHelper;
 
-        mainArrow = new Arrow(Brushes.LightSkyBlue);
-        oppositeArrow = new Arrow(Brushes.Red);
+        mainArrow = new WindArrow(Brushes.LightSkyBlue);
+        oppositeArrow = new WindArrow(Brushes.Red);
 
         AddToCanvas(mainArrow.Line);
         AddToCanvas(mainArrow.Head);
