@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:oxy="http://oxyplot.org/wpf"
         Title="Forest fire simulation evaluation"
-        Height="650" Width="1000"
+        Height="700" Width="1000"
         WindowStartupLocation="CenterScreen"
 		ResizeMode="CanMinimize">
 
