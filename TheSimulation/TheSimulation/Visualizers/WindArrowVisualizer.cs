@@ -29,12 +29,29 @@ public sealed class WindArrowVisualizer
 
     public const int OverlayZIndex = 1_000;
 
-    private const double Margin = 40;
     private const double BaseLength = 30;
     private const double ArrowHeadLength = 8;
     private const double ArrowHeadWidth = 4;
 
     private Vector currentWindVector = new();
+
+    // --- Kompass Felder ---
+    private Ellipse compassCircle;
+    private TextBlock northText;
+    private TextBlock eastText;
+    private TextBlock southText;
+    private TextBlock westText;
+
+    private const double CompassMargin = 20;  // Abstand vom Canvas-Rand
+    private const double CompassRadius = 50;
+    private const double LabelInset = 10;     // Abstand Himmelsrichtungen zum Kreisrand
+
+    // --- Gegenpfeil für Windrichtung ---
+    private readonly Line arrowOpposite;
+    private readonly Polygon arrowHeadOpposite;
+    private readonly PointCollection arrowHeadPointsOpposite = new(3);
+
+    private readonly static Brush arrowOppositeColor = Brushes.Red;
 
     /// <summary>
     /// Initializes a new instance of the WindArrowVisualizer class that displays wind direction and speed on the
@@ -61,6 +78,23 @@ public sealed class WindArrowVisualizer
 
         AddToCanvas(arrow);
         AddToCanvas(arrowHead);
+
+        // Zweiter Pfeil (rot, entgegengesetzt)
+        arrowOpposite = CreateLine(arrowOppositeColor);
+        arrowHeadOpposite = CreateArrowHead(arrowOppositeColor);
+        arrowHeadOpposite.Points = arrowHeadPointsOpposite;
+
+        AddToCanvas(arrowOpposite);
+        AddToCanvas(arrowHeadOpposite);
+
+        // --- neuen Kompass hinzufügen ---
+        if (canvas.IsLoaded)
+            CreateCompass();
+        else
+            canvas.Loaded += (s, e) => CreateCompass();
+
+        // Optional: bei Größenänderung Canvas neu zeichnen
+        canvas.SizeChanged += (s, e) => CreateCompass();
     }
 
     /// <summary>
@@ -103,23 +137,26 @@ public sealed class WindArrowVisualizer
     /// </remarks>
     public void Draw()
     {
-        var (centerX, centerY) = GetCanvasCenter();
+        var (centerX, centerY) = GetCompassCenter();
         var windVector = GetWindVector();
 
         if (windVector.Length == 0)
-        {
             return;
-        }
 
         windVector.Normalize();
         var length = BaseLength * windHelper.CurrentWindStrength;
 
+        // blauer Pfeil (Original)
         var endX = centerX + windVector.X * length;
         var endY = centerY + windVector.Y * length;
+        DrawArrow(centerX, centerY, endX, endY, arrow, arrowHead, arrowHeadPoints, windVector);
 
-        DrawArrow(centerX, centerY, endX, endY);
-        DrawArrowHead(endX, endY, windVector);
+        // roter Pfeil (entgegengesetzt)
+        var oppEndX = centerX - windVector.X * length;
+        var oppEndY = centerY - windVector.Y * length;
+        DrawArrow(centerX, centerY, oppEndX, oppEndY, arrowOpposite, arrowHeadOpposite, arrowHeadPointsOpposite, new Vector(-windVector.X, -windVector.Y));
     }
+
 
     /// <summary>
     /// Draws an arrow from the specified starting coordinates to the specified ending coordinates.
@@ -128,13 +165,21 @@ public sealed class WindArrowVisualizer
     /// <param name="startY">The Y-coordinate of the starting point of the arrow.</param>
     /// <param name="endX">The X-coordinate of the ending point of the arrow.</param>
     /// <param name="endY">The Y-coordinate of the ending point of the arrow.</param>
-    private void DrawArrow(double startX, double startY, double endX, double endY)
+    private void DrawArrow(double startX, double startY, double endX, double endY,
+                       Line line, Polygon head, PointCollection headPoints, Vector direction)
     {
-        arrow.X1 = startX;
-        arrow.Y1 = startY;
-        arrow.X2 = endX;
-        arrow.Y2 = endY;
+        line.X1 = startX;
+        line.Y1 = startY;
+        line.X2 = endX;
+        line.Y2 = endY;
+
+        var points = CalculateArrowHeadPoints(endX, endY, direction);
+
+        headPoints.Clear();
+        foreach (var p in points)
+            headPoints.Add(p);
     }
+
 
     /// <summary>
     /// Calculates and updates the points that define the arrowhead at the specified end position and direction.
@@ -197,8 +242,12 @@ public sealed class WindArrowVisualizer
     /// A tuple containing the X and Y coordinates of the canvas center,
     /// with the margin applied.
     /// </returns>
-    private (double x, double y) GetCanvasCenter()
-        => (canvas.ActualWidth - Margin, Margin);
+    private (double x, double y) GetCompassCenter()
+    {
+        double centerX = canvas.ActualWidth - CompassRadius - CompassMargin;
+        double centerY = CompassRadius + CompassMargin;
+        return (centerX, centerY);
+    }
 
     /// <summary>
     /// Adds the specified UI element to the canvas if it is not already present and sets its Z-index to ensure correct
@@ -229,9 +278,9 @@ public sealed class WindArrowVisualizer
     /// A Line instance with the stroke color set to the current arrow color,
     /// a stroke thickness of 3, and hit testing disabled.
     /// </returns>
-    private static Line CreateLine() => new()
+    private static Line CreateLine(Brush color = null) => new()
     {
-        Stroke = arrowColor,
+        Stroke = color ?? arrowColor,
         StrokeThickness = 3,
         IsHitTestVisible = false
     };
@@ -243,9 +292,69 @@ public sealed class WindArrowVisualizer
     /// A Polygon object representing an arrowhead,
     /// with its fill color set and hit testing disabled.
     /// </returns>
-    private static Polygon CreateArrowHead() => new()
+    private static Polygon CreateArrowHead(Brush color = null) => new()
     {
-        Fill = arrowColor,
+        Fill = color ?? arrowColor, // Standard: blau, optional andere Farbe
         IsHitTestVisible = false
     };
+
+    private void CreateCompass()
+    {
+        var centerX = canvas.ActualWidth - CompassRadius - CompassMargin;
+        var centerY = CompassRadius + CompassMargin;
+
+        // Kreis zeichnen
+        if (compassCircle == null)
+            compassCircle = new Ellipse();
+
+        compassCircle.Width = CompassRadius * 2;
+        compassCircle.Height = CompassRadius * 2;
+        compassCircle.Stroke = Brushes.Gray;
+        compassCircle.StrokeThickness = 2;
+        compassCircle.IsHitTestVisible = false;
+
+        Canvas.SetLeft(compassCircle, centerX - CompassRadius);
+        Canvas.SetTop(compassCircle, centerY - CompassRadius);
+        AddToCanvas(compassCircle);
+
+        // Himmelsrichtungen: N=270°, E=0°, S=90°, W=180°
+        northText = CreateOrUpdateText(northText, "N", centerX, centerY, CompassRadius, 270);
+        eastText = CreateOrUpdateText(eastText, "E", centerX, centerY, CompassRadius, 0);
+        southText = CreateOrUpdateText(southText, "S", centerX, centerY, CompassRadius, 90);
+        westText = CreateOrUpdateText(westText, "W", centerX, centerY, CompassRadius, 180);
+    }
+
+    private TextBlock CreateOrUpdateText(TextBlock existing, string text, double centerX, double centerY, double radius, double angleDegrees)
+    {
+        if (existing == null)
+        {
+            existing = new TextBlock
+            {
+                Text = text,
+                Foreground = Brushes.Gray,
+                FontWeight = FontWeights.Bold,
+                IsHitTestVisible = false,
+                RenderTransformOrigin = new Point(0.5, 0.5)
+            };
+            AddToCanvas(existing);
+        }
+        else
+        {
+            existing.Text = text;
+        }
+
+        double angleRad = angleDegrees * Math.PI / 180;
+
+        double adjustedRadius = radius - LabelInset;  // innen im Kreis
+        double x = centerX + adjustedRadius * Math.Cos(angleRad);
+        double y = centerY + adjustedRadius * Math.Sin(angleRad);
+
+        existing.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var size = existing.DesiredSize;
+
+        Canvas.SetLeft(existing, x - size.Width / 2);
+        Canvas.SetTop(existing, y - size.Height / 2);
+
+        return existing;
+    }
 }
