@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TheSimulation"
         mc:Ignorable="d"
         Title="Forest fire simulation"
-        Height="650"
+        Height="700"
         Width="1000"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
