@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:TheSimulation"
         mc:Ignorable="d"
         Title="Forest fire simulation configuration"
-        Height="650"
+        Height="700"
         Width="1000"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
@@ -52,7 +52,7 @@
 		</Grid.RowDefinitions>
 
 		<!-- Simulate-Button -->
-		<Button Grid.Row="0" Height="40" Width="120" HorizontalAlignment="Right" VerticalAlignment="Top" Click="StartSimulation_Click" Style="{StaticResource CustomButtonStyle}" Margin="0,-7,0,0">
+		<Button Grid.Row="0" Height="40" Width="120" HorizontalAlignment="Right" VerticalAlignment="Top" Click="StartSimulation_Click" Style="{StaticResource CustomButtonStyle}">
 			<Button.ToolTip>Starts the simulation in a new window</Button.ToolTip>
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
@@ -63,7 +63,7 @@
 		</Button>
 
 		<!-- Reset-Button -->
-		<Button Grid.Row="0" Height="40" Width="120" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ResetAllSettings_Click" Style="{StaticResource CustomButtonStyle}" Margin="0,-7,0,0">
+		<Button Grid.Row="0" Height="40" Width="120" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ResetAllSettings_Click" Style="{StaticResource CustomButtonStyle}">
 			<Button.ToolTip>Set page settings back to default</Button.ToolTip>
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
@@ -74,7 +74,7 @@
 		</Button>
 
 		<!-- Graphics Settings Button -->
-		<Button Grid.Row="0" Height="40" Width="120" HorizontalAlignment="Left" VerticalAlignment="Top" Click="OpenGraphicsSettingsWindow" Style="{StaticResource CustomButtonStyle}" Margin="0,-7,0,0">
+		<Button Grid.Row="0" Height="40" Width="120" HorizontalAlignment="Left" VerticalAlignment="Top" Click="OpenGraphicsSettingsWindow" Style="{StaticResource CustomButtonStyle}">
 			<Button.ToolTip>Open graphics settings window</Button.ToolTip>
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
@@ -88,14 +88,14 @@
 		<StackPanel Grid.Row="1" VerticalAlignment="Top">
 
 			<!-- Terrain -->
-			<GroupBox Header="Terrain" Style="{StaticResource CustomGroupBoxStyle}" Margin="0,1,0,0">
+			<GroupBox Header="Terrain" Style="{StaticResource CustomGroupBoxStyle}" Margin="0,8,0,0">
 				<StackPanel>
 					<CheckBox x:Name="TerrainGenerationCheckBox" Content="Enable terrain generation" IsChecked="True"/>
 				</StackPanel>
 			</GroupBox>
 
 			<!-- Trees -->
-			<GroupBox Header="Trees" Margin="0,1,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
+			<GroupBox Header="Trees" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 				<StackPanel>
 					<CheckBox Margin="5,0,0,5" x:Name="GrowForestCheckBox" Content="Grow forest" IsChecked="True" Unchecked="GrowForestCheckBox_Unchecked" Checked="GrowForestCheckBox_Checked"/>
 					<CheckBox Margin="5,5,0,0" x:Name="PrefillCheckBox" Content="Prefill forest" IsChecked="False" Checked="PrefillCheckBox_Changed" Unchecked="PrefillCheckBox_Changed"/>
@@ -106,7 +106,7 @@
 			</GroupBox>
 
 			<!-- Fire -->
-			<GroupBox Header="Fire" Margin="0,1,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Red">
+			<GroupBox Header="Fire" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Red">
 				<StackPanel>
 					<CheckBox Margin="5,0,60,0" x:Name="PauseFireCheckBox" Content="Pause growing during fire" IsChecked="True"/>
 					<TextBlock Text="{Binding ElementName=FireIntensitySlider, Path=Value, StringFormat=Fire spread chance: {0:F0}%}" FontSize="14" Margin="10,5,0,0"/>
@@ -115,7 +115,7 @@
 			</GroupBox>
 
 			<!-- Environment -->
-			<GroupBox Header="Environment" Margin="0,1,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Blue">
+			<GroupBox Header="Environment" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Blue">
 				<StackPanel>
 					<!-- Air Humidity -->
 					<TextBlock Margin="10,0,0,0" FontSize="14" Text="{Binding ElementName=AirHumiditySlider, Path=Value, StringFormat=Air humidity: {0:F0}%}"/>
