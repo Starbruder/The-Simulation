@@ -13,6 +13,7 @@ public sealed class GraphicsSettings
     public bool ShowBoltFlashes { get; set; } = false;
     public bool ShowFireParticles { get; set; } = true;
     public bool ShowSmokeParticles { get; set; } = true;
+    public bool ShowFlamesOnTrees { get; set; } = true;
     public bool ShowBurnedDownTrees { get; set; } = false;
     public Shape TreeShape { get; set; } = new Ellipse();
 
@@ -24,6 +25,7 @@ public sealed class GraphicsSettings
         bool showBoltFlashes,
         bool showFireParticles,
         bool showSmokeParticles,
+        bool showFlamesOnTrees,
         bool showBurnedDownTrees,
         Shape treeShape
     )
@@ -32,6 +34,7 @@ public sealed class GraphicsSettings
         ShowBoltFlashes = showBoltFlashes;
         ShowFireParticles = showFireParticles;
         ShowSmokeParticles = showSmokeParticles;
+        ShowFlamesOnTrees = showFlamesOnTrees;
         ShowBurnedDownTrees = showBurnedDownTrees;
         TreeShape = treeShape;
     }

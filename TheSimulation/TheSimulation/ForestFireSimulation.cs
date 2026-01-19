@@ -53,9 +53,11 @@ public sealed class ForestFireSimulation
     private readonly HashSet<Cell> growableCells = [];
     private readonly HashSet<Cell> burningTrees = [];
 
+    private readonly Dictionary<Cell, FireAnimation> fireAnimations = [];
+
     private readonly List<SimulationSnapshot> simulationHistory = [];
 
-    private readonly List<FireEvent> fireEvents = [];
+    private readonly List<FireEvent> fireEventsHistory = [];
 
     private TerrainCell[,] terrainGrid;
 
@@ -128,7 +130,7 @@ public sealed class ForestFireSimulation
         var cell = new Cell(x, y);
 
         IgniteTree(cell);
-        fireEvents.Add(new FireEvent(
+        fireEventsHistory.Add(new FireEvent(
             FireEventType.ManualIgnition,
             accumulatedSimulationTime
         ));
@@ -290,7 +292,7 @@ public sealed class ForestFireSimulation
                 simulationConfig.EnvironmentConfig.AtmosphereConfig.AirTemperatureCelsius,
             Runtime: accumulatedSimulationTime,
             History: new(simulationHistory),
-            FireEvents: new(fireEvents)
+            FireEvents: new(fireEventsHistory)
         );
 
         var evalWindow = new EvaluationWindow(data);
@@ -666,6 +668,18 @@ public sealed class ForestFireSimulation
 
     private void SpawnFireEffect(Cell burningCell)
     {
+        if (simulationConfig.VisualEffectsConfig.ShowFlameAnimations)
+        {
+            var fire = new FireAnimation(
+                burningCell,
+                ForestCanvas,
+                simulationConfig.TreeConfig.Size
+            );
+
+            fireAnimations[burningCell] = fire;
+            fire.Start();
+        }
+
         if (simulationConfig.VisualEffectsConfig.ShowFireParticles
              && randomHelper.NextDouble() < 0.7)
         {
@@ -691,6 +705,13 @@ public sealed class ForestFireSimulation
     {
         forestGrid[cell.X, cell.Y] = ForestCellState.Empty;
         burningTrees.Remove(cell);
+
+        if (simulationConfig.VisualEffectsConfig.ShowFlameAnimations &&
+            fireAnimations.TryGetValue(cell, out var fire))
+        {
+            fire.Stop();
+            fireAnimations.Remove(cell);
+        }
 
         if (treeElements.TryGetValue(cell, out var tree))
         {
@@ -786,7 +807,7 @@ public sealed class ForestFireSimulation
         {
             await ShowLightning(cell);
 
-            fireEvents.Add(new(
+            fireEventsHistory.Add(new(
                 FireEventType.Lightning,
                 accumulatedSimulationTime
             ));

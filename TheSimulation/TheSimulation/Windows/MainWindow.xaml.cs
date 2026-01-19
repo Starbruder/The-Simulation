@@ -65,6 +65,7 @@ public sealed partial class MainWindow : Window
             graphicsSettings.ShowBoltFlashes,
             graphicsSettings.ShowFireParticles,
             graphicsSettings.ShowSmokeParticles,
+            graphicsSettings.ShowFlamesOnTrees,
             graphicsSettings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
         );
 
