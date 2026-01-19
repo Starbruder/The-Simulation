@@ -15,7 +15,7 @@ namespace TheSimulation;
 /// simulation or visualization environments where real-time wind feedback is required.
 /// The overlay's Z-index is set to ensure it appears above other canvas elements.
 /// </remarks>
-public sealed class WindArrowVisualizer
+public sealed class WindCompasVisualizer
 {
     private readonly Canvas canvas;
     private readonly WindConfig config;
@@ -66,7 +66,7 @@ public sealed class WindArrowVisualizer
     /// <param name="windHelper">
     /// The WindHelper instance used to obtain wind data for visualization.
     /// </param>
-    public WindArrowVisualizer(Canvas canvas, WindConfig config, WindHelper windHelper)
+    public WindCompasVisualizer(Canvas canvas, WindConfig config, WindHelper windHelper)
     {
         this.canvas = canvas;
         this.config = config;
