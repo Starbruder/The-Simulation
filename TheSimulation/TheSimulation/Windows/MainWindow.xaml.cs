@@ -42,8 +42,7 @@ public sealed partial class MainWindow : Window
             MaxCount: 50_000,
             ForestDensity: 0.6f,
             Size: 7,
-            AllowRegrowForest: regrowForest,
-            TreeShape: graphicsSettings.TreeShape
+            AllowRegrowForest: regrowForest
         );
 
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
@@ -66,7 +65,8 @@ public sealed partial class MainWindow : Window
             graphicsSettings.ShowFireParticles,
             graphicsSettings.ShowSmokeParticles,
             graphicsSettings.ShowFlamesOnTrees,
-            graphicsSettings.ShowBurnedDownTrees // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
+            graphicsSettings.ShowBurnedDownTrees, // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
+            graphicsSettings.TreeShape
         );
 
         var useTerrainGeneration = TerrainGenerationCheckBox.IsChecked ?? true;

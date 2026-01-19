@@ -545,7 +545,7 @@ public sealed class ForestFireSimulation
         var size = simulationConfig.TreeConfig.Size;
         var color = GetTreeColor(cell);
 
-        return simulationConfig.TreeConfig.TreeShape switch
+        return simulationConfig.VisualEffectsConfig.TreeShape switch
         {
             Ellipse => new Ellipse
             {
