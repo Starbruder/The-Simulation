@@ -1,4 +1,6 @@
-﻿namespace TheSimulation;
+﻿using System.Windows.Shapes;
+
+namespace TheSimulation;
 
 /// <summary>
 /// Represents configuration options for enabling or disabling visual effects such as lightning, fire particles, and
@@ -14,6 +16,7 @@
 /// particles; otherwise, <see langword="false"/>.</param>
 /// <param name="ShowFlameAnimations">A value indicating whether flames on trees are displayed. Set to <see langword="true"/> to show flames on
 /// <param name="ShowBurnedDownTrees">A value indicating whether burned down trees are displayed. Set to <see langword="true"/> to show burned down
+/// <param name="TreeShape">The geometric shape representing the tree structure how it should be displayed.</param>
 public sealed record VisualEffectsConfig
 (
     bool ShowLightning,
@@ -21,5 +24,6 @@ public sealed record VisualEffectsConfig
     bool ShowFireParticles,
     bool ShowSmokeParticles,
     bool ShowFlameAnimations,
-    bool ShowBurnedDownTrees
+    bool ShowBurnedDownTrees,
+	Shape TreeShape
 );
