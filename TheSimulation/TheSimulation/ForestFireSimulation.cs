@@ -23,7 +23,7 @@ public sealed class ForestFireSimulation
 
     private readonly RandomHelper randomHelper = new();
     private readonly WindHelper windHelper;
-    private readonly WindArrowVisualizer windVisualizer;
+    private readonly WindCompasVisualizer windVisualizer;
     private readonly ParticleGenerator particleGenerator;
     private readonly DispatcherTimer simulationTimer = new();
     private TimeSpan accumulatedSimulationTime = TimeSpan.Zero;
