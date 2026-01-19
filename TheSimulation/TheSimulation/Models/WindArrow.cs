@@ -7,7 +7,7 @@ namespace TheSimulation;
 /// <summary>
 /// Represents a directional arrow with a line and a polygon head for the tip.
 /// </summary>
-public sealed class Arrow
+public sealed class WindArrow
 {
     /// <summary>
     /// The line representing the shaft of the arrow.
@@ -27,7 +27,7 @@ public sealed class Arrow
     /// Creates a new Arrow with the specified color.
     /// </summary>
     /// <param name="color">Brush color for both line and arrowhead.</param>
-    public Arrow(Brush color)
+    public WindArrow(Brush color)
     {
         Line = new Line
         {
