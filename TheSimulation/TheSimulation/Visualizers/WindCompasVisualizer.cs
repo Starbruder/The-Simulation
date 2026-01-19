@@ -29,7 +29,7 @@ public sealed class WindCompasVisualizer
 
     public const int OverlayZIndex = 1_000;
 
-    private const double BaseLength = 30;
+    private const double BaseLength = 20;
     private const double ArrowHeadLength = 8;
     private const double ArrowHeadWidth = 4;
 
@@ -144,7 +144,7 @@ public sealed class WindCompasVisualizer
             return;
 
         windVector.Normalize();
-        var length = BaseLength * windHelper.CurrentWindStrength;
+        var length = 10 + BaseLength * windHelper.CurrentWindStrength;
 
         // blauer Pfeil (Original)
         var endX = centerX + windVector.X * length;
