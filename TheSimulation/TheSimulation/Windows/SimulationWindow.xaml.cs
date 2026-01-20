@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace TheSimulation;
 
@@ -24,6 +25,15 @@ public sealed partial class SimulationWindow : Window
         };
 
         SetSimulationSpeedNormal();
+    }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Space)
+        {
+            PauseResume_Click(sender, e);
+            e.Handled = true;
+        }
     }
 
     private void PauseResume_Click(object sender, RoutedEventArgs e)
