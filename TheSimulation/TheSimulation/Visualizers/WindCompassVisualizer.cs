@@ -27,6 +27,9 @@ public sealed class WindCompassVisualizer
     private Vector currentWindVector = new();
 
     private Ellipse compassCircle;
+    private readonly Brush CompassForeGroundColor = Brushes.Gray;
+    private Ellipse compassBackground;
+    private readonly Brush CompassBackgroundColor = new SolidColorBrush(Color.FromArgb(165, 35, 35, 35));
     private readonly TextBlock[] directionLabels = new TextBlock[4];
 
     private const double CompassMargin = 20;
@@ -140,7 +143,7 @@ public sealed class WindCompassVisualizer
 
         compassCircle ??= new Ellipse
         {
-            Stroke = Brushes.Gray,
+            Stroke = CompassForeGroundColor,
             StrokeThickness = 2,
             IsHitTestVisible = false
         };
@@ -167,6 +170,25 @@ public sealed class WindCompassVisualizer
                 directions[i].Angle
             );
         }
+
+        AddCompassBackground(centerX, centerY);
+    }
+
+    private void AddCompassBackground(double centerX, double centerY)
+    {
+        compassBackground ??= new Ellipse
+        {
+            Fill = CompassBackgroundColor,
+            IsHitTestVisible = false
+        };
+
+        compassBackground.Width = compassBackground.Height = CompassRadius * 2;
+        Canvas.SetLeft(compassBackground, centerX - CompassRadius);
+        Canvas.SetTop(compassBackground, centerY - CompassRadius);
+        AddToCanvas(compassBackground);
+
+        // etwas unterhalb der anderen Elemente
+        Panel.SetZIndex(compassBackground, OverlayZIndex - 2);
     }
 
     /// <summary>
@@ -179,7 +201,7 @@ public sealed class WindCompassVisualizer
             existing = new TextBlock
             {
                 Text = text,
-                Foreground = Brushes.Gray,
+                Foreground = CompassForeGroundColor,
                 FontWeight = FontWeights.Bold,
                 IsHitTestVisible = false,
                 RenderTransformOrigin = new(0.5, 0.5)
