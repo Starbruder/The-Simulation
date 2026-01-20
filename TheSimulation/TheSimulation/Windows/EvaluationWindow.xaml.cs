@@ -20,6 +20,14 @@ public sealed partial class EvaluationWindow : Window
         EvalHumidity.Text = $"Air Humidity: {data.AirHumidityPercentage * 100:F0} %";
         EvalTemperature.Text = $"Air Temperature: {data.AirTemperatureCelsius}°C";
 
+        var averageWindDirection = data.History.Count > 0
+            ? data.History.Average(h => h.WindDirectionDegrees)
+            : 0;
+
+        EvalAverageWindDirection.Text = data.History.Count > 0
+            ? $"Average Wind Direction: {averageWindDirection:F0}°"
+            : "Average Wind Direction: N/A";
+
         var averageWindSpeed = data.History.Count > 0
             ? data.History.Average(h => h.WindSpeed)
             : 0;

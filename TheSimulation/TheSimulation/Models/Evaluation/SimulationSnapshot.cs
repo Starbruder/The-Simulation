@@ -10,12 +10,12 @@ namespace TheSimulation;
 /// <param name="Grown"></param>
 /// <param name="Burned"></param>
 /// <param name="WindSpeed"></param>
-/// <param name="WindDirection"></param>
+/// <param name="WindDirectionDegrees"></param>
 public sealed record SimulationSnapshot
 (
     TimeSpan Time,
     uint Grown,
     uint Burned,
     double WindSpeed,
-    double WindDirection
+    double WindDirectionDegrees
 );
