@@ -269,15 +269,12 @@ public sealed class ForestFireSimulation
     {
         var elapsedTime = CalculateSimulationTime();
         var currentWindSpeed = windHelper.CurrentWindStrength;
-        var currentWind = windHelper.GetWindVector();
-        var windAngle = WindMapper.ConvertVectorToWindAngleDegrees(currentWind);
         var historySnapshot = new SimulationSnapshot
         (
             elapsedTime,
             totalGrownTrees,
             totalBurnedTrees,
-            currentWindSpeed,
-            windAngle
+            currentWindSpeed
         );
         simulationHistory.Add(historySnapshot);
     }

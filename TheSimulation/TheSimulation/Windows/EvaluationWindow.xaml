@@ -34,7 +34,6 @@
 			<TextBlock x:Name="EvalTemperature" FontSize="16" Text="Air temperature: 0 °C"/>
 			<!-- Abstand -->
 			<Rectangle Height="5"/>
-			<TextBlock x:Name="EvalAverageWindDirection" FontSize="16" Text="Average Wind Direction: 0°"/>
 			<TextBlock x:Name="EvalAverageWindSpeed" FontSize="16" Text="Average Wind Speed: 0% (0 Bft)"/>
 			<!-- Abstand -->
 			<Rectangle Height="5"/>
