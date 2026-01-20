@@ -33,10 +33,7 @@ public sealed class ForestFireSimulation
     private readonly DispatcherTimer fireTimer = new();
     private readonly DispatcherTimer windUpdateTimer = new();
 
-    private ForestCellState[,] forestGrid;
-
-    private int cols;
-    private int rows;
+    private ForestGrid grid = new(0, 0);
 
     private int cachedMaxTreesPossible;
     private float cachedTemperatureEffect;
@@ -68,7 +65,6 @@ public sealed class ForestFireSimulation
     public ForestFireSimulation(SimulationConfig simulationConfig, Canvas ForestCanvas)
     {
         // To get rid of the warning CS8618
-        forestGrid = new ForestCellState[0, 0];
         terrainGrid = new TerrainCell[0, 0];
 
         this.ForestCanvas = ForestCanvas;
@@ -124,12 +120,11 @@ public sealed class ForestFireSimulation
 
         // Löst das Problem, dass außerhalb geklickt wird und das Programm abstürzt.
         // of out of bounds (Knapp außerhalb des Baumrasters klicken)
-        if (x < 0 || y < 0 || x >= cols || y >= rows)
+        var cell = new Cell(x, y);
+        if (!grid.IsInside(cell))
         {
             return;
         }
-
-        var cell = new Cell(x, y);
 
         IgniteTree(cell);
         fireEventsHistory.Add(new FireEvent(
@@ -140,12 +135,12 @@ public sealed class ForestFireSimulation
 
     private void IgniteTree(Cell cell)
     {
-        if (forestGrid[cell.X, cell.Y] != ForestCellState.Tree)
+        if (!grid.IsTree(cell))
         {
             return;
         }
 
-        forestGrid[cell.X, cell.Y] = ForestCellState.Burning;
+        grid.SetBurning(cell);
         burningTrees.Add(cell);
         UpdateTreeColor(cell, Brushes.Red);
 
@@ -303,10 +298,12 @@ public sealed class ForestFireSimulation
 
     private void InitializeGrid()
     {
-        cols = (int)(ForestCanvas.ActualWidth / simulationConfig.TreeConfig.Size);
-        rows = (int)(ForestCanvas.ActualHeight / simulationConfig.TreeConfig.Size);
+        var cols =
+            (int)(ForestCanvas.ActualWidth / simulationConfig.TreeConfig.Size);
+        var rows =
+            (int)(ForestCanvas.ActualHeight / simulationConfig.TreeConfig.Size);
 
-        forestGrid = new ForestCellState[cols, rows];
+        grid = new(cols, rows);
 
         cachedMaxTreesPossible = CalculateMaxTreesPossible();
 
@@ -323,9 +320,9 @@ public sealed class ForestFireSimulation
     {
         growableCells.Clear();
 
-        for (var x = 0; x < cols; x++)
+        for (var x = 0; x < grid.Cols; x++)
         {
-            for (var y = 0; y < rows; y++)
+            for (var y = 0; y < grid.Rows; y++)
             {
                 if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
                 {
@@ -390,11 +387,11 @@ public sealed class ForestFireSimulation
 
     private List<Cell> GenerateCells()
     {
-        var allCells = new List<Cell>(cols * rows);
+        var allCells = new List<Cell>(grid.Cols * grid.Rows);
 
-        for (var x = 0; x < cols; x++)
+        for (var x = 0; x < grid.Cols; x++)
         {
-            for (var y = 0; y < rows; y++)
+            for (var y = 0; y < grid.Rows; y++)
             {
                 allCells.Add(new(x, y));
             }
@@ -464,7 +461,7 @@ public sealed class ForestFireSimulation
         }
 
         // Zielanzahl anhand der Dichte oder Maximalanzahl
-        var targetTrees = (int)(cols * rows * simulationConfig.TreeConfig.ForestDensity);
+        var targetTrees = (int)(grid.Cols * grid.Rows * simulationConfig.TreeConfig.ForestDensity);
 
         if (activeTrees.Count >= targetTrees ||
             activeTrees.Count >= simulationConfig.TreeConfig.MaxCount)
@@ -521,14 +518,13 @@ public sealed class ForestFireSimulation
     private void AddTree(Cell cell)
     {
         growableCells.Remove(cell);
-        activeTrees.Add(cell);
         AddTreeWithoutUIUpdate(cell);
         UpdateTreeUI();
     }
 
     private void AddTreeWithoutUIUpdate(Cell cell)
     {
-        forestGrid[cell.X, cell.Y] = ForestCellState.Tree;
+        grid.SetTree(cell);
 
         var tree = CreateTreeShape(cell);
 
@@ -597,9 +593,9 @@ public sealed class ForestFireSimulation
 
         foreach (var burningCell in burningTrees)
         {
-            foreach (var neighbor in GetIgnitableNeighbors(burningCell))
+            foreach (var neighbor in grid.GetNeighbors(burningCell))
             {
-                if (forestGrid[neighbor.X, neighbor.Y] != ForestCellState.Tree)
+                if (!grid.IsTree(neighbor))
                 {
                     continue;
                 }
@@ -705,7 +701,7 @@ public sealed class ForestFireSimulation
 
     private void BurnDownTree(Cell cell)
     {
-        forestGrid[cell.X, cell.Y] = ForestCellState.Empty;
+        grid.Clear(cell);
         burningTrees.Remove(cell);
 
         if (simulationConfig.VisualEffectsConfig.ShowFlameAnimations &&
@@ -739,28 +735,6 @@ public sealed class ForestFireSimulation
         treeElements.Remove(cell);
     }
 
-    private IEnumerable<Cell> GetIgnitableNeighbors(Cell cell)
-    {
-        for (var dx = -1; dx <= 1; dx++)
-        {
-            for (var dy = -1; dy <= 1; dy++)
-            {
-                if (dx == 0 && dy == 0)
-                {
-                    continue;
-                }
-
-                var nx = cell.X + dx;
-                var ny = cell.Y + dy;
-
-                if (nx >= 0 && ny >= 0 && nx < cols && ny < rows)
-                {
-                    yield return new(nx, ny);
-                }
-            }
-        }
-    }
-
     private void UpdateTreeColor(Cell cell, Brush color)
     {
         if (treeElements.TryGetValue(cell, out var tree))
@@ -771,13 +745,13 @@ public sealed class ForestFireSimulation
 
     private void GenerateTerrain()
     {
-        for (var x = 0; x < cols; x++)
+        for (var x = 0; x < grid.Cols; x++)
         {
-            for (var y = 0; y < rows; y++)
+            for (var y = 0; y < grid.Rows; y++)
             {
                 // sanfter Verlauf: Zentrum = hoch, Ränder = niedrig
-                var centerX = cols / 2.0;
-                var centerY = rows / 2.0;
+                var centerX = grid.Cols / 2.0;
+                var centerY = grid.Rows / 2.0;
 
                 var dx = (x - centerX) / centerX; // -1 ... 1
                 var dy = (y - centerY) / centerY; // -1 ... 1
@@ -825,7 +799,7 @@ public sealed class ForestFireSimulation
             return randomHelper.NextCell(activeTrees);
         }
 
-        return randomHelper.NextCell(cols, rows);
+        return randomHelper.NextCell(grid.Cols, grid.Rows);
     }
 
     private async Task ShowLightning(Cell cell)
@@ -899,7 +873,7 @@ public sealed class ForestFireSimulation
     }
 
     private int CalculateMaxTreesPossible()
-        => Math.Max(1, (int)(cols * rows * simulationConfig.TreeConfig.ForestDensity));
+        => Math.Max(1, (int)(grid.Cols * grid.Rows * simulationConfig.TreeConfig.ForestDensity));
 
     private void UpdateTreeUI()
     {
