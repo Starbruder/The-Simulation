@@ -17,5 +17,5 @@ public sealed record SimulationSnapshot
     uint Grown,
     uint Burned,
     double WindSpeed,
-    double WindDirectionDegrees
+    Vector WindDirectionDegrees
 );

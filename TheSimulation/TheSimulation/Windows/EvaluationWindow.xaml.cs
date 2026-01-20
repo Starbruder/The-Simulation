@@ -20,9 +20,8 @@ public sealed partial class EvaluationWindow : Window
         EvalHumidity.Text = $"Air Humidity: {data.AirHumidityPercentage * 100:F0} %";
         EvalTemperature.Text = $"Air Temperature: {data.AirTemperatureCelsius}°C";
 
-        var averageWindDirection = data.History.Count > 0
-            ? data.History.Average(h => h.WindDirectionDegrees)
-            : 0;
+        var averageWindDirection =
+            CalculateAverageWind(data.History.Select(h => h.WindDirectionDegrees).ToList());
 
         EvalAverageWindDirection.Text = data.History.Count > 0
             ? $"Average Wind Direction: {averageWindDirection:F0}°"
@@ -41,6 +40,28 @@ public sealed partial class EvaluationWindow : Window
         EvalRuntime.Text = $"Runtime: {data.Runtime:hh\\:mm\\:ss}";
 
         DrawCharts(data);
+    }
+
+    /// <summary>
+    /// Berechnet die durchschnittliche Windrichtung (in Grad) aus einer Liste von Vektoren.
+    /// </summary>
+    public static double CalculateAverageWind(List<Vector> windVectors)
+    {
+        if (windVectors == null || windVectors.Count == 0)
+            return 0;
+
+        // Mittelwert-Vektor berechnen
+        var avgVector = new Vector(0, 0);
+        foreach (var v in windVectors)
+            avgVector += v;
+
+        avgVector /= windVectors.Count;
+
+        // Winkel berechnen (nur, wenn Vektor != 0)
+        if (avgVector.Length > 0)
+            return WindMapper.ConvertVectorToWindAngleDegrees(avgVector);
+
+        return 0;
     }
 
     private void DrawCharts(Evaluation data)
