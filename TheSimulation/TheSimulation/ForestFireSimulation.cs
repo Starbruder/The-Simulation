@@ -526,7 +526,8 @@ public sealed class ForestFireSimulation
     {
         grid.SetTree(cell);
 
-        var tree = CreateTreeShape(cell);
+        var color = GetTreeColor(cell);
+        var tree = CreateCellShape(cell, color);
 
         Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
         Canvas.SetTop(tree, cell.Y * simulationConfig.TreeConfig.Size);
@@ -538,10 +539,9 @@ public sealed class ForestFireSimulation
         totalGrownTrees++;
     }
 
-    private Shape CreateTreeShape(Cell cell)
+    private Shape CreateCellShape(Cell cell, Brush color)
     {
         var size = simulationConfig.TreeConfig.Size;
-        var color = GetTreeColor(cell);
 
         return simulationConfig.VisualEffectsConfig.TreeShape switch
         {
@@ -804,14 +804,7 @@ public sealed class ForestFireSimulation
 
     private async Task ShowLightning(Cell cell)
     {
-        var lightningCell = new Ellipse
-        {
-            Width = simulationConfig.TreeConfig.Size,
-            Height = simulationConfig.TreeConfig.Size,
-            Fill = Brushes.LightBlue,
-            Opacity = 1,
-            Tag = cell
-        };
+        var lightningCell = CreateCellShape(cell, Colors.LightningColor);
 
         Canvas.SetLeft(lightningCell, cell.X * simulationConfig.TreeConfig.Size);
         Canvas.SetTop(lightningCell, cell.Y * simulationConfig.TreeConfig.Size);

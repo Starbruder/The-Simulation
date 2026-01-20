@@ -23,4 +23,6 @@ public static class Colors
             Brushes.Firebrick
         ];
     }
+
+    public static Brush LightningColor = Brushes.LightBlue;
 }
