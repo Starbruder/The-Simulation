@@ -48,6 +48,8 @@ public sealed class ForestFireSimulation
     private uint totalGrownTrees = 0;
     private uint totalBurnedTrees = 0;
 
+    const uint windChangeIntervalMs = 300 + (int)SimulationSpeed.Normal;
+
     private readonly Dictionary<Cell, Shape> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
     private readonly HashSet<Cell> growableCells = [];
@@ -429,7 +431,6 @@ public sealed class ForestFireSimulation
 
     private void InitializeWindTimer()
     {
-        const uint windChangeIntervalMs = 300;
         windUpdateTimer.Interval = TimeSpan.FromMilliseconds(windChangeIntervalMs);
 
         windUpdateTimer.Tick += (_, _) =>
@@ -449,6 +450,7 @@ public sealed class ForestFireSimulation
         treeGrowthTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
         fireTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
         igniteTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs * 750);
+        windUpdateTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs + windChangeIntervalMs);
 
         windVisualizer?.Draw();
     }
