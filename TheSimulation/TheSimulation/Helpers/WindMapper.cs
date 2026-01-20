@@ -17,10 +17,10 @@ public static class WindMapper
         return new(x, y);
     }
 
-    public static BeaufortScale ConvertWindPercentStrenghToBeaufort(double windStrength)
+    public static BeaufortScale ConvertWindPercentStrenghToBeaufort(double windPercentStrength)
     {
         // WindStrength ist ein Wert zwischen 0 und 1, daher multiplizieren wir mit 12, um den Bereich 0 bis 12 zu erhalten
-        var beaufortScale = (int)(windStrength * 12);
+        var beaufortScale = (int)(windPercentStrength * 12);
         return (BeaufortScale)Math.Min(beaufortScale, (int)BeaufortScale.Hurricane); // Maximalwert Hurricane (Stufe 11)
     }
 
