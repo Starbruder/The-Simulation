@@ -13,12 +13,12 @@ public sealed class WindHelper(WindConfig config)
 
     public double CalculateWindEffect(Cell from, Cell to)
     {
-        var dx = to.X - from.X;
-        var dy = to.Y - from.Y;
+        var diffrenceX = to.X - from.X;
+        var diffrenceY = to.Y - from.Y;
 
         // Richtungsvektor der Feuerausbreitung
-        var spreadDir = new Vector(dx, dy);
-        spreadDir.Normalize();
+        var spreadDirection = new Vector(diffrenceX, diffrenceY);
+        spreadDirection.Normalize();
 
         // Wind normalisieren
         var windVector = GetWindVector();
@@ -30,7 +30,7 @@ public sealed class WindHelper(WindConfig config)
         windVector.Normalize();
 
         // Skalarprodukt: -1 .. 1
-        var alignment = Vector.Multiply(spreadDir, windVector);
+        var alignment = Vector.Multiply(spreadDirection, windVector);
 
         // multipliziere mit Stärke
         var effect = 1 + CurrentWindStrength * alignment;
