@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace TheSimulation;
 
@@ -15,6 +16,15 @@ public sealed partial class MainWindow : Window
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
         InitailizeWindDirectionDropdown();
+    }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.R)
+        {
+            ResetAllSettings_Click(sender, e);
+            e.Handled = true;
+        }
     }
 
     private void InitailizeWindDirectionDropdown()
