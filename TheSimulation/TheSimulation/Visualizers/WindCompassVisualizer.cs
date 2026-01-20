@@ -27,7 +27,7 @@ public sealed class WindCompassVisualizer
     private Vector currentWindVector = new();
 
     private Ellipse compassCircle;
-    private TextBlock[] directionLabels = new TextBlock[4];
+    private readonly TextBlock[] directionLabels = new TextBlock[4];
 
     private const double CompassMargin = 20;
     private const double CompassRadius = 50;
