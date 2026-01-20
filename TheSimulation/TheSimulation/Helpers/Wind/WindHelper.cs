@@ -41,21 +41,13 @@ public sealed class WindHelper(WindConfig config)
 
     public Vector GetWindVector()
     {
-        if (!config.RandomDirection)
+        if (config.RandomDirection)
         {
-            return WindMapper.GetWindVector(config.Direction);
+            return WindMapper.ConvertWindAngleDegreesToVector(
+                CurrentWindAngleDegrees, CurrentWindStrength);
         }
 
-        // in Radiant umrechnen
-        var rad = CurrentWindAngleDegrees * Math.PI / 180;
-        var x = Math.Cos(rad);
-        var y = Math.Sin(rad);
-
-        var vector = new Vector(x, y);
-        vector.Normalize();
-        vector *= CurrentWindStrength;
-
-        return vector;
+        return WindMapper.GetWindVector(config.Direction);
     }
 
     public void RandomizeAndUpdateWind()

@@ -17,6 +17,36 @@ public static class WindMapper
         return new(x, y);
     }
 
+    public static Vector ConvertWindAngleDegreesToVector(double angleDegrees, double windStrength)
+    {
+        // in Radiant umrechnen
+        var rad = angleDegrees * Math.PI / 180;
+        var x = Math.Cos(rad);
+        var y = Math.Sin(rad);
+
+        var vector = new Vector(x, y);
+        vector.Normalize();
+        vector *= windStrength;
+
+        return vector;
+    }
+
+    public static double ConvertVectorToWindAngleDegrees(Vector windVector)
+    {
+        // atan2 liefert den Winkel in Radiant (-π bis π)
+        var angleRad = Math.Atan2(windVector.Y, windVector.X);
+
+        var angleDeg = angleRad * (180.0 / Math.PI);
+
+        // auf 0 - 360° normalisieren
+        if (angleDeg < 0)
+        {
+            angleDeg += 360;
+        }
+
+        return angleDeg;
+    }
+
     public static BeaufortScale ConvertWindPercentStrenghToBeaufort(double windPercentStrength)
     {
         // WindStrength ist ein Wert zwischen 0 und 1, daher multiplizieren wir mit 12, um den Bereich 0 bis 12 zu erhalten

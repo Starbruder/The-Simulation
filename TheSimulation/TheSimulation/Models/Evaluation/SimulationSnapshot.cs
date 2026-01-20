@@ -1,4 +1,6 @@
-﻿namespace TheSimulation;
+﻿using System.Windows;
+
+namespace TheSimulation;
 
 /// <summary>
 /// <see cref="SimulationSnapshot"/> ist ein <see langword="public"/> <see langword="record"/>, das einen bestimmten Zeitpunkt in der Simulation darstellt.
@@ -8,10 +10,12 @@
 /// <param name="Grown"></param>
 /// <param name="Burned"></param>
 /// <param name="WindSpeed"></param>
+/// <param name="WindDirection"></param>
 public sealed record SimulationSnapshot
 (
     TimeSpan Time,
     uint Grown,
     uint Burned,
-    double WindSpeed
+    double WindSpeed,
+    double WindDirection
 );
