@@ -473,7 +473,6 @@ public sealed class ForestFireSimulation
         }
 
         var cell = randomHelper.NextCell(growableCells);
-        growableCells.Remove(cell);
 
         if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
         {
@@ -499,7 +498,6 @@ public sealed class ForestFireSimulation
             return;
         }
 
-        // Baum wächst
         AddTree(cell);
     }
 
@@ -522,6 +520,8 @@ public sealed class ForestFireSimulation
 
     private void AddTree(Cell cell)
     {
+        growableCells.Remove(cell);
+        activeTrees.Add(cell);
         AddTreeWithoutUIUpdate(cell);
         UpdateTreeUI();
     }
