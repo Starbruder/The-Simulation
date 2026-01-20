@@ -6,6 +6,7 @@ namespace TheSimulation;
 /// <see langword="new"/> <see langword="class"/> representing graphics settings for the simulation.
 /// Used to configure visual effects such as lightning, fire particles, and smoke particles.
 /// Interfaces with the <see cref="MainWindow"/> and <see cref="GraphicsWindow"/> to visually apply user preferences.
+/// By setting the settings here, the default settings are set for GraphicsWindow when it is first created.
 /// </summary>
 public sealed class GraphicsSettings
 {
