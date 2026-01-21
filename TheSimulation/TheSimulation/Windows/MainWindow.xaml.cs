@@ -50,8 +50,8 @@ public sealed partial class MainWindow : Window
         var treeConfig = new TreeConfig
         (
             MaxCount: 50_000,
-            ForestDensity: 0.6f,
-            Size: 8,
+            ForestDensity: 0.7f,
+            Size: 9,
             AllowRegrowForest: regrowForest
         );
 
