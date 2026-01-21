@@ -51,7 +51,7 @@ public sealed partial class MainWindow : Window
         (
             MaxCount: 50_000,
             ForestDensity: 0.6f,
-            Size: 7,
+            Size: 8,
             AllowRegrowForest: regrowForest
         );
 
