@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -83,7 +84,62 @@ public sealed class ForestFireSimulation
             MouseBurnClick(simulationConfig, e);
         };
 
+        ForestCanvas.MouseRightButtonDown += (_, e) =>
+        {
+            MouseDestroyClick(e);
+        };
+
         StartOrResumeSimulation();
+    }
+
+    private void MouseDestroyClick(MouseButtonEventArgs e)
+    {
+        var pos = e.GetPosition(ForestCanvas);
+
+        var x = (int)(pos.X / simulationConfig.TreeConfig.Size);
+        var y = (int)(pos.Y / simulationConfig.TreeConfig.Size);
+
+        // Löst das Problem, dass außerhalb geklickt wird und das Programm abstürzt.
+        // of out of bounds (Knapp außerhalb des Baumrasters klicken)
+        var cell = new Cell(x, y);
+        if (!grid.IsInside(cell))
+        {
+            return;
+        }
+
+        DestroyCell(cell);
+    }
+
+    private void DestroyCell(Cell cell)
+    {
+        if (!grid.IsTree(cell))
+        {
+            return;
+        }
+
+        // 🔥 Falls der Baum brennt → Feuer & Effekte stoppen
+        if (burningTrees.Remove(cell))
+        {
+            if (fireAnimations.TryGetValue(cell, out var fire))
+            {
+                fire.Stop();
+                fireAnimations.Remove(cell);
+            }
+        }
+
+        grid.Clear(cell);
+
+        // 🖼️ UI-Element entfernen
+        if (treeElements.TryGetValue(cell, out var tree))
+        {
+            ForestCanvas.Children.Remove(tree);
+            treeElements.Remove(cell);
+        }
+
+        activeTrees.Remove(cell);
+        growableCells.Add(cell);
+
+        UpdateTreeUI();
     }
 
     public void StartOrResumeSimulation()
@@ -111,7 +167,7 @@ public sealed class ForestFireSimulation
     }
 
     private void MouseBurnClick
-        (SimulationConfig simulationConfig, System.Windows.Input.MouseButtonEventArgs e)
+        (SimulationConfig simulationConfig, MouseButtonEventArgs e)
     {
         var pos = e.GetPosition(ForestCanvas);
 
@@ -205,8 +261,6 @@ public sealed class ForestFireSimulation
 
     private void InitializeSimulationTimer()
     {
-        // Add a negative second to let the timer start at 00:00:00
-        accumulatedSimulationTime = accumulatedSimulationTime.Add(TimeSpan.FromSeconds(-1));
         var hours = (int)accumulatedSimulationTime.TotalHours;
         UpdateSimulationTimeText?.Invoke(
             $"Runtime: {hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}"
