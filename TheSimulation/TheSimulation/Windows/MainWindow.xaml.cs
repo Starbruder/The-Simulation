@@ -10,6 +10,7 @@ namespace TheSimulation;
 public sealed partial class MainWindow : Window
 {
     private readonly GraphicsSettings graphicsSettings = new();
+    private readonly RandomHelper random = new();
 
     public MainWindow()
     {
@@ -40,7 +41,7 @@ public sealed partial class MainWindow : Window
     private void StartSimulation_Click(object sender, RoutedEventArgs e)
     {
         var config = GetSimulationConfigFromUI();
-        new SimulationWindow(config).Show();
+        new SimulationWindow(config, random).Show();
     }
 
     private SimulationConfig GetSimulationConfigFromUI()
@@ -170,11 +171,11 @@ public sealed partial class MainWindow : Window
             : WindDirection.North;
     }
 
-    private static WindDirection GetRandomWindDirection()
+    private WindDirection GetRandomWindDirection()
     {
         var values = Enum.GetValues(typeof(WindDirection));
-        var randomIndex = new RandomHelper().NextInt(0, values.Length);
-        return (WindDirection)values.GetValue(randomIndex)!;
+        var randomIndex = random.NextInt(0, values.Length);
+        return (WindDirection)values.GetValue(randomIndex);
     }
 
     /// <summary>

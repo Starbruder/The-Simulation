@@ -10,12 +10,13 @@ public sealed partial class SimulationWindow : Window
 {
     private readonly ForestFireSimulation simulation;
 
-    public SimulationWindow(SimulationConfig simulationConfig)
+    public SimulationWindow(SimulationConfig simulationConfig, RandomHelper random)
     {
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
 
-        simulation = new ForestFireSimulation(simulationConfig, ForestCanvas)
+        simulation = new
+            (simulationConfig, random, ForestCanvas, SimulationSpeed.Ultra)
         {
             UpdateSimulationTimeText = text => SimulationTimeText.Text = text,
             UpdateTreeDensityText = text => TreeDensityText.Text = text,
