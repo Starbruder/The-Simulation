@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace TheSimulation;
 
@@ -15,6 +13,7 @@ public sealed class ForestFireSimulation
     private Canvas ForestCanvas { get; }
 
     private readonly SimulationConfig simulationConfig;
+    private readonly RandomHelper randomHelper;
 
     public required Action<string> UpdateSimulationTimeText;
     public required Action<string> UpdateTreeDensityText;
@@ -22,17 +21,12 @@ public sealed class ForestFireSimulation
     public required Action<string> UpdateTotalGrownTreesText;
     public required Action<string> UpdateTotalBurnedTreesText;
 
-    private readonly RandomHelper randomHelper = new();
     private readonly WindHelper windHelper;
     private readonly WindCompassVisualizer windVisualizer;
     private readonly ParticleGenerator particleGenerator;
-    private readonly DispatcherTimer simulationTimer = new();
     private TimeSpan accumulatedSimulationTime = TimeSpan.Zero;
 
-    private readonly DispatcherTimer treeGrowthTimer = new();
-    private readonly DispatcherTimer igniteTimer = new();
-    private readonly DispatcherTimer fireTimer = new();
-    private readonly DispatcherTimer windUpdateTimer = new();
+    private readonly SimulationClock clock = new();
 
     private ForestGrid grid = new(0, 0);
 
@@ -46,8 +40,7 @@ public sealed class ForestFireSimulation
     private uint totalGrownTrees = 0;
     private uint totalBurnedTrees = 0;
 
-    const uint windChangeIntervalMs = 300 + (int)SimulationSpeed.Normal;
-    private SimulationSpeed simulationSpeed = SimulationSpeed.Normal;
+    private SimulationSpeed simulationSpeed;
 
     private readonly Dictionary<Cell, Shape> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
@@ -64,15 +57,16 @@ public sealed class ForestFireSimulation
 
     private readonly Rectangle screenFlash = new();
 
-    public ForestFireSimulation(SimulationConfig simulationConfig, Canvas ForestCanvas)
+    public ForestFireSimulation(SimulationConfig simulationConfig, RandomHelper random, Canvas ForestCanvas, SimulationSpeed simulationSpeed = SimulationSpeed.Normal)
     {
         // To get rid of the warning CS8618
         terrainGrid = new TerrainCell[0, 0];
 
         this.ForestCanvas = ForestCanvas;
-
+        this.randomHelper = random;
         this.simulationConfig = simulationConfig;
-        windHelper = new(simulationConfig.EnvironmentConfig.WindConfig);
+        this.simulationSpeed = simulationSpeed;
+		windHelper = new(simulationConfig.EnvironmentConfig.WindConfig);
         windVisualizer =
             new(ForestCanvas, simulationConfig.EnvironmentConfig.WindConfig, windHelper);
 
@@ -149,17 +143,17 @@ public sealed class ForestFireSimulation
 
         if (simulationConfig.TreeConfig.AllowRegrowForest)
         {
-            treeGrowthTimer.Start();
+            clock.StartGrowTimer();
         }
 
-        igniteTimer.Start();
-        fireTimer.Start();
-        simulationTimer.Start();
+        clock.StartIgniteTimer();
+        clock.StartFireTimer();
+        clock.StartSecondTimer();
 
         if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
             simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
         {
-            windUpdateTimer.Start();
+            clock.StartWindTimer();
             return;
         }
 
@@ -207,7 +201,7 @@ public sealed class ForestFireSimulation
     private async Task InitializeSimulationAsync()
     {
         CacheEnvironmentFactors();
-        InitializeSimulationTimer();
+        InitializeSimulationClock();
         InitializeGrid();
 
         if (simulationConfig.VisualEffectsConfig.ShowBoltScreenFlash)
@@ -222,18 +216,17 @@ public sealed class ForestFireSimulation
 
         if (simulationConfig.TreeConfig.AllowRegrowForest)
         {
-            InitializeGrowTimer();
+            clock.GrowTick += GrowStep;
         }
-        InitializeIgniteTimer();
-        InitializeFireTimer();
+        clock.IgniteTick += async () => await IgniteRandomCell();
+        clock.FireTick += FireStep;
 
-        const SimulationSpeed startSimulationSpeed = SimulationSpeed.Normal;
-        SetSimulationSpeed(startSimulationSpeed);
+        SetSimulationSpeed(simulationSpeed);
 
         if (simulationConfig.EnvironmentConfig.WindConfig.RandomDirection ||
             simulationConfig.EnvironmentConfig.WindConfig.RandomStrength)
         {
-            InitializeWindTimer();
+            clock.WindTick += UpdateWind;
             return;
         }
 
@@ -260,36 +253,35 @@ public sealed class ForestFireSimulation
             1 - simulationConfig.EnvironmentConfig.AtmosphereConfig.AirHumidityPercentage;
     }
 
-    private void InitializeSimulationTimer()
+    private void InitializeSimulationClock()
     {
         var hours = (int)accumulatedSimulationTime.TotalHours;
         UpdateSimulationTimeText?.Invoke(
             $"Runtime: {hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}"
         );
 
-        simulationTimer.Interval = TimeSpan.FromSeconds(1);
+        clock.Tick1s += OnSimulationTick;
+    }
 
-        simulationTimer.Tick += (_, _) =>
+    private void OnSimulationTick()
+    {
+        const int maxSimulationHours = 99;
+        if (CalculateSimulationTime() >= new TimeSpan(maxSimulationHours, 0, 0)
+        || simulationConfig.PrefillConfig.ShouldPrefillMap && LowDensityMinimumReached()
+        && !simulationConfig.TreeConfig.AllowRegrowForest)
         {
-            const int maxSimulationHours = 99;
-            if (CalculateSimulationTime() >= new TimeSpan(maxSimulationHours, 0, 0)
-            || simulationConfig.PrefillConfig.ShouldPrefillMap && LowDensityMinimumReached()
-            && !simulationConfig.TreeConfig.AllowRegrowForest)
-            {
-                StopOrPauseSimulation();
-                OpenEvalualtionWindow();
-                return;
-            }
+            StopOrPauseSimulation();
+            OpenEvalualtionWindow();
+            return;
+        }
 
-            accumulatedSimulationTime =
-                accumulatedSimulationTime.Add(simulationTimer.Interval);
+        accumulatedSimulationTime = accumulatedSimulationTime.Add(clock.TimerSecond);
 
-            var hours = (int)accumulatedSimulationTime.TotalHours;
-            UpdateSimulationTimeText?.Invoke(
-                $"Runtime: {hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}"
-            );
-            RecordSimulationStats();
-        };
+        var hours = (int)accumulatedSimulationTime.TotalHours;
+        UpdateSimulationTimeText?.Invoke(
+            $"Runtime: {hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}"
+        );
+        RecordSimulationStats();
     }
 
     private bool LowDensityMinimumReached()
@@ -308,12 +300,7 @@ public sealed class ForestFireSimulation
     public void StopOrPauseSimulation()
     {
         isPaused = true;
-
-        simulationTimer.Stop();
-        treeGrowthTimer.Stop();
-        igniteTimer.Stop();
-        fireTimer.Stop();
-        windUpdateTimer.Stop();
+        clock.Stop();
     }
 
     private void RecordSimulationStats()
@@ -456,55 +443,20 @@ public sealed class ForestFireSimulation
         return allCells;
     }
 
-    private void InitializeGrowTimer()
+    private void UpdateWind()
     {
-        treeGrowthTimer.Tick += (_, _) => GrowStep();
-    }
+        windHelper.RandomizeAndUpdateWind(); // Winkel und Strengh randomisieren
+        var vector = windHelper.GetWindVector();
+        windVisualizer.UpdateWind(vector); // Pfeil aktualisieren
 
-    private void InitializeIgniteTimer()
-    {
-        igniteTimer.Tick += async (_, _) =>
-        {
-            try
-            {
-                await IgniteRandomCell();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-                StopOrPauseSimulation();
-            }
-        };
-    }
-
-    private void InitializeFireTimer()
-    {
-        fireTimer.Tick += (_, _) => FireStep();
-    }
-
-    private void InitializeWindTimer()
-    {
-        windUpdateTimer.Interval = TimeSpan.FromMilliseconds(windChangeIntervalMs);
-
-        windUpdateTimer.Tick += (_, _) =>
-        {
-            windHelper.RandomizeAndUpdateWind(); // Winkel und Strengh randomisieren
-            var vector = windHelper.GetWindVector();
-            windVisualizer.UpdateWind(vector); // Pfeil aktualisieren
-
-            UpdateWindUI();
-        };
+        UpdateWindUI();
     }
 
     public void SetSimulationSpeed(SimulationSpeed simulationSpeed)
     {
         this.simulationSpeed = simulationSpeed;
-        var baseIntervalMs = (int)simulationSpeed;
 
-        treeGrowthTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
-        fireTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
-        igniteTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs * 750);
-        windUpdateTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs + windChangeIntervalMs);
+        clock.SetSpeed(simulationSpeed);
 
         windVisualizer?.Draw();
     }
@@ -642,8 +594,6 @@ public sealed class ForestFireSimulation
             isFireActiveThenPause = false;
             return;
         }
-
-        windHelper.RandomizeAndUpdateWind();
 
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
