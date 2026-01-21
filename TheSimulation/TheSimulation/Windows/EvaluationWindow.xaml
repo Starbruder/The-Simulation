@@ -41,6 +41,7 @@
 		</StackPanel>
 
 		<Button Grid.Row="0"
+			ToolTip="Opens a new save CSV dialog window to select the save location of the file"
 			HorizontalAlignment="Right"
 			VerticalAlignment="Top"
 			Click="ExportCsv_Click"

@@ -46,24 +46,29 @@
                 Content="❚❚"
                 Margin="16,0,0,0"
                 VerticalAlignment="Center"
+                ToolTip="Pauses / Resumes the simulation (Space)"
                 Click="PauseResume_Click" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedSlowButton"
+                ToolTip="Sets the simulation speed to half the normal speed (0,5x)"
                 Content="0,5"
                 Click="SpeedSlow_Click"
                 Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedNormalButton"
+                ToolTip="Sets the simulation speed to normal speed (1x)"
                 Content="×1"
                 Click="SpeedNormal_Click"
                 Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedFastButton"
+                ToolTip="Sets the simulation speed to double the normal speed (2x)"
                 Content="×2"
                 Click="SpeedFast_Click"
                 Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedUltraButton"
+                ToolTip="Sets the simulation speed to ultra speed (40x the normal speed)"
                 Content="×40"
                 Click="SpeedUltra_Click"
                 Margin="2" Style="{StaticResource CustomButtonStyle}"/>
@@ -116,6 +121,7 @@
                 Grid.Column="2"
                 Margin="16,0,0,0"
                 VerticalAlignment="Center"
+                ToolTip="Opens a new window to show the result of this simulation"
                 Click="ShowEvaluation_Click" Style="{StaticResource CustomButtonStyle}"/>
 		</StackPanel>
 

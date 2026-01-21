@@ -63,8 +63,12 @@
 		</Button>
 
 		<!-- Reset-Button -->
-		<Button Grid.Row="0" Height="40" Width="120" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ResetAllSettings_Click" Style="{StaticResource CustomButtonStyle}">
-			<Button.ToolTip>Set page settings back to default</Button.ToolTip>
+		<Button Grid.Row="0"
+		Height="40" Width="120"
+		HorizontalAlignment="Center" VerticalAlignment="Top"
+		Click="ResetAllSettings_Click"
+		ToolTip="Set page settings back to default (R)"
+		Style="{StaticResource CustomButtonStyle}">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
 					<fa:ImageAwesome Icon="Undo" Width="10" Height="10"/>
@@ -90,7 +94,7 @@
 			<!-- Terrain -->
 			<GroupBox Header="Terrain" Style="{StaticResource CustomGroupBoxStyle}" Margin="0,8,0,0">
 				<StackPanel>
-					<CheckBox x:Name="TerrainGenerationCheckBox" Content="Enable terrain generation" IsChecked="True" Margin="5,0,0,5"/>
+					<CheckBox x:Name="TerrainGenerationCheckBox" Content="Enable terrain generation" IsChecked="True"/>
 				</StackPanel>
 			</GroupBox>
 
@@ -98,9 +102,9 @@
 			<GroupBox Header="Trees" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 				<StackPanel>
 					<CheckBox Margin="5,0,0,5" x:Name="GrowForestCheckBox" Content="Grow forest"
-					  IsChecked="True"
-					  Checked="GrowForestCheckBox_Changed"
-					  Unchecked="GrowForestCheckBox_Changed"/>
+			  IsChecked="True"
+			  Checked="GrowForestCheckBox_Changed"
+			  Unchecked="GrowForestCheckBox_Changed"/>
 
 					<CheckBox Margin="5,5,0,0" x:Name="PrefillCheckBox" Content="Prefill forest"
 					  IsChecked="True"

@@ -89,7 +89,10 @@
 		</GroupBox>
 
 		<!-- Apply Button -->
-		<Button Grid.Row="4" Style="{StaticResource CustomButtonStyle}" Click="ApplyGraphicsSettings">
+		<Button Grid.Row="4"
+			Style="{StaticResource CustomButtonStyle}"
+			Click="ApplyGraphicsSettings"
+			ToolTip="Applies the graphics settings choosen on this page and closes the window">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
 					<fa:ImageAwesome Icon="Check" Width="15" Height="15" Margin="0,0,5,0"/>
