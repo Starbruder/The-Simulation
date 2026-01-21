@@ -59,7 +59,7 @@ public sealed class FireAnimation
 
         var rand = Random.Shared;
 
-        const int flameCount = 2;
+        const int flameCount = 1;
 
         for (var i = 0; i < flameCount; i++)
         {
