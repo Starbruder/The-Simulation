@@ -51,12 +51,10 @@ public sealed partial class SimulationWindow : Window
         {
             simulation.StartOrResumeSimulation();
             PauseResumeButton.Content = "❚❚";
-            //MessageBox.Show("Simulation resumed.");
             return;
         }
 
         PauseSimulation();
-        //MessageBox.Show("Simulation paused.");
     }
 
     private void SpeedSlow_Click(object s, RoutedEventArgs e)
