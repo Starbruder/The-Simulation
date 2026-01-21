@@ -273,7 +273,8 @@ public sealed class ForestFireSimulation
         {
             const int maxSimulationHours = 99;
             if (CalculateSimulationTime() >= new TimeSpan(maxSimulationHours, 0, 0)
-            || simulationConfig.PrefillConfig.ShouldPrefillMap && LowDensityMinimumReached())
+            || simulationConfig.PrefillConfig.ShouldPrefillMap && LowDensityMinimumReached()
+            && !simulationConfig.TreeConfig.AllowRegrowForest)
             {
                 StopOrPauseSimulation();
                 OpenEvalualtionWindow();
