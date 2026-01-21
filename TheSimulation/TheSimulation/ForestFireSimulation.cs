@@ -649,6 +649,13 @@ public sealed class ForestFireSimulation
         {
             foreach (var neighbor in grid.GetNeighbors(burningCell))
             {
+                if (randomHelper.NextDouble() <
+                    simulationConfig.FireConfig.SpreadChancePercent / 100)
+                {
+                    // Durch Funkenflug auch weiter entfernte Bäume anzünden
+                    TryIgniteNearbyCell(burningCell, toIgnite);
+                }
+
                 if (!grid.IsTree(neighbor))
                 {
                     continue;
@@ -670,6 +677,53 @@ public sealed class ForestFireSimulation
         isFireActiveThenPause = burningTrees.Count > 0;
     }
 
+    /// <summary>
+    /// Versucht, durch Hitze oder Funkenflug einen zusätzlichen Baum
+    /// im Umkreis von 2–3 Zellen zu entzünden.
+    /// Die Wahrscheinlichkeit nimmt mit der Distanz ab und wird stark
+    /// von Windrichtung und -stärke beeinflusst.
+    /// </summary>
+    /// <param name="source">Die aktuell brennende Zelle</param>
+    /// <param name="toIgnite">Sammlung neu zu entzündender Zellen im aktuellen FireStep</param>
+    private void TryIgniteNearbyCell(Cell source, HashSet<Cell> toIgnite)
+    {
+        const int MinSpotFireRadius = 2;
+        const int MaxSpotFireRadius = 4;
+
+        // Zufällige Verschiebung der Zielzelle in X- und Y-Richtung
+        var offsetX = randomHelper.NextInt(-MaxSpotFireRadius, MaxSpotFireRadius + 1);
+        var offsetY = randomHelper.NextInt(-MaxSpotFireRadius, MaxSpotFireRadius + 1);
+
+        // Abstand zur Zielzelle berechnen (Hypotenuse)
+        var distanceToTarget = Math.Sqrt(offsetX * offsetX + offsetY * offsetY);
+
+        if (distanceToTarget < MinSpotFireRadius || distanceToTarget > MaxSpotFireRadius)
+        {
+            return;
+        }
+
+        var target = new Cell(source.X + offsetX, source.Y + offsetY);
+
+        if (!grid.IsInside(target) || !grid.IsTree(target))
+        {
+            return;
+        }
+
+        var windEffect = windHelper.CalculateWindEffect(source, target);
+        var distanceFalloff = MinSpotFireRadius / distanceToTarget;
+
+        var chance =
+            distanceFalloff *
+            windEffect *
+            cachedHumidityEffect *
+            cachedTemperatureEffect;
+
+        if (randomHelper.NextDouble() < chance)
+        {
+            toIgnite.Add(target);
+        }
+    }
+
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
     {
         // Uncommented later when impl. diffrent ground types
@@ -684,14 +738,10 @@ public sealed class ForestFireSimulation
         //}
         //}
 
-        var baseChance =
-            simulationConfig.FireConfig.SpreadChancePercent / 100;
-
         var windEffect =
             windHelper.CalculateWindEffect(burningCell, neighbor);
 
         var chance =
-            baseChance *
             windEffect *
             cachedHumidityEffect *
             cachedTemperatureEffect;

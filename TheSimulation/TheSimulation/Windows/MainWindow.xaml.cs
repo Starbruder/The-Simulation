@@ -56,11 +56,11 @@ public sealed partial class MainWindow : Window
         );
 
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
-        var fireIntensity = FireIntensitySlider.Value; // (Fire spread chance percent)
+        var fireChance = FireSpreadChanceSlider.Value; // (Additional fire spread chance percent)
 
         var fireConfig = new FireConfig
         (
-            fireIntensity,
+            fireChance,
             pauseDuringFire
         );
 
@@ -248,7 +248,7 @@ public sealed partial class MainWindow : Window
 
         // Feuer zurücksetzen
         PauseFireCheckBox.IsChecked = true;
-        FireIntensitySlider.Value = 85;
+        FireSpreadChanceSlider.Value = 50;
 
         // Umwelt zurücksetzen
         AirHumiditySlider.Value = 50;

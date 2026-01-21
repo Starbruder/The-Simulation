@@ -109,8 +109,8 @@
 			<GroupBox Header="Fire" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Red">
 				<StackPanel>
 					<CheckBox Margin="5,0,60,0" x:Name="PauseFireCheckBox" Content="Pause growing during fire" IsChecked="True"/>
-					<TextBlock Text="{Binding ElementName=FireIntensitySlider, Path=Value, StringFormat=Fire spread chance: {0:F0}%}" FontSize="14" Margin="10,5,0,0"/>
-					<Slider x:Name="FireIntensitySlider" Maximum="100" Value="85" IsSnapToTickEnabled="True" TickFrequency="5"/>
+					<TextBlock Text="{Binding ElementName=FireSpreadChanceSlider, Path=Value, StringFormat=Additional fire spread chance: {0:F0}%}" FontSize="14" Margin="10,5,0,0"/>
+					<Slider x:Name="FireSpreadChanceSlider" Maximum="100" Value="85" IsSnapToTickEnabled="True" TickFrequency="5"/>
 				</StackPanel>
 			</GroupBox>
 
