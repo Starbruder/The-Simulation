@@ -16,11 +16,11 @@ public sealed class ForestFireSimulation
 
     private readonly SimulationConfig simulationConfig;
 
-    public Action<string> UpdateSimulationTimeText;
-    public Action<string> UpdateTreeDensityText;
-    public Action<string> UpdateWindStrengthText;
-    public Action<string> UpdateTotalGrownTreesText;
-    public Action<string> UpdateTotalBurnedTreesText;
+    public required Action<string> UpdateSimulationTimeText;
+    public required Action<string> UpdateTreeDensityText;
+    public required Action<string> UpdateWindStrengthText;
+    public required Action<string> UpdateTotalGrownTreesText;
+    public required Action<string> UpdateTotalBurnedTreesText;
 
     private readonly RandomHelper randomHelper = new();
     private readonly WindHelper windHelper;
@@ -130,7 +130,7 @@ public sealed class ForestFireSimulation
 
         grid.Clear(cell);
 
-        // 🖼️ UI-Element entfernen
+        // UI-Element entfernen
         if (treeElements.TryGetValue(cell, out var tree))
         {
             ForestCanvas.Children.Remove(tree);

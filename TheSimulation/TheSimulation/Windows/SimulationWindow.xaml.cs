@@ -24,7 +24,7 @@ public sealed partial class SimulationWindow : Window
             UpdateTotalBurnedTreesText = text => TotalBurnedTrees.Text = text
         };
 
-        SetSimulationSpeedNormal();
+        SetSimulationSpeedUltra();
 
         PauseSimulation();
     }
@@ -95,6 +95,9 @@ public sealed partial class SimulationWindow : Window
     }
 
     private void SpeedUltra_Click(object s, RoutedEventArgs e)
+        => SetSimulationSpeedUltra();
+
+    private void SetSimulationSpeedUltra()
     {
         simulation.SetSimulationSpeed(SimulationSpeed.Ultra);
 
