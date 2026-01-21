@@ -25,6 +25,8 @@ public sealed partial class SimulationWindow : Window
         };
 
         SetSimulationSpeedNormal();
+
+        PauseSimulation();
     }
 
     private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -34,6 +36,12 @@ public sealed partial class SimulationWindow : Window
             PauseResume_Click(sender, e);
             e.Handled = true;
         }
+    }
+
+    private void PauseSimulation()
+    {
+        simulation.StopOrPauseSimulation();
+        PauseResumeButton.Content = "▶";
     }
 
     private void PauseResume_Click(object sender, RoutedEventArgs e)
@@ -46,8 +54,7 @@ public sealed partial class SimulationWindow : Window
             return;
         }
 
-        simulation.StopOrPauseSimulation();
-        PauseResumeButton.Content = "▶";
+        PauseSimulation();
         MessageBox.Show("Simulation paused.");
     }
 

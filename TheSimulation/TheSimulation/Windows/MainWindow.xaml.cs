@@ -139,7 +139,7 @@ public sealed partial class MainWindow : Window
 
     private PrefillConfig GetPrefillConfigFromUI()
     {
-        var prefill = PrefillCheckBox.IsChecked ?? false;
+        var prefill = PrefillCheckBox.IsChecked ?? true;
         var prefillDensity = PrefillDensitySlider.Value / 100; // 0..1
 
         return new
@@ -179,7 +179,11 @@ public sealed partial class MainWindow : Window
 
     private void PrefillCheckBox_Changed(object sender, RoutedEventArgs e)
     {
-        PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? false;
+        if (PrefillDensitySlider is null || PrefillCheckBox is null)
+        {
+            return;
+        }
+        PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? true;
     }
 
     private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
