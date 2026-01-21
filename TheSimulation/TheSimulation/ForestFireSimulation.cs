@@ -66,7 +66,7 @@ public sealed class ForestFireSimulation
         this.randomHelper = random;
         this.simulationConfig = simulationConfig;
         this.simulationSpeed = simulationSpeed;
-		windHelper = new(simulationConfig.EnvironmentConfig.WindConfig);
+        windHelper = new(simulationConfig.EnvironmentConfig.WindConfig);
         windVisualizer =
             new(ForestCanvas, simulationConfig.EnvironmentConfig.WindConfig, windHelper);
 
