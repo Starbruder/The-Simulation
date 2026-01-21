@@ -90,15 +90,22 @@
 			<!-- Terrain -->
 			<GroupBox Header="Terrain" Style="{StaticResource CustomGroupBoxStyle}" Margin="0,8,0,0">
 				<StackPanel>
-					<CheckBox x:Name="TerrainGenerationCheckBox" Content="Enable terrain generation" IsChecked="True"/>
+					<CheckBox x:Name="TerrainGenerationCheckBox" Content="Enable terrain generation" IsChecked="True" Margin="5,0,0,5"/>
 				</StackPanel>
 			</GroupBox>
 
 			<!-- Trees -->
 			<GroupBox Header="Trees" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 				<StackPanel>
-					<CheckBox Margin="5,0,0,5" x:Name="GrowForestCheckBox" Content="Grow forest" IsChecked="True" Unchecked="GrowForestCheckBox_Unchecked" Checked="GrowForestCheckBox_Checked"/>
-					<CheckBox Margin="5,5,0,0" x:Name="PrefillCheckBox" Content="Prefill forest" IsChecked="True" Checked="PrefillCheckBox_Changed" Unchecked="PrefillCheckBox_Changed"/>
+					<CheckBox Margin="5,0,0,5" x:Name="GrowForestCheckBox" Content="Grow forest"
+					  IsChecked="True"
+					  Checked="GrowForestCheckBox_Changed"
+					  Unchecked="GrowForestCheckBox_Changed"/>
+
+					<CheckBox Margin="5,5,0,0" x:Name="PrefillCheckBox" Content="Prefill forest"
+					  IsChecked="True"
+					  Checked="PrefillCheckBox_Changed"
+					  Unchecked="PrefillCheckBox_Changed"/>
 					<!-- TextBlock für Prefill density Wert -->
 					<TextBlock Margin="10,5,0,5" FontSize="14" Text="{Binding ElementName=PrefillDensitySlider, Path=Value, StringFormat=Prefill density: {0:F0}%}"/>
 					<Slider x:Name="PrefillDensitySlider" Minimum="0" Maximum="100" Value="80" TickFrequency="5" IsSnapToTickEnabled="True"/>

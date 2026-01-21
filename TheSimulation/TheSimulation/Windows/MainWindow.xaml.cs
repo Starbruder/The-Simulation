@@ -177,12 +177,24 @@ public sealed partial class MainWindow : Window
         return (WindDirection)values.GetValue(randomIndex)!;
     }
 
+    /// <summary>
+    /// Prüft, dass mindestens eine Option aktiviert bleibt.
+    /// Wird ausgelöst, wenn PrefillCheckBox geändert wird.
+    /// </summary>
     private void PrefillCheckBox_Changed(object sender, RoutedEventArgs e)
     {
         if (PrefillDensitySlider is null || PrefillCheckBox is null)
         {
             return;
         }
+
+        if (PrefillCheckBox.IsChecked == false && GrowForestCheckBox.IsChecked == false)
+        {
+            // Mindestens eine aktiv halten
+            PrefillCheckBox.IsChecked = true;
+        }
+
+        // Prefill-Density Slider nur aktiv, wenn Prefill an ist
         PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? true;
     }
 
@@ -267,5 +279,24 @@ public sealed partial class MainWindow : Window
         var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
 
         WindStrengthText.Text = $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)";
+    }
+
+    /// <summary>
+    /// Prüft, dass mindestens eine Option aktiviert bleibt.
+    /// Wird ausgelöst, wenn GrowForestCheckBox geändert wird.
+    /// </summary>
+    private void GrowForestCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (GrowForestCheckBox.IsChecked == false && PrefillCheckBox.IsChecked == false)
+        {
+            // Mindestens eine aktiv halten
+            GrowForestCheckBox.IsChecked = true;
+        }
+
+        // Optional: PauseFireCheckBox nur aktiv, wenn GrowForest an ist
+        if (PauseFireCheckBox is not null)
+        {
+            PauseFireCheckBox.IsEnabled = GrowForestCheckBox.IsChecked ?? true;
+        }
     }
 }
