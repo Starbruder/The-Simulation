@@ -243,12 +243,12 @@ public sealed partial class MainWindow : Window
 
         // Bäume zurücksetzen
         GrowForestCheckBox.IsChecked = true;
-        PrefillCheckBox.IsChecked = false;
-        PrefillDensitySlider.Value = 60;
+        PrefillCheckBox.IsChecked = true;
+        PrefillDensitySlider.Value = 80;
 
         // Feuer zurücksetzen
         PauseFireCheckBox.IsChecked = true;
-        FireSpreadChanceSlider.Value = 50;
+        FireSpreadChanceSlider.Value = 40;
 
         // Umwelt zurücksetzen
         AirHumiditySlider.Value = 50;
@@ -256,7 +256,7 @@ public sealed partial class MainWindow : Window
         RandomWindDirectionCheckBox.IsChecked = false;
         WindDirectionBox.SelectedIndex = 0;
         RandomWindStrengthCheckBox.IsChecked = false;
-        WindStrengthSlider.Value = 0.7;
+        WindStrengthSlider.Value = 0.75;
     }
 
     private void WindStrengthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
