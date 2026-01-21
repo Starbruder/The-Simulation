@@ -34,7 +34,7 @@ public sealed class ForestFireSimulation
     private float cachedTemperatureEffect;
     private float cachedHumidityEffect;
 
-    public bool isPaused = false;
+    public bool IsPaused { get; private set; } = false;
     private bool isFireActiveThenPause = false;
 
     private uint totalGrownTrees = 0;
@@ -139,7 +139,7 @@ public sealed class ForestFireSimulation
 
     public void StartOrResumeSimulation()
     {
-        isPaused = false;
+        IsPaused = false;
 
         if (simulationConfig.TreeConfig.AllowRegrowForest)
         {
@@ -299,7 +299,7 @@ public sealed class ForestFireSimulation
 
     public void StopOrPauseSimulation()
     {
-        isPaused = true;
+        IsPaused = true;
         clock.Stop();
     }
 

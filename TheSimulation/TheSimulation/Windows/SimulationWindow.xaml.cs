@@ -47,16 +47,16 @@ public sealed partial class SimulationWindow : Window
 
     private void PauseResume_Click(object sender, RoutedEventArgs e)
     {
-        if (simulation.isPaused)
+        if (simulation.IsPaused)
         {
             simulation.StartOrResumeSimulation();
             PauseResumeButton.Content = "❚❚";
-            MessageBox.Show("Simulation resumed.");
+            //MessageBox.Show("Simulation resumed.");
             return;
         }
 
         PauseSimulation();
-        MessageBox.Show("Simulation paused.");
+        //MessageBox.Show("Simulation paused.");
     }
 
     private void SpeedSlow_Click(object s, RoutedEventArgs e)
