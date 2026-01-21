@@ -47,6 +47,7 @@ public sealed class ForestFireSimulation
     private uint totalBurnedTrees = 0;
 
     const uint windChangeIntervalMs = 300 + (int)SimulationSpeed.Normal;
+    private SimulationSpeed simulationSpeed = SimulationSpeed.Normal;
 
     private readonly Dictionary<Cell, Shape> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
@@ -496,6 +497,7 @@ public sealed class ForestFireSimulation
 
     public void SetSimulationSpeed(SimulationSpeed simulationSpeed)
     {
+        this.simulationSpeed = simulationSpeed;
         var baseIntervalMs = (int)simulationSpeed;
 
         treeGrowthTimer.Interval = TimeSpan.FromMilliseconds(baseIntervalMs);
@@ -768,8 +770,21 @@ public sealed class ForestFireSimulation
         }
     }
 
+    /// <summary>
+    /// Spawnt die Feueranimation für eine Zelle.
+    /// Bei extrem hoher Simulation-Geschwindigkeit (>= 40x) wird die Animation deaktiviert.
+    /// </summary>
+    /// <param name="cell">Die Zelle, die brennt</param>
+    /// <param name="simulationSpeed">Die aktuelle Simulation-Geschwindigkeit</param>
     private void SpawnFireEffect(Cell burningCell)
     {
+        // Bei sehr hoher Geschwindigkeit keine Animation abspielen
+        const SimulationSpeed MaxSpeedForAnimation = SimulationSpeed.Ultra;
+        if (simulationSpeed == MaxSpeedForAnimation)
+        {
+            return;
+        }
+
         if (simulationConfig.VisualEffectsConfig.ShowFlameAnimations)
         {
             var fire = new FireAnimation(
