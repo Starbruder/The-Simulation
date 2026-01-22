@@ -139,14 +139,6 @@ public sealed class ForestFireSimulation
             return;
         }
 
-        if (isTreeBurning)
-        {
-            // 🔥 Wenn der Baum brennt und bevor ein neuer Baum gepflanzt wird, 
-            // muss sichergestellt werden, dass die Baumanzahl korrekt bleibt,
-            // da AddTree() verwendet wird, aber auch totalGrownTrees erhöht wird.
-            totalGrownTrees--;
-        }
-
         ResetCellState(cell);
 
         if (simulationConfig.TerrainConfig.UseTerrainGeneration)
