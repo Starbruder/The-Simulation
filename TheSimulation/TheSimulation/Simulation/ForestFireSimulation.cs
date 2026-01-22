@@ -129,8 +129,7 @@ public sealed class ForestFireSimulation
         var isTreeThere = grid.IsTree(cell);
         var isTreeBurning = grid.IsBurning(cell);
 
-        // ❌ nur gesunde Bäume blockieren
-        if (isTreeThere && !isTreeBurning)
+        if (isTreeThere || isTreeBurning)
         {
             return;
         }
