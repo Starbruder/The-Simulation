@@ -74,20 +74,15 @@ public sealed class ForestFireSimulation
 
         ForestCanvas.Loaded += async (_, _) => await InitializeSimulationAsync();
 
-        ForestCanvas.MouseLeftButtonDown += (_, e) =>
+        ForestCanvas.PreviewMouseDown += (_, e) =>
         {
-            MouseBurnClick(simulationConfig, e);
-        };
-
-        ForestCanvas.MouseRightButtonDown += (_, e) =>
-        {
-            MouseDestroyClick(e);
+            MouseClick(simulationConfig, e);
         };
 
         StartOrResumeSimulation();
     }
 
-    private void MouseDestroyClick(MouseButtonEventArgs e)
+    private void MouseClick(SimulationConfig simulationConfig, MouseButtonEventArgs e)
     {
         var pos = e.GetPosition(ForestCanvas);
 
@@ -102,8 +97,54 @@ public sealed class ForestFireSimulation
             return;
         }
 
-        DestroyCell(cell);
+        switch (e.ChangedButton)
+        {
+            case MouseButton.Left:
+                MouseBurnClick(cell);
+                break;
+
+            case MouseButton.Middle:
+                MouseDestroyClick(cell);
+                break;
+
+            case MouseButton.Right:
+                MouseGrowClick(cell);
+                break;
+
+            case MouseButton.XButton1: // Hier könnte man noch andere Funktionen hinzufügen
+                break;
+            case MouseButton.XButton2: // Z.b: Zoom In/Out oder Simulationsgeschwindigkeit ändern
+                break;
+        }
     }
+
+    private void MouseGrowClick(Cell cell)
+    {
+        if (grid.IsTree(cell))
+        {
+            return;
+        }
+
+        if (!growableCells.Contains(cell))
+        {
+            return;
+        }
+
+        if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+        {
+            var terrain = terrainGrid[cell.X, cell.Y];
+
+            if (terrain.Type != TerrainType.Soil)
+            {
+                return;
+            }
+        }
+
+        AddTree(cell);
+    }
+
+    private void MouseDestroyClick(Cell cell)
+        => DestroyCell(cell);
 
     private void DestroyCell(Cell cell)
     {
@@ -161,22 +202,8 @@ public sealed class ForestFireSimulation
         UpdateWindUI();
     }
 
-    private void MouseBurnClick
-        (SimulationConfig simulationConfig, MouseButtonEventArgs e)
+    private void MouseBurnClick(Cell cell)
     {
-        var pos = e.GetPosition(ForestCanvas);
-
-        var x = (int)(pos.X / simulationConfig.TreeConfig.Size);
-        var y = (int)(pos.Y / simulationConfig.TreeConfig.Size);
-
-        // Löst das Problem, dass außerhalb geklickt wird und das Programm abstürzt.
-        // of out of bounds (Knapp außerhalb des Baumrasters klicken)
-        var cell = new Cell(x, y);
-        if (!grid.IsInside(cell))
-        {
-            return;
-        }
-
         IgniteTree(cell);
         fireEventsHistory.Add(new FireEvent(
             FireEventType.ManualIgnition,
