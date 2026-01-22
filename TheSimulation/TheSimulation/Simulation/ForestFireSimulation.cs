@@ -104,7 +104,7 @@ public sealed class ForestFireSimulation
                 break;
 
             case MouseButton.Middle:
-                MouseDestroyClick(cell);
+                DestroyCell(cell);
                 break;
 
             case MouseButton.Right:
@@ -120,7 +120,11 @@ public sealed class ForestFireSimulation
 
     private void MouseGrowClick(Cell cell)
     {
-        if (grid.IsTree(cell))
+        var isTreeThere = grid.IsTree(cell);
+        var isTreeBurning = grid.IsBurning(cell);
+
+        // ❌ nur gesunde Bäume blockieren
+        if (isTreeThere && !isTreeBurning)
         {
             return;
         }
@@ -129,6 +133,16 @@ public sealed class ForestFireSimulation
         {
             return;
         }
+
+        if (isTreeBurning)
+        {
+            // 🔥 Wenn der Baum brennt und bevor ein neuer Baum gepflanzt wird, 
+            // muss sichergestellt werden, dass die Baumanzahl korrekt bleibt,
+            // da AddTree() verwendet wird, aber auch totalGrownTrees erhöht wird.
+            totalGrownTrees--;
+        }
+
+        ResetCellState(cell);
 
         if (simulationConfig.TerrainConfig.UseTerrainGeneration)
         {
@@ -143,15 +157,16 @@ public sealed class ForestFireSimulation
         AddTree(cell);
     }
 
-    private void MouseDestroyClick(Cell cell)
-        => DestroyCell(cell);
-
     private void DestroyCell(Cell cell)
     {
         if (!grid.IsTree(cell))
         {
             return;
         }
+
+        totalGrownTrees--;
+
+        ResetCellState(cell);
 
         // 🔥 Falls der Baum brennt → Feuer & Effekte stoppen
         if (burningTrees.Remove(cell))
@@ -165,7 +180,6 @@ public sealed class ForestFireSimulation
 
         grid.Clear(cell);
 
-        // UI-Element entfernen
         if (treeElements.TryGetValue(cell, out var tree))
         {
             ForestCanvas.Children.Remove(tree);
@@ -176,6 +190,30 @@ public sealed class ForestFireSimulation
         growableCells.Add(cell);
 
         UpdateTreeUI();
+    }
+
+    private void ResetCellState(Cell cell)
+    {
+        if (burningTrees.Remove(cell))
+        {
+            if (fireAnimations.TryGetValue(cell, out var fire))
+            {
+                fire.Stop();
+                fireAnimations.Remove(cell);
+            }
+        }
+
+        if (treeElements.TryGetValue(cell, out var tree))
+        {
+            ForestCanvas.Children.Remove(tree);
+            treeElements.Remove(cell);
+        }
+
+        activeTrees.Remove(cell);
+
+        grid.Clear(cell);
+
+        growableCells.Add(cell);
     }
 
     public void StartOrResumeSimulation()
@@ -205,7 +243,7 @@ public sealed class ForestFireSimulation
     private void MouseBurnClick(Cell cell)
     {
         IgniteTree(cell);
-        fireEventsHistory.Add(new FireEvent(
+        fireEventsHistory.Add(new(
             FireEventType.ManualIgnition,
             accumulatedSimulationTime
         ));
