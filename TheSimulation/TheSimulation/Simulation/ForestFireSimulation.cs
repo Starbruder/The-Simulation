@@ -76,22 +76,28 @@ public sealed class ForestFireSimulation
 
         ForestCanvas.PreviewMouseDown += (_, e) =>
         {
-            MouseClick(simulationConfig, e);
+            MouseClick(e);
         };
 
         StartOrResumeSimulation();
     }
 
-    private void MouseClick(SimulationConfig simulationConfig, MouseButtonEventArgs e)
+    private Cell GetMouseClickedCell(MouseButtonEventArgs e)
     {
         var pos = e.GetPosition(ForestCanvas);
 
         var x = (int)(pos.X / simulationConfig.TreeConfig.Size);
         var y = (int)(pos.Y / simulationConfig.TreeConfig.Size);
 
+        return new(x, y);
+    }
+
+    private void MouseClick(MouseButtonEventArgs e)
+    {
+        var cell = GetMouseClickedCell(e);
+
         // Löst das Problem, dass außerhalb geklickt wird und das Programm abstürzt.
         // of out of bounds (Knapp außerhalb des Baumrasters klicken)
-        var cell = new Cell(x, y);
         if (!grid.IsInside(cell))
         {
             return;
@@ -104,7 +110,7 @@ public sealed class ForestFireSimulation
                 break;
 
             case MouseButton.Middle:
-                DestroyCell(cell);
+                MouseDestoryClick(cell);
                 break;
 
             case MouseButton.Right:
@@ -157,15 +163,19 @@ public sealed class ForestFireSimulation
         AddTree(cell);
     }
 
-    private void DestroyCell(Cell cell)
+    private void MouseDestoryClick(Cell cell)
     {
-        if (!grid.IsTree(cell))
+        if (grid.IsEmpty(cell))
         {
             return;
         }
 
         totalGrownTrees--;
+        DestroyCell(cell);
+    }
 
+    private void DestroyCell(Cell cell)
+    {
         ResetCellState(cell);
 
         // 🔥 Falls der Baum brennt → Feuer & Effekte stoppen
