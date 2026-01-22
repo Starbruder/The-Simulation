@@ -288,12 +288,6 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private void GrowForestCheckBox_Changed(object sender, RoutedEventArgs e)
     {
-        if (GrowForestCheckBox.IsChecked == false && PrefillCheckBox.IsChecked == false)
-        {
-            // Mindestens eine aktiv halten
-            GrowForestCheckBox.IsChecked = true;
-        }
-
         // Optional: PauseFireCheckBox nur aktiv, wenn GrowForest an ist
         if (PauseFireCheckBox is not null)
         {
