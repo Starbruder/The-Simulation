@@ -140,7 +140,45 @@
 					<ComboBox Margin="4,5,4,0" x:Name="WindDirectionBox" SelectedIndex="0" MinWidth="150"/>
 					<!-- Random Wind Strength -->
 					<CheckBox Margin="5,5,0,0" x:Name="RandomWindStrengthCheckBox" Content="Random wind strength" IsChecked="False"/>
-					<TextBlock x:Name="WindStrengthText" Margin="10,5,0,0" FontSize="14" Text="Wind Strengh: 0% (0 Bft)"/>
+					<TextBlock x:Name="WindStrengthText" Margin="10,5,0,0" FontSize="14" Text="Wind Strengh: 0% (0 Bft)">
+						<TextBlock.ToolTip>
+							<TextBlock>
+								Wind strength affects fire spread in the given direction.
+								<LineBreak/>
+								Bft stands for Beaufort Scale and is a standardized system to
+								estimate wind force.
+								<LineBreak/>
+								Each level corresponds to a range of wind
+								speeds and descriptive terms:
+								<LineBreak/>
+								0 → Calm below 1 km/h
+								<LineBreak/>
+								1 → Light Air (1–5 km/h)
+								<LineBreak/>
+								2 → Light Breeze (6–11 km/h)
+								<LineBreak/>
+								3 → Gentle Breeze (12–19 km/h)
+								<LineBreak/>
+								4 → Moderate Breeze (20–28 km/h)
+								<LineBreak/>
+								5 → Fresh Breeze (29–38 km/h)
+								<LineBreak/>
+								6 → Strong Breeze (39–49 km/h)
+								<LineBreak/>
+								7 → Strong Wind (50–61 km/h)
+								<LineBreak/>
+								8 → Severe Wind (62–74 km/h)
+								<LineBreak/>
+								9 → Storm (75–88 km/h)
+								<LineBreak/>
+								10 → Violent Storm (89–102 km/h)
+								<LineBreak/>
+								11 → Hurricane (103–117 km/h)
+								<LineBreak/>
+								12 → Hurricane Extreme (118+ km/h)"
+							</TextBlock>
+						</TextBlock.ToolTip>
+					</TextBlock>
 					<Slider x:Name="WindStrengthSlider" Minimum="0" Maximum="1" Value="0.75" TickFrequency="0.05" IsSnapToTickEnabled="True" ValueChanged="WindStrengthSlider_ValueChanged"/>
 				</StackPanel>
 			</GroupBox>
