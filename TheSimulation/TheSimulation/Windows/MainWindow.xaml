@@ -140,7 +140,7 @@
 					<ComboBox Margin="4,5,4,0" x:Name="WindDirectionBox" SelectedIndex="0" MinWidth="150"/>
 					<!-- Random Wind Strength -->
 					<CheckBox Margin="5,5,0,0" x:Name="RandomWindStrengthCheckBox" Content="Random wind strength" IsChecked="False"/>
-					<TextBlock x:Name="WindStrengthText" Margin="10,5,0,0" FontSize="14" Text="Wind Strengh: 0% (0Bft)"/>
+					<TextBlock x:Name="WindStrengthText" Margin="10,5,0,0" FontSize="14" Text="Wind Strengh: 0% (0 Bft)"/>
 					<Slider x:Name="WindStrengthSlider" Minimum="0" Maximum="1" Value="0.75" TickFrequency="0.05" IsSnapToTickEnabled="True" ValueChanged="WindStrengthSlider_ValueChanged"/>
 				</StackPanel>
 			</GroupBox>
