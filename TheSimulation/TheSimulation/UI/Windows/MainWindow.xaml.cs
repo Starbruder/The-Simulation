@@ -279,7 +279,8 @@ public sealed partial class MainWindow : Window
         var windStrengthReadablePercent = windStrength * 100;
         var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
 
-        WindStrengthText.Text = $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)";
+        WindStrengthText.Text =
+            $"Wind Strengh: {windStrengthReadablePercent:F0}% ({beaufortScale} Bft)";
     }
 
     /// <summary>
