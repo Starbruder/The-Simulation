@@ -57,8 +57,8 @@
 		<!-- Wettereffekte GroupBox -->
 		<GroupBox Header="Weather Effects" Grid.Row="0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Blue">
 			<StackPanel>
-				<CheckBox x:Name="LightningCheckBox" Content="Show Lightning" Margin="10"/>
-				<CheckBox x:Name="BoltFlashCheckBox" Content="Show Bolt Flashes" Margin="10"/>
+				<CheckBox x:Name="LightningCheckBox" Content="Show lightning" Margin="10"/>
+				<CheckBox x:Name="BoltFlashCheckBox" Content="Show bolt flashes" Margin="10"/>
 			</StackPanel>
 		</GroupBox>
 
@@ -72,15 +72,16 @@
 		<!-- Partikeleffekte GroupBox -->
 		<GroupBox Header="Particle Effects" Grid.Row="2" Style="{StaticResource CustomGroupBoxStyle}">
 			<StackPanel>
-				<CheckBox x:Name="FireSparksCheckBox" Content="Show Sparks" Margin="10"/>
-				<CheckBox x:Name="SmokeCheckBox" Content="Show Smoke" Margin="10"/>
+				<CheckBox x:Name="FireSparksCheckBox" Content="Show sparks" Margin="10"/>
+				<CheckBox x:Name="SmokeCheckBox" Content="Show smoke" Margin="10"/>
 			</StackPanel>
 		</GroupBox>
 
 		<!-- Baumeffekte GroupBox -->
 		<GroupBox Header="Tree Effects" Grid.Row="3" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 			<StackPanel>
-				<CheckBox x:Name="BurnedTreeCheckBox" Content="Show Burned Trees" Margin="10"/>
+				<CheckBox x:Name="BurnedTreeCheckBox"
+					Content="Show burned trees" Margin="10"/>
 				<ComboBox x:Name="TreeShapeComboBox" Margin="10">
 					<ComboBoxItem Content="Ellipse"/>
 					<ComboBoxItem Content="Rectangle"/>
