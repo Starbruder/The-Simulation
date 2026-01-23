@@ -94,7 +94,52 @@
 			<!-- Terrain -->
 			<GroupBox Header="Terrain" Style="{StaticResource CustomGroupBoxStyle}" Margin="0,8,0,0">
 				<StackPanel>
-					<CheckBox x:Name="TerrainGenerationCheckBox" Content="Enable terrain generation" IsChecked="True"/>
+					<CheckBox x:Name="TerrainGenerationCheckBox" Content="Enable terrain generation" IsChecked="True">
+						<CheckBox.ToolTip>
+							<TextBlock TextWrapping="Wrap" MaxWidth="300">
+<Bold>Terrain Generation:</Bold> Generates the terrain using a height map with a central hill and slight random noise. Elevation ranges from 0 (lowest) to 1 (highest).  
+<LineBreak/><LineBreak/>
+
+<Bold>Tree Placement:</Bold>
+Trees are placed on randomly selected cells using a <Bold>uniform distribution</Bold> across all growable cells.  
+<LineBreak/>
+- Each selected cell has a growth probability reduced linearly by elevation:  
+<LineBreak/>
+  P(grow) = 1 - (Elevation × 0.7)  
+<LineBreak/>
+- Small random noise ±0.1 is added to elevation (uniform), changing growth chance by ±7%.  
+<LineBreak/>
+- Example probabilities:  
+<LineBreak/>
+  • Elevation 0.0 → 100%  
+<LineBreak/>
+  • Elevation 0.3 → 79%  
+<LineBreak/>
+  • Elevation 0.5 → 65%  
+<LineBreak/>
+  • Elevation 0.7 → 51%  
+<LineBreak/>
+  • Elevation 1.0 → 30%  
+<LineBreak/><LineBreak/>
+
+<Bold>Fire Spread on Slopes:</Bold>
+Fire spreads faster uphill and slower downhill. Effect is calculated from height difference (Δheight):  
+<LineBreak/>
+• Uphill (Δheight &gt; 0): factor = 1 + Δheight × 2  
+<LineBreak/>
+• Downhill (Δheight &lt; 0): factor = 1 + Δheight  
+<LineBreak/><LineBreak/>
+
+<Bold>Example:</Bold>
+• From 0.3 → 0.5 (Δheight = 0.2): factor = 1.4 → fire spreads 40% faster  
+<LineBreak/>
+• From 0.5 → 0.3 (Δheight = -0.2): factor = 0.8 → fire spreads 20% slower  
+<LineBreak/><LineBreak/>
+
+<Bold>Effect:</Bold> Enabling terrain generation creates a natural hill-shaped forest with variable tree density, adding realistic randomness and dynamic fire behavior.
+							</TextBlock>
+						</CheckBox.ToolTip>
+					</CheckBox>
 				</StackPanel>
 			</GroupBox>
 
@@ -102,9 +147,30 @@
 			<GroupBox Header="Trees" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 				<StackPanel>
 					<CheckBox Margin="5,0,0,5" x:Name="GrowForestCheckBox" Content="Grow forest"
-			  IsChecked="True"
-			  Checked="GrowForestCheckBox_Changed"
-			  Unchecked="GrowForestCheckBox_Changed"/>
+          IsChecked="True"
+          Checked="GrowForestCheckBox_Changed"
+          Unchecked="GrowForestCheckBox_Changed">
+						<CheckBox.ToolTip>
+							<TextBlock TextWrapping="Wrap" MaxWidth="300">
+            When enabled, trees will grow over time to replenish the forest.
+            <LineBreak/>
+            <LineBreak/>
+            <Bold>Next tree timing:</Bold> Trees grow in steps determined by the simulation clock. 
+            Each tick triggers an attempt to grow a single tree.
+            <LineBreak/>
+            <LineBreak/>
+            <Bold>Next tree location:</Bold> A cell is chosen randomly from all currently growable cells (those without trees or obstacles). 
+            If terrain generation is enabled, the growth probability is reduced on higher elevations: 
+            taller hills are less likely to receive a new tree, while valleys are more likely.
+            <LineBreak/>
+            <LineBreak/>
+            <Bold>Distribution pattern:</Bold> 
+            - Horizontally: uniform random selection across all free cells. 
+            - Vertically (height): linear decreasing probability from valleys (high chance) to hills (low chance). 
+            - Result: more trees appear in low areas, fewer on elevated terrain, creating a natural, uneven forest density.
+							</TextBlock>
+						</CheckBox.ToolTip>
+					</CheckBox>
 
 					<CheckBox Margin="5,5,0,0" x:Name="PrefillCheckBox" Content="Prefill forest"
 					  IsChecked="True"
