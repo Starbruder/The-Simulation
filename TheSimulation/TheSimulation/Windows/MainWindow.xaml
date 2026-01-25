@@ -55,6 +55,205 @@
 			<Bold>Effect:</Bold> Quick initial forest setup, creates more realistic landscapes.
 		</TextBlock>
 
+		<!-- Terrain -->
+		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="TerrainGenerationTooltip">
+<Bold>Terrain Generation:</Bold> Generates the terrain using a height map with a central hill and slight random noise. Elevation ranges from 0 (lowest) to 1 (highest).
+<LineBreak/><LineBreak/>
+
+<Bold>Tree Placement:</Bold>
+Trees are placed on randomly selected cells using a <Bold>uniform distribution</Bold> across all growable cells.
+<LineBreak/>
+- Each selected cell has a growth probability reduced linearly by elevation:
+<LineBreak/>
+  P(grow) = 1 - (Elevation × 0.7)
+<LineBreak/>
+- Small random noise ±0.1 is added to elevation (uniform), changing growth chance by ±7%.
+<LineBreak/>
+- Example probabilities:
+<LineBreak/>
+  • Elevation 0.0 → 100%
+<LineBreak/>
+  • Elevation 0.3 → 79%
+<LineBreak/>
+  • Elevation 0.5 → 65%
+<LineBreak/>
+  • Elevation 0.7 → 51%
+<LineBreak/>
+  • Elevation 1.0 → 30%
+<LineBreak/><LineBreak/>
+
+<Bold>Fire Spread on Slopes:</Bold>
+Fire spreads faster uphill and slower downhill. Effect is calculated from height difference (Δheight):
+<LineBreak/>
+• Uphill (Δheight &gt; 0): factor = 1 + Δheight × 2
+<LineBreak/>
+• Downhill (Δheight &lt; 0): factor = 1 + Δheight
+<LineBreak/><LineBreak/>
+
+<Bold>Example:</Bold>
+• From 0.3 → 0.5 (Δheight = 0.2): factor = 1.4 → fire spreads 40% faster
+<LineBreak/>
+• From 0.5 → 0.3 (Δheight = -0.2): factor = 0.8 → fire spreads 20% slower
+<LineBreak/><LineBreak/>
+
+<Bold>Effect:</Bold> Enabling terrain generation creates a natural hill-shaped forest with variable tree density, adding realistic randomness and dynamic fire behavior.
+		</TextBlock>
+
+		<!-- Trees -->
+		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="GrowForestTooltip">
+When enabled, trees will grow over time to replenish the forest.
+<LineBreak/>
+<LineBreak/>
+<Bold>Next tree timing:</Bold> Trees grow in steps determined by the simulation clock. 
+Each tick triggers an attempt to grow a single tree.
+<LineBreak/>
+<LineBreak/>
+<Bold>Next tree location:</Bold> A cell is chosen randomly from all currently growable cells (those without trees or obstacles). 
+If terrain generation is enabled, the growth probability is reduced on higher elevations: 
+taller hills are less likely to receive a new tree, while valleys are more likely.
+<LineBreak/>
+<LineBreak/>
+<Bold>Distribution pattern:</Bold> 
+- Horizontally: uniform random selection across all free cells. 
+- Vertically (height): linear decreasing probability from valleys (high chance) to hills (low chance). 
+- Result: more trees appear in low areas, fewer on elevated terrain, creating a natural, uneven forest density.
+		</TextBlock>
+
+		<!-- Fire -->
+		<TextBlock TextWrapping="Wrap" MaxWidth="320" x:Key="PauseFireTooltip">
+<Bold>Pause Growing During Fire:</Bold>
+Temporarily disables tree growth while any fire is active.
+<LineBreak/><LineBreak/>
+
+<Bold>Effect:</Bold>
+<LineBreak/>
+• As long as at least one tree is burning, no new trees will grow
+<LineBreak/>
+• Tree growth resumes automatically once all fires are extinguished
+<LineBreak/><LineBreak/>
+
+<Bold>Dependency:</Bold>
+This option depends on <Bold>Grow forest</Bold>.
+<LineBreak/>
+• If <Bold>Grow forest</Bold> is disabled, growth is fully disabled and this option is locked ON
+<LineBreak/>
+• If <Bold>Grow forest</Bold> is enabled, you can freely toggle this setting
+		</TextBlock>
+
+		<TextBlock TextWrapping="Wrap" MaxWidth="360" x:Key="FireSpreadChanceTooltip">
+<Bold>Additional Fire Spread Chance (Spot Fires):</Bold>
+Controls the probability of long-range ignitions caused by embers or sparks.
+<LineBreak/><LineBreak/>
+
+<Bold>Trigger condition:</Bold>
+For each burning tree and fire tick:
+<LineBreak/>
+A random value ∈ [0,1] is compared against the calculated spot fire chance.
+<LineBreak/><LineBreak/>
+
+<Bold>Spot fire radius:</Bold>
+<LineBreak/>
+• Minimum distance: 2 cells
+<LineBreak/>
+• Maximum distance: 4 cells
+<LineBreak/><LineBreak/>
+
+<Bold>Chance calculation:</Bold>
+<LineBreak/>
+chance =
+distanceFactor × windEffect × humidityEffect × temperatureEffect
+<LineBreak/><LineBreak/>
+
+<Bold>Distance factor:</Bold>
+distanceFactor = 2 / distance
+<LineBreak/>
+• Distance 2 → 1.00
+<LineBreak/>
+• Distance 3 → 0.67
+<LineBreak/>
+• Distance 4 → 0.50
+<LineBreak/><LineBreak/>
+
+<Bold>Humidity effect:</Bold>
+humidityEffect = 1 − airHumidity
+<LineBreak/>
+• 0% → 1.00
+<LineBreak/>
+• 50% → 0.50
+<LineBreak/>
+• 80% → 0.20
+<LineBreak/><LineBreak/>
+
+<Bold>Temperature effect:</Bold>
+Calculated from air temperature:
+<LineBreak/>
+• Cold air → factor &lt; 1
+<LineBreak/>
+• Hot air → factor &gt; 1
+<LineBreak/><LineBreak/>
+
+<Bold>Wind effect:</Bold>
+Based on wind strength and alignment:
+<LineBreak/>
+• Wind aligned with target → factor &gt; 1
+<LineBreak/>
+• Wind against target → factor &lt; 1
+<LineBreak/><LineBreak/>
+
+<Bold>Note:</Bold>
+This setting does not affect direct neighbor fire spread.
+It only adds long-range spot fires.
+		</TextBlock>
+
+		<!-- Environment -->
+		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="AirHumidityTooltip">
+<Bold>Air Humidity:</Bold> Ambient moisture level in % (0–100%).
+<LineBreak/><LineBreak/>
+<Bold>Effect on Fire:</Bold>
+- High humidity → easier fire spread
+- Low humidity → easier fire spread
+<LineBreak/><LineBreak/>
+<Bold>Distribution:</Bold> Instant effect applied uniformly across the simulation grid.
+		</TextBlock>
+
+		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="AirTemperatureTooltip">
+<Bold>Air Temperature:</Bold> Ambient temperature in °C (-10 ⇒ 50).
+<LineBreak/><LineBreak/>
+<Bold>Effect on Fire:</Bold>
+- Higher temperature → increased fire spread chance
+- Lower temperature → decreased fire spread chance
+<LineBreak/><LineBreak/>
+<Bold>Notes:</Bold> Works in combination with humidity to determine local fire dynamics.
+		</TextBlock>
+
+		<TextBlock TextWrapping="Wrap" MaxWidth="350" x:Key="RandomWindDirectionTooltip">
+<Bold>Random Wind Direction:</Bold> If enabled, wind direction fluctuates slightly each update.
+<LineBreak/><LineBreak/>
+<Bold>Details:</Bold>
+• Maximum fluctuation: ±5° per simulation tick
+<LineBreak/>• Updates every simulation tick (interval = SimulationSpeed + 300 ms)
+<LineBreak/>• Fluctuations are uniformly distributed (all angles equally likely within ±5°)
+<LineBreak/><LineBreak/>
+<Bold>Effect:</Bold> Fire spreads faster when aligned with wind, slower against it; dynamic fire fronts.
+		</TextBlock>
+
+		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="WindDirectionFromTooltip">
+<Bold>Wind Direction:</Bold> The base direction from which the wind blows.
+<LineBreak/><LineBreak/>
+<Bold>Options:</Bold> Usually represented as compass points (e.g., N, NE, E, SE, S, SW, W, NW).
+<LineBreak/>- 0° = North, 90° = East, 180° = South, 270° = West
+<LineBreak/><LineBreak/>
+<Bold>Effect:</Bold> Fire spreads faster in the direction the wind blows, slower against it.
+<LineBreak/><LineBreak/>
+<Bold>Random Wind:</Bold> If "Random wind direction" is enabled, this value is the starting direction, and it fluctuates ±5° per simulation tick.
+		</TextBlock>
+
+		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="WindDirectionBoxTooltip">
+<Bold>Select Wind Direction:</Bold> Choose the compass direction from which the wind blows.
+<LineBreak/>- Changes affect fire spread alignment immediately.
+<LineBreak/>- Works together with "Random wind direction" for dynamic wind behavior.
+		</TextBlock>
+
 		<TextBlock TextWrapping="Wrap" MaxWidth="350" x:Key="WindStrengthTooltip">
 			<Bold>Wind Strength:</Bold> Affects fire spread in the current wind direction.
 			<LineBreak/><LineBreak/>
@@ -139,8 +338,11 @@
 		</Button>
 
 		<!-- Graphics Settings Button -->
-		<Button Grid.Row="0" Height="40" Width="120" HorizontalAlignment="Left" VerticalAlignment="Top" Click="OpenGraphicsSettingsWindow" Style="{StaticResource CustomButtonStyle}">
-			<Button.ToolTip>Open graphics settings window</Button.ToolTip>
+		<Button Grid.Row="0" Height="40" Width="120"
+			HorizontalAlignment="Left" VerticalAlignment="Top"
+			Click="OpenGraphicsSettingsWindow"
+			Style="{StaticResource CustomButtonStyle}"
+			ToolTip="Open graphics settings window">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
 					<fa:ImageAwesome Icon="Cog" Width="10" Height="10"/>
@@ -154,84 +356,19 @@
 
 			<!-- Terrain -->
 			<GroupBox Header="Terrain" Style="{StaticResource CustomGroupBoxStyle}" Margin="0,8,0,0">
-				<StackPanel>
-					<CheckBox x:Name="TerrainGenerationCheckBox" Content="Enable terrain generation" IsChecked="True">
-						<CheckBox.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-<Bold>Terrain Generation:</Bold> Generates the terrain using a height map with a central hill and slight random noise. Elevation ranges from 0 (lowest) to 1 (highest).
-<LineBreak/><LineBreak/>
-
-<Bold>Tree Placement:</Bold>
-Trees are placed on randomly selected cells using a <Bold>uniform distribution</Bold> across all growable cells.
-<LineBreak/>
-- Each selected cell has a growth probability reduced linearly by elevation:
-<LineBreak/>
-  P(grow) = 1 - (Elevation × 0.7)
-<LineBreak/>
-- Small random noise ±0.1 is added to elevation (uniform), changing growth chance by ±7%.
-<LineBreak/>
-- Example probabilities:
-<LineBreak/>
-  • Elevation 0.0 → 100%
-<LineBreak/>
-  • Elevation 0.3 → 79%
-<LineBreak/>
-  • Elevation 0.5 → 65%
-<LineBreak/>
-  • Elevation 0.7 → 51%
-<LineBreak/>
-  • Elevation 1.0 → 30%
-<LineBreak/><LineBreak/>
-
-<Bold>Fire Spread on Slopes:</Bold>
-Fire spreads faster uphill and slower downhill. Effect is calculated from height difference (Δheight):
-<LineBreak/>
-• Uphill (Δheight &gt; 0): factor = 1 + Δheight × 2
-<LineBreak/>
-• Downhill (Δheight &lt; 0): factor = 1 + Δheight
-<LineBreak/><LineBreak/>
-
-<Bold>Example:</Bold>
-• From 0.3 → 0.5 (Δheight = 0.2): factor = 1.4 → fire spreads 40% faster
-<LineBreak/>
-• From 0.5 → 0.3 (Δheight = -0.2): factor = 0.8 → fire spreads 20% slower
-<LineBreak/><LineBreak/>
-
-<Bold>Effect:</Bold> Enabling terrain generation creates a natural hill-shaped forest with variable tree density, adding realistic randomness and dynamic fire behavior.
-							</TextBlock>
-						</CheckBox.ToolTip>
-					</CheckBox>
-				</StackPanel>
+				<CheckBox x:Name="TerrainGenerationCheckBox"
+					Content="Enable terrain generation" IsChecked="True"
+					ToolTip="{StaticResource TerrainGenerationTooltip}"/>
 			</GroupBox>
 
 			<!-- Trees -->
 			<GroupBox Header="Trees" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 				<StackPanel>
 					<CheckBox Margin="5,0,0,0" x:Name="GrowForestCheckBox" Content="Grow forest"
-          IsChecked="True"
-          Checked="GrowForestCheckBox_Changed"
-          Unchecked="GrowForestCheckBox_Changed">
-						<CheckBox.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-            When enabled, trees will grow over time to replenish the forest.
-            <LineBreak/>
-            <LineBreak/>
-            <Bold>Next tree timing:</Bold> Trees grow in steps determined by the simulation clock. 
-            Each tick triggers an attempt to grow a single tree.
-            <LineBreak/>
-            <LineBreak/>
-            <Bold>Next tree location:</Bold> A cell is chosen randomly from all currently growable cells (those without trees or obstacles). 
-            If terrain generation is enabled, the growth probability is reduced on higher elevations: 
-            taller hills are less likely to receive a new tree, while valleys are more likely.
-            <LineBreak/>
-            <LineBreak/>
-            <Bold>Distribution pattern:</Bold> 
-            - Horizontally: uniform random selection across all free cells. 
-            - Vertically (height): linear decreasing probability from valleys (high chance) to hills (low chance). 
-            - Result: more trees appear in low areas, fewer on elevated terrain, creating a natural, uneven forest density.
-							</TextBlock>
-						</CheckBox.ToolTip>
-					</CheckBox>
+						IsChecked="True"
+						Checked="GrowForestCheckBox_Changed"
+						Unchecked="GrowForestCheckBox_Changed"
+						ToolTip="{StaticResource GrowForestTooltip}"/>
 
 					<!-- TextBlock für Prefill density Wert -->
 					<TextBlock Margin="10,5,0,0" FontSize="14"
@@ -245,97 +382,12 @@ Fire spreads faster uphill and slower downhill. Effect is calculated from height
 			<!-- Fire -->
 			<GroupBox Header="Fire" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Red">
 				<StackPanel>
-					<CheckBox Margin="5,0,60,0" x:Name="PauseFireCheckBox" Content="Pause growing during fire" IsChecked="True">
-						<CheckBox.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="320">
-<Bold>Pause Growing During Fire:</Bold>
-Temporarily disables tree growth while any fire is active.
-<LineBreak/><LineBreak/>
-
-<Bold>Effect:</Bold>
-<LineBreak/>
-• As long as at least one tree is burning, no new trees will grow
-<LineBreak/>
-• Tree growth resumes automatically once all fires are extinguished
-<LineBreak/><LineBreak/>
-
-<Bold>Dependency:</Bold>
-This option depends on <Bold>Grow forest</Bold>.
-<LineBreak/>
-• If <Bold>Grow forest</Bold> is disabled, growth is fully disabled and this option is locked ON
-<LineBreak/>
-• If <Bold>Grow forest</Bold> is enabled, you can freely toggle this setting
-							</TextBlock>
-						</CheckBox.ToolTip>
-					</CheckBox>
-					<TextBlock Text="{Binding ElementName=FireSpreadChanceSlider, Path=Value, StringFormat=Additional fire spread chance: {0:F0}%}" FontSize="14" Margin="10,5,0,0">
-						<TextBlock.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="360">
-<Bold>Additional Fire Spread Chance (Spot Fires):</Bold>
-Controls the probability of long-range ignitions caused by embers or sparks.
-<LineBreak/><LineBreak/>
-
-<Bold>Trigger condition:</Bold>
-For each burning tree and fire tick:
-<LineBreak/>
-A random value ∈ [0,1] is compared against the calculated spot fire chance.
-<LineBreak/><LineBreak/>
-
-<Bold>Spot fire radius:</Bold>
-<LineBreak/>
-• Minimum distance: 2 cells
-<LineBreak/>
-• Maximum distance: 4 cells
-<LineBreak/><LineBreak/>
-
-<Bold>Chance calculation:</Bold>
-<LineBreak/>
-chance =
-distanceFactor × windEffect × humidityEffect × temperatureEffect
-<LineBreak/><LineBreak/>
-
-<Bold>Distance factor:</Bold>
-distanceFactor = 2 / distance
-<LineBreak/>
-• Distance 2 → 1.00
-<LineBreak/>
-• Distance 3 → 0.67
-<LineBreak/>
-• Distance 4 → 0.50
-<LineBreak/><LineBreak/>
-
-<Bold>Humidity effect:</Bold>
-humidityEffect = 1 − airHumidity
-<LineBreak/>
-• 0% → 1.00
-<LineBreak/>
-• 50% → 0.50
-<LineBreak/>
-• 80% → 0.20
-<LineBreak/><LineBreak/>
-
-<Bold>Temperature effect:</Bold>
-Calculated from air temperature:
-<LineBreak/>
-• Cold air → factor &lt; 1
-<LineBreak/>
-• Hot air → factor &gt; 1
-<LineBreak/><LineBreak/>
-
-<Bold>Wind effect:</Bold>
-Based on wind strength and alignment:
-<LineBreak/>
-• Wind aligned with target → factor &gt; 1
-<LineBreak/>
-• Wind against target → factor &lt; 1
-<LineBreak/><LineBreak/>
-
-<Bold>Note:</Bold>
-This setting does not affect direct neighbor fire spread.
-It only adds long-range spot fires.
-							</TextBlock>
-						</TextBlock.ToolTip>
-					</TextBlock>
+					<CheckBox Margin="5,0,60,0" x:Name="PauseFireCheckBox"
+						Content="Pause growing during fire" IsChecked="True"
+						ToolTip="{StaticResource PauseFireTooltip}"/>
+					<TextBlock Text="{Binding ElementName=FireSpreadChanceSlider, Path=Value, StringFormat=Additional fire spread chance: {0:F0}%}"
+						FontSize="14" Margin="10,5,0,0"
+						ToolTip="{StaticResource FireSpreadChanceTooltip}"/>
 					<Slider x:Name="FireSpreadChanceSlider" Maximum="100" Value="40" IsSnapToTickEnabled="True" TickFrequency="5"/>
 				</StackPanel>
 			</GroupBox>
@@ -344,74 +396,28 @@ It only adds long-range spot fires.
 			<GroupBox Header="Environment" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Blue">
 				<StackPanel>
 					<!-- Air Humidity -->
-					<TextBlock Margin="10,0,0,0" FontSize="14" Text="{Binding ElementName=AirHumiditySlider, Path=Value, StringFormat=Air humidity: {0:F0}%}">
-						<TextBlock.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-<Bold>Air Humidity:</Bold> Ambient moisture level in % (0–100%).
-<LineBreak/><LineBreak/>
-<Bold>Effect on Fire:</Bold>
-- High humidity → easier fire spread
-- Low humidity → easier fire spread
-<LineBreak/><LineBreak/>
-<Bold>Distribution:</Bold> Instant effect applied uniformly across the simulation grid.
-							</TextBlock>
-						</TextBlock.ToolTip>
-					</TextBlock>
+					<TextBlock Margin="10,0,0,0" FontSize="14" Text="{Binding ElementName=AirHumiditySlider, Path=Value, StringFormat=Air humidity: {0:F0}%}"
+						ToolTip="{StaticResource AirHumidityTooltip}"/>
+
 					<Slider x:Name="AirHumiditySlider" Minimum="0" Maximum="100" Value="50" TickFrequency="5" IsSnapToTickEnabled="True"/>
 					<!-- Air Temperature -->
-					<TextBlock Margin="10,5,0,0" FontSize="14" Text="{Binding ElementName=AirTemperatureSlider, Path=Value, StringFormat=Air temperature: {0:F0} °C}">
-						<TextBlock.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-<Bold>Air Temperature:</Bold> Ambient temperature in °C (-10 ⇒ 50).
-<LineBreak/><LineBreak/>
-<Bold>Effect on Fire:</Bold>
-- Higher temperature → increased fire spread chance
-- Lower temperature → decreased fire spread chance
-<LineBreak/><LineBreak/>
-<Bold>Notes:</Bold> Works in combination with humidity to determine local fire dynamics.
-							</TextBlock>
-						</TextBlock.ToolTip>
-					</TextBlock>
+					<TextBlock Margin="10,5,0,0" FontSize="14" Text="{Binding ElementName=AirTemperatureSlider, Path=Value, StringFormat=Air temperature: {0:F0} °C}"
+						ToolTip="{StaticResource AirTemperatureTooltip}"/>
+
 					<Slider x:Name="AirTemperatureSlider" Minimum="-10" Maximum="50" Value="30" TickFrequency="1" IsSnapToTickEnabled="True"/>
 					<!-- Random Wind Direction -->
-					<CheckBox Margin="5,5,0,0" x:Name="RandomWindDirectionCheckBox" Content="Random wind direction" IsChecked="False" Checked="RandomWindDirectionCheckBox_Changed" Unchecked="RandomWindDirectionCheckBox_Changed">
-						<CheckBox.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="350">
-<Bold>Random Wind Direction:</Bold> If enabled, wind direction fluctuates slightly each update.
-<LineBreak/><LineBreak/>
-<Bold>Details:</Bold>
-• Maximum fluctuation: ±5° per simulation tick
-<LineBreak/>• Updates every simulation tick (interval = SimulationSpeed + 300 ms)
-<LineBreak/>• Fluctuations are uniformly distributed (all angles equally likely within ±5°)
-<LineBreak/><LineBreak/>
-<Bold>Effect:</Bold> Fire spreads faster when aligned with wind, slower against it; dynamic fire fronts.
-							</TextBlock>
-						</CheckBox.ToolTip>
-					</CheckBox>
-					<TextBlock Margin="10,5,0,0" Text="Wind direction (from)">
-						<TextBlock.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-            <Bold>Wind Direction:</Bold> The base direction from which the wind blows.
-            <LineBreak/><LineBreak/>
-            <Bold>Options:</Bold> Usually represented as compass points (e.g., N, NE, E, SE, S, SW, W, NW).
-            <LineBreak/>- 0° = North, 90° = East, 180° = South, 270° = West
-            <LineBreak/><LineBreak/>
-            <Bold>Effect:</Bold> Fire spreads faster in the direction the wind blows, slower against it.
-            <LineBreak/><LineBreak/>
-            <Bold>Random Wind:</Bold> If "Random wind direction" is enabled, this value is the starting direction, and it fluctuates ±5° per simulation tick.
-							</TextBlock>
-						</TextBlock.ToolTip>
-</TextBlock>
+					<CheckBox Margin="5,5,0,0" x:Name="RandomWindDirectionCheckBox"
+						Content="Random wind direction" IsChecked="False"
+						Checked="RandomWindDirectionCheckBox_Changed"
+						Unchecked="RandomWindDirectionCheckBox_Changed"
+						ToolTip="{StaticResource RandomWindDirectionTooltip}"/>
 
-					<ComboBox Margin="4,5,4,0" x:Name="WindDirectionBox" SelectedIndex="0" MinWidth="150">
-						<ComboBox.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-            <Bold>Select Wind Direction:</Bold> Choose the compass direction from which the wind blows.
-            <LineBreak/>- Changes affect fire spread alignment immediately.
-            <LineBreak/>- Works together with "Random wind direction" for dynamic wind behavior.
-							</TextBlock>
-						</ComboBox.ToolTip>
-					</ComboBox>
+					<TextBlock Margin="10,5,0,0" Text="Wind direction (from)"
+						ToolTip="{StaticResource WindDirectionFromTooltip}"/>
+
+					<ComboBox Margin="4,5,4,0" x:Name="WindDirectionBox"
+						SelectedIndex="0" MinWidth="150"
+						ToolTip="{StaticResource WindDirectionBoxTooltip}"/>
 
 					<!-- Random Wind Strength -->
 					<CheckBox Margin="5,5,0,0" x:Name="RandomWindStrengthCheckBox"
