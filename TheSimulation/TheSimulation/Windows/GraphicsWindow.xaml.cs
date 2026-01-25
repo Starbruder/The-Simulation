@@ -56,4 +56,22 @@ public sealed partial class GraphicsWindow : Window
 
         Close();
     }
+
+    private void ResetAllSettings_Click(object sender, RoutedEventArgs e)
+    {
+        // Weather effcts zurücksetzen
+        LightningCheckBox.IsChecked = true;
+        BoltFlashCheckBox.IsChecked = false;
+
+        // Fire zurücksetzen
+        FlameAnimationsCheckBox.IsChecked = true;
+
+        // Particle effects zurücksetzen
+        FireSparksCheckBox.IsChecked = true;
+        SmokeCheckBox.IsChecked = true;
+
+        // Trees zurücksetzen
+        BurnedTreeCheckBox.IsChecked = false;
+        TreeShapeComboBox.SelectedIndex = 0;
+    }
 }

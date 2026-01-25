@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:TheSimulation"
         mc:Ignorable="d"
         Title="Forest fire graphics settings"
-        Height="620" Width="750"
+        Height="620" Width="700"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
 
@@ -89,10 +89,26 @@
 			</StackPanel>
 		</GroupBox>
 
+		<!-- Reset-Button -->
+		<Button Grid.Row="4"
+			Height="40" Width="120"
+			HorizontalAlignment="Left" VerticalAlignment="Center"
+			Click="ResetAllSettings_Click"
+			ToolTip="Set page settings back to default"
+			Style="{StaticResource CustomButtonStyle}">
+			<Button.Content>
+				<StackPanel Orientation="Horizontal">
+					<fa:ImageAwesome Icon="Undo" Width="10" Height="10"/>
+					<TextBlock Text="Reset config" Margin="5,0,0,0"/>
+				</StackPanel>
+			</Button.Content>
+		</Button>
+
 		<!-- Apply Button -->
 		<Button Grid.Row="4"
 			Style="{StaticResource CustomButtonStyle}"
 			Click="ApplyGraphicsSettings"
+			HorizontalAlignment="Right"
 			ToolTip="Applies the graphics settings choosen on this page and closes the window">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
