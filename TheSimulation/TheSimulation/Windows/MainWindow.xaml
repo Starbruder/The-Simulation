@@ -207,7 +207,7 @@ Fire spreads faster uphill and slower downhill. Effect is calculated from height
 			<!-- Trees -->
 			<GroupBox Header="Trees" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 				<StackPanel>
-					<CheckBox Margin="5,0,0,5" x:Name="GrowForestCheckBox" Content="Grow forest"
+					<CheckBox Margin="5,0,0,0" x:Name="GrowForestCheckBox" Content="Grow forest"
           IsChecked="True"
           Checked="GrowForestCheckBox_Changed"
           Unchecked="GrowForestCheckBox_Changed">
@@ -233,16 +233,12 @@ Fire spreads faster uphill and slower downhill. Effect is calculated from height
 						</CheckBox.ToolTip>
 					</CheckBox>
 
-					<CheckBox Margin="5,5,0,0" x:Name="PrefillCheckBox" Content="Prefill forest"
-						IsChecked="True"
-						Checked="PrefillCheckBox_Changed"
-						Unchecked="PrefillCheckBox_Changed"
-						ToolTip="{StaticResource PrefillTooltip}"/>
 					<!-- TextBlock für Prefill density Wert -->
-					<TextBlock Margin="10,5,0,5" FontSize="14"
+					<TextBlock Margin="10,5,0,0" FontSize="14"
 						Text="{Binding ElementName=PrefillDensitySlider, Path=Value, StringFormat=Prefill density: {0:F0}%}"
 						ToolTip="{StaticResource PrefillTooltip}"/>
-					<Slider x:Name="PrefillDensitySlider" Minimum="5" Maximum="100" Value="80" TickFrequency="5" IsSnapToTickEnabled="True"/>
+					<Slider x:Name="PrefillDensitySlider" Minimum="0" Maximum="100"
+						Value="80" TickFrequency="5" IsSnapToTickEnabled="True"/>
 				</StackPanel>
 			</GroupBox>
 

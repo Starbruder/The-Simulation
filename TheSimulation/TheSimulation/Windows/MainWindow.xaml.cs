@@ -140,12 +140,11 @@ public sealed partial class MainWindow : Window
 
     private PrefillConfig GetPrefillConfigFromUI()
     {
-        var prefill = PrefillCheckBox.IsChecked ?? true;
         var prefillDensity = PrefillDensitySlider.Value / 100; // 0..1
 
         return new
         (
-            prefill,
+            prefillDensity >= 0,
             prefillDensity // Z.b: 0.5 = 50 %
         );
     }
@@ -176,27 +175,6 @@ public sealed partial class MainWindow : Window
         var values = Enum.GetValues(typeof(WindDirection));
         var randomIndex = random.NextInt(0, values.Length);
         return (WindDirection)values.GetValue(randomIndex);
-    }
-
-    /// <summary>
-    /// Prüft, dass mindestens eine Option aktiviert bleibt.
-    /// Wird ausgelöst, wenn PrefillCheckBox geändert wird.
-    /// </summary>
-    private void PrefillCheckBox_Changed(object sender, RoutedEventArgs e)
-    {
-        if (PrefillDensitySlider is null || PrefillCheckBox is null)
-        {
-            return;
-        }
-
-        if (PrefillCheckBox.IsChecked == false && GrowForestCheckBox.IsChecked == false)
-        {
-            // Mindestens eine aktiv halten
-            PrefillCheckBox.IsChecked = true;
-        }
-
-        // Prefill-Density Slider nur aktiv, wenn Prefill an ist
-        PrefillDensitySlider.IsEnabled = PrefillCheckBox.IsChecked ?? true;
     }
 
     private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
@@ -256,7 +234,6 @@ public sealed partial class MainWindow : Window
 
         // Bäume zurücksetzen
         GrowForestCheckBox.IsChecked = true;
-        PrefillCheckBox.IsChecked = true;
         PrefillDensitySlider.Value = 80;
 
         // Feuer zurücksetzen
