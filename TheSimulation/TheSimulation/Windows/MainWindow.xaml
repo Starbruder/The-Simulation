@@ -43,6 +43,67 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
+
+		<!-- Tooltips als Resources im Window -->
+		<TextBlock TextWrapping="Wrap" MaxWidth="350" x:Key="WindStrengthTooltip">
+			<Bold>Wind Strength:</Bold> Affects fire spread in the current wind direction.
+			<LineBreak/><LineBreak/>
+
+			<Bold>Beaufort Scale (Bft):</Bold> Standardized system to estimate wind force:
+			<LineBreak/>
+			0 → Calm (less than 1 km/h)
+			<LineBreak/>
+			1 → Light Air (1–5 km/h)
+			<LineBreak/>
+			2 → Light Breeze (6–11 km/h)
+			<LineBreak/>
+			3 → Gentle Breeze (12–19 km/h)
+			<LineBreak/>
+			4 → Moderate Breeze (20–28 km/h)
+			<LineBreak/>
+			5 → Fresh Breeze (29–38 km/h)
+			<LineBreak/>
+			6 → Strong Breeze (39–49 km/h)
+			<LineBreak/>
+			7 → Strong Wind (50–61 km/h)
+			<LineBreak/>
+			8 → Severe Wind (62–74 km/h)
+			<LineBreak/>
+			9 → Storm (75–88 km/h)
+			<LineBreak/>
+			10 → Violent Storm (89–102 km/h)
+			<LineBreak/>
+			11 → Hurricane (103–117 km/h)
+			<LineBreak/>
+			12 → Hurricane Extreme (more than 118 km/h)
+			<LineBreak/><LineBreak/>
+
+			<Bold>Random Wind Strength Enabled:</Bold>
+			<LineBreak/>
+			• Start value set by the slider (0%–100%)
+			<LineBreak/>
+			• Wind strength randomly fluctuates ±3% per update
+			<LineBreak/>
+			• Wind direction randomly fluctuates ±5° per update
+			<LineBreak/>
+			• Updates occur every simulation tick, interval = (SimulationSpeed + 300 ms)
+			<LineBreak/>
+			• Fluctuations are uniformly distributed (all values equally likely within the range)
+			<LineBreak/><LineBreak/>
+
+			<Bold>Effect:</Bold> Enabling random wind creates dynamic fire behavior:
+			fire spreads faster when aligned with wind, slower against wind.
+		</TextBlock>
+
+		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="PrefillTooltip">
+			<Bold>Prefill Forest:</Bold> Populates forest at simulation start.
+			<LineBreak/><LineBreak/>
+			<Bold>Density Slider:</Bold> Sets percentage of map cells to initially fill with trees (0–100%).
+			<LineBreak/>- Random selection uses uniform distribution across all growable cells.  
+			<LineBreak/>- Elevation-based adjustment reduces probability on higher terrain (same as growth).
+			<LineBreak/><LineBreak/>
+			<Bold>Effect:</Bold> Quick initial forest setup, creates more realistic landscapes.
+		</TextBlock>
 	</Window.Resources>
 
 	<Grid Margin="20">
@@ -173,35 +234,14 @@ Fire spreads faster uphill and slower downhill. Effect is calculated from height
 					</CheckBox>
 
 					<CheckBox Margin="5,5,0,0" x:Name="PrefillCheckBox" Content="Prefill forest"
-					  IsChecked="True"
-					  Checked="PrefillCheckBox_Changed"
-					  Unchecked="PrefillCheckBox_Changed">
-						<CheckBox.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-<Bold>Prefill Forest:</Bold> Populates forest at simulation start.  
-<LineBreak/><LineBreak/>
-<Bold>Density Slider:</Bold> Sets percentage of map cells to initially fill with trees (0–100%).  
-<LineBreak/>- Random selection uses uniform distribution across all growable cells.  
-<LineBreak/>- Elevation-based adjustment reduces probability on higher terrain (same as growth).  
-<LineBreak/><LineBreak/>
-<Bold>Effect:</Bold> Quick initial forest setup, creates more realistic landscapes.
-							</TextBlock>
-						</CheckBox.ToolTip>
-					</CheckBox>
+						IsChecked="True"
+						Checked="PrefillCheckBox_Changed"
+						Unchecked="PrefillCheckBox_Changed"
+						ToolTip="{StaticResource PrefillTooltip}"/>
 					<!-- TextBlock für Prefill density Wert -->
-					<TextBlock Margin="10,5,0,5" FontSize="14" Text="{Binding ElementName=PrefillDensitySlider, Path=Value, StringFormat=Prefill density: {0:F0}%}">
-						<TextBlock.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-<Bold>Prefill Forest:</Bold> Populates forest at simulation start.  
-<LineBreak/><LineBreak/>
-<Bold>Density Slider:</Bold> Sets percentage of map cells to initially fill with trees (0–100%).  
-<LineBreak/>- Random selection uses uniform distribution across all growable cells.  
-<LineBreak/>- Elevation-based adjustment reduces probability on higher terrain (same as growth).  
-<LineBreak/><LineBreak/>
-<Bold>Effect:</Bold> Quick initial forest setup, creates more realistic landscapes.
-							</TextBlock>
-						</TextBlock.ToolTip>
-					</TextBlock>
+					<TextBlock Margin="10,5,0,5" FontSize="14"
+						Text="{Binding ElementName=PrefillDensitySlider, Path=Value, StringFormat=Prefill density: {0:F0}%}"
+						ToolTip="{StaticResource PrefillTooltip}"/>
 					<Slider x:Name="PrefillDensitySlider" Minimum="5" Maximum="100" Value="80" TickFrequency="5" IsSnapToTickEnabled="True"/>
 				</StackPanel>
 			</GroupBox>
@@ -378,113 +418,15 @@ It only adds long-range spot fires.
 					</ComboBox>
 
 					<!-- Random Wind Strength -->
-					<CheckBox Margin="5,5,0,0" x:Name="RandomWindStrengthCheckBox" Content="Random wind strength" IsChecked="False">
-						<CheckBox.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="350">
-<Bold>Wind Strength:</Bold> Affects fire spread in the current wind direction.
-<LineBreak/><LineBreak/>
-
-<Bold>Beaufort Scale (Bft):</Bold> Standardized system to estimate wind force:
-<LineBreak/>
-0 → Calm (less than 1 km/h)
-<LineBreak/>
-1 → Light Air (1–5 km/h)
-<LineBreak/>
-2 → Light Breeze (6–11 km/h)
-<LineBreak/>
-3 → Gentle Breeze (12–19 km/h)
-<LineBreak/>
-4 → Moderate Breeze (20–28 km/h)
-<LineBreak/>
-5 → Fresh Breeze (29–38 km/h)
-<LineBreak/>
-6 → Strong Breeze (39–49 km/h)
-<LineBreak/>
-7 → Strong Wind (50–61 km/h)
-<LineBreak/>
-8 → Severe Wind (62–74 km/h)
-<LineBreak/>
-9 → Storm (75–88 km/h)
-<LineBreak/>
-10 → Violent Storm (89–102 km/h)
-<LineBreak/>
-11 → Hurricane (103–117 km/h)
-<LineBreak/>
-12 → Hurricane Extreme (more than 118 km/h)
-<LineBreak/><LineBreak/>
-
-<Bold>Random Wind Strength Enabled:</Bold>
-<LineBreak/>
-• Start value set by the slider (0%–100%)
-<LineBreak/>
-• Wind strength randomly fluctuates ±3% per update
-<LineBreak/>
-• Wind direction randomly fluctuates ±5° per update
-<LineBreak/>
-• Updates occur every simulation tick, interval = (SimulationSpeed + 300 ms)
-<LineBreak/>
-• Fluctuations are uniformly distributed (all values equally likely within the range)
-<LineBreak/><LineBreak/>
-
-<Bold>Effect:</Bold> Enabling random wind creates dynamic fire behavior:
-fire spreads faster when aligned with wind, slower against wind.
-							</TextBlock>
-						</CheckBox.ToolTip>
-					</CheckBox>
-					<TextBlock x:Name="WindStrengthText" Margin="10,5,0,0" FontSize="14" Text="Wind Strength: 0% (0 Bft)">
-						<TextBlock.ToolTip>
-							<TextBlock TextWrapping="Wrap" MaxWidth="350">
-            <Bold>Wind Strength:</Bold> Affects fire spread in the current wind direction.
-            <LineBreak/><LineBreak/>
-
-            <Bold>Beaufort Scale (Bft):</Bold> Standardized system to estimate wind force:
-            <LineBreak/>
-            0 → Calm (less than 1 km/h)
-            <LineBreak/>
-            1 → Light Air (1–5 km/h)
-            <LineBreak/>
-            2 → Light Breeze (6–11 km/h)
-            <LineBreak/>
-            3 → Gentle Breeze (12–19 km/h)
-            <LineBreak/>
-            4 → Moderate Breeze (20–28 km/h)
-            <LineBreak/>
-            5 → Fresh Breeze (29–38 km/h)
-            <LineBreak/>
-            6 → Strong Breeze (39–49 km/h)
-            <LineBreak/>
-            7 → Strong Wind (50–61 km/h)
-            <LineBreak/>
-            8 → Severe Wind (62–74 km/h)
-            <LineBreak/>
-            9 → Storm (75–88 km/h)
-            <LineBreak/>
-            10 → Violent Storm (89–102 km/h)
-            <LineBreak/>
-            11 → Hurricane (103–117 km/h)
-            <LineBreak/>
-            12 → Hurricane Extreme (more than 118 km/h)
-            <LineBreak/><LineBreak/>
-
-            <Bold>Random Wind Strength Enabled:</Bold>
-            <LineBreak/>
-            • Start value set by the slider (0%–100%)
-            <LineBreak/>
-            • Wind strength randomly fluctuates ±3% per update
-            <LineBreak/>
-            • Wind direction randomly fluctuates ±5° per update
-            <LineBreak/>
-            • Updates occur every simulation tick, interval = (SimulationSpeed + 300 ms)
-            <LineBreak/>
-            • Fluctuations are uniformly distributed (all values equally likely within the range)
-            <LineBreak/><LineBreak/>
-
-            <Bold>Effect:</Bold> Enabling random wind creates dynamic fire behavior:
-            fire spreads faster when aligned with wind, slower against wind.
-							</TextBlock>
-						</TextBlock.ToolTip>
-					</TextBlock>
-					<Slider x:Name="WindStrengthSlider" Minimum="0" Maximum="1" Value="0.75" TickFrequency="0.05" IsSnapToTickEnabled="True" ValueChanged="WindStrengthSlider_ValueChanged"/>
+					<CheckBox Margin="5,5,0,0" x:Name="RandomWindStrengthCheckBox"
+						Content="Random wind strength" IsChecked="False"
+						ToolTip="{StaticResource WindStrengthTooltip}"/>
+					<TextBlock x:Name="WindStrengthText" Margin="10,5,0,0" FontSize="14"
+						Text="Wind Strength: 0% (0 Bft)"
+						ToolTip="{StaticResource WindStrengthTooltip}"/>
+					<Slider x:Name="WindStrengthSlider" Minimum="0" Maximum="1" Value="0.75"
+						TickFrequency="0.05" IsSnapToTickEnabled="True"
+						ValueChanged="WindStrengthSlider_ValueChanged"/>
 				</StackPanel>
 			</GroupBox>
 		</StackPanel>
