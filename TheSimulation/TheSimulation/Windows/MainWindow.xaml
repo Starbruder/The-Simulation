@@ -233,6 +233,72 @@ This option depends on <Bold>Grow forest</Bold>.
 						</CheckBox.ToolTip>
 					</CheckBox>
 					<TextBlock Text="{Binding ElementName=FireSpreadChanceSlider, Path=Value, StringFormat=Additional fire spread chance: {0:F0}%}" FontSize="14" Margin="10,5,0,0">
+						<TextBlock.ToolTip>
+							<TextBlock TextWrapping="Wrap" MaxWidth="360">
+<Bold>Additional Fire Spread Chance (Spot Fires):</Bold>
+Controls the probability of long-range ignitions caused by embers or sparks.
+<LineBreak/><LineBreak/>
+
+<Bold>Trigger condition:</Bold>
+For each burning tree and fire tick:
+<LineBreak/>
+A random value ∈ [0,1] is compared against the calculated spot fire chance.
+<LineBreak/><LineBreak/>
+
+<Bold>Spot fire radius:</Bold>
+<LineBreak/>
+• Minimum distance: 2 cells
+<LineBreak/>
+• Maximum distance: 4 cells
+<LineBreak/><LineBreak/>
+
+<Bold>Chance calculation:</Bold>
+<LineBreak/>
+chance =
+distanceFactor × windEffect × humidityEffect × temperatureEffect
+<LineBreak/><LineBreak/>
+
+<Bold>Distance factor:</Bold>
+distanceFactor = 2 / distance
+<LineBreak/>
+• Distance 2 → 1.00
+<LineBreak/>
+• Distance 3 → 0.67
+<LineBreak/>
+• Distance 4 → 0.50
+<LineBreak/><LineBreak/>
+
+<Bold>Humidity effect:</Bold>
+humidityEffect = 1 − airHumidity
+<LineBreak/>
+• 0% → 1.00
+<LineBreak/>
+• 50% → 0.50
+<LineBreak/>
+• 80% → 0.20
+<LineBreak/><LineBreak/>
+
+<Bold>Temperature effect:</Bold>
+Calculated from air temperature:
+<LineBreak/>
+• Cold air → factor &lt; 1
+<LineBreak/>
+• Hot air → factor &gt; 1
+<LineBreak/><LineBreak/>
+
+<Bold>Wind effect:</Bold>
+Based on wind strength and alignment:
+<LineBreak/>
+• Wind aligned with target → factor &gt; 1
+<LineBreak/>
+• Wind against target → factor &lt; 1
+<LineBreak/><LineBreak/>
+
+<Bold>Note:</Bold>
+This setting does not affect direct neighbor fire spread.
+It only adds long-range spot fires.
+							</TextBlock>
+						</TextBlock.ToolTip>
 					</TextBlock>
 					<Slider x:Name="FireSpreadChanceSlider" Maximum="100" Value="40" IsSnapToTickEnabled="True" TickFrequency="5"/>
 				</StackPanel>
