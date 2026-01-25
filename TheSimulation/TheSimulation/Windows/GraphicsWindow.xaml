@@ -9,7 +9,8 @@
         Title="Forest fire graphics settings"
         Height="585" Width="700"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+		KeyDown="Window_KeyDown">
 
 	<Window.Resources>
 		<!-- Style für GroupBoxen -->

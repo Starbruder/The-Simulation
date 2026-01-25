@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using System.Windows.Shapes;
 
 namespace TheSimulation;
@@ -29,6 +30,15 @@ public sealed partial class GraphicsWindow : Window
             Rectangle => 1,
             _ => 0
         };
+    }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.R)
+        {
+            ResetAllSettings_Click(sender, e);
+            e.Handled = true;
+        }
     }
 
     private void ApplyGraphicsSettings(object sender, RoutedEventArgs e)
