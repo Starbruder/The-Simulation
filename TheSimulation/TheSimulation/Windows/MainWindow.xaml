@@ -45,6 +45,16 @@
 		</Style>
 
 		<!-- Tooltips als Resources im Window -->
+		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="PrefillTooltip">
+			<Bold>Prefill Forest:</Bold> Populates forest at simulation start.
+			<LineBreak/><LineBreak/>
+			<Bold>Density Slider:</Bold> Sets percentage of map cells to initially fill with trees (0–100%).
+			<LineBreak/>- Random selection uses uniform distribution across all growable cells.
+			<LineBreak/>- Elevation-based adjustment reduces probability on higher terrain (same as growth).
+			<LineBreak/><LineBreak/>
+			<Bold>Effect:</Bold> Quick initial forest setup, creates more realistic landscapes.
+		</TextBlock>
+
 		<TextBlock TextWrapping="Wrap" MaxWidth="350" x:Key="WindStrengthTooltip">
 			<Bold>Wind Strength:</Bold> Affects fire spread in the current wind direction.
 			<LineBreak/><LineBreak/>
@@ -94,16 +104,6 @@
 			<Bold>Effect:</Bold> Enabling random wind creates dynamic fire behavior:
 			fire spreads faster when aligned with wind, slower against wind.
 		</TextBlock>
-
-		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="PrefillTooltip">
-			<Bold>Prefill Forest:</Bold> Populates forest at simulation start.
-			<LineBreak/><LineBreak/>
-			<Bold>Density Slider:</Bold> Sets percentage of map cells to initially fill with trees (0–100%).
-			<LineBreak/>- Random selection uses uniform distribution across all growable cells.  
-			<LineBreak/>- Elevation-based adjustment reduces probability on higher terrain (same as growth).
-			<LineBreak/><LineBreak/>
-			<Bold>Effect:</Bold> Quick initial forest setup, creates more realistic landscapes.
-		</TextBlock>
 	</Window.Resources>
 
 	<Grid Margin="20">
@@ -125,11 +125,11 @@
 
 		<!-- Reset-Button -->
 		<Button Grid.Row="0"
-		Height="40" Width="120"
-		HorizontalAlignment="Center" VerticalAlignment="Top"
-		Click="ResetAllSettings_Click"
-		ToolTip="Set page settings back to default (R)"
-		Style="{StaticResource CustomButtonStyle}">
+			Height="40" Width="120"
+			HorizontalAlignment="Center" VerticalAlignment="Top"
+			Click="ResetAllSettings_Click"
+			ToolTip="Set page settings back to default (R)"
+			Style="{StaticResource CustomButtonStyle}">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
 					<fa:ImageAwesome Icon="Undo" Width="10" Height="10"/>
@@ -158,43 +158,43 @@
 					<CheckBox x:Name="TerrainGenerationCheckBox" Content="Enable terrain generation" IsChecked="True">
 						<CheckBox.ToolTip>
 							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-<Bold>Terrain Generation:</Bold> Generates the terrain using a height map with a central hill and slight random noise. Elevation ranges from 0 (lowest) to 1 (highest).  
+<Bold>Terrain Generation:</Bold> Generates the terrain using a height map with a central hill and slight random noise. Elevation ranges from 0 (lowest) to 1 (highest).
 <LineBreak/><LineBreak/>
 
 <Bold>Tree Placement:</Bold>
-Trees are placed on randomly selected cells using a <Bold>uniform distribution</Bold> across all growable cells.  
+Trees are placed on randomly selected cells using a <Bold>uniform distribution</Bold> across all growable cells.
 <LineBreak/>
-- Each selected cell has a growth probability reduced linearly by elevation:  
+- Each selected cell has a growth probability reduced linearly by elevation:
 <LineBreak/>
-  P(grow) = 1 - (Elevation × 0.7)  
+  P(grow) = 1 - (Elevation × 0.7)
 <LineBreak/>
-- Small random noise ±0.1 is added to elevation (uniform), changing growth chance by ±7%.  
+- Small random noise ±0.1 is added to elevation (uniform), changing growth chance by ±7%.
 <LineBreak/>
-- Example probabilities:  
+- Example probabilities:
 <LineBreak/>
-  • Elevation 0.0 → 100%  
+  • Elevation 0.0 → 100%
 <LineBreak/>
-  • Elevation 0.3 → 79%  
+  • Elevation 0.3 → 79%
 <LineBreak/>
-  • Elevation 0.5 → 65%  
+  • Elevation 0.5 → 65%
 <LineBreak/>
-  • Elevation 0.7 → 51%  
+  • Elevation 0.7 → 51%
 <LineBreak/>
-  • Elevation 1.0 → 30%  
+  • Elevation 1.0 → 30%
 <LineBreak/><LineBreak/>
 
 <Bold>Fire Spread on Slopes:</Bold>
-Fire spreads faster uphill and slower downhill. Effect is calculated from height difference (Δheight):  
+Fire spreads faster uphill and slower downhill. Effect is calculated from height difference (Δheight):
 <LineBreak/>
-• Uphill (Δheight &gt; 0): factor = 1 + Δheight × 2  
+• Uphill (Δheight &gt; 0): factor = 1 + Δheight × 2
 <LineBreak/>
-• Downhill (Δheight &lt; 0): factor = 1 + Δheight  
+• Downhill (Δheight &lt; 0): factor = 1 + Δheight
 <LineBreak/><LineBreak/>
 
 <Bold>Example:</Bold>
-• From 0.3 → 0.5 (Δheight = 0.2): factor = 1.4 → fire spreads 40% faster  
+• From 0.3 → 0.5 (Δheight = 0.2): factor = 1.4 → fire spreads 40% faster
 <LineBreak/>
-• From 0.5 → 0.3 (Δheight = -0.2): factor = 0.8 → fire spreads 20% slower  
+• From 0.5 → 0.3 (Δheight = -0.2): factor = 0.8 → fire spreads 20% slower
 <LineBreak/><LineBreak/>
 
 <Bold>Effect:</Bold> Enabling terrain generation creates a natural hill-shaped forest with variable tree density, adding realistic randomness and dynamic fire behavior.
@@ -377,12 +377,12 @@ It only adds long-range spot fires.
 					<CheckBox Margin="5,5,0,0" x:Name="RandomWindDirectionCheckBox" Content="Random wind direction" IsChecked="False" Checked="RandomWindDirectionCheckBox_Changed" Unchecked="RandomWindDirectionCheckBox_Changed">
 						<CheckBox.ToolTip>
 							<TextBlock TextWrapping="Wrap" MaxWidth="350">
-<Bold>Random Wind Direction:</Bold> If enabled, wind direction fluctuates slightly each update.  
+<Bold>Random Wind Direction:</Bold> If enabled, wind direction fluctuates slightly each update.
 <LineBreak/><LineBreak/>
-<Bold>Details:</Bold>  
-• Maximum fluctuation: ±5° per simulation tick  
-<LineBreak/>• Updates every simulation tick (interval = SimulationSpeed + 300 ms)  
-<LineBreak/>• Fluctuations are uniformly distributed (all angles equally likely within ±5°)  
+<Bold>Details:</Bold>
+• Maximum fluctuation: ±5° per simulation tick
+<LineBreak/>• Updates every simulation tick (interval = SimulationSpeed + 300 ms)
+<LineBreak/>• Fluctuations are uniformly distributed (all angles equally likely within ±5°)
 <LineBreak/><LineBreak/>
 <Bold>Effect:</Bold> Fire spreads faster when aligned with wind, slower against it; dynamic fire fronts.
 							</TextBlock>
@@ -391,12 +391,12 @@ It only adds long-range spot fires.
 					<TextBlock Margin="10,5,0,0" Text="Wind direction (from)">
 						<TextBlock.ToolTip>
 							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-            <Bold>Wind Direction:</Bold> The base direction from which the wind blows.  
+            <Bold>Wind Direction:</Bold> The base direction from which the wind blows.
             <LineBreak/><LineBreak/>
-            <Bold>Options:</Bold> Usually represented as compass points (e.g., N, NE, E, SE, S, SW, W, NW).  
-            <LineBreak/>- 0° = North, 90° = East, 180° = South, 270° = West  
+            <Bold>Options:</Bold> Usually represented as compass points (e.g., N, NE, E, SE, S, SW, W, NW).
+            <LineBreak/>- 0° = North, 90° = East, 180° = South, 270° = West
             <LineBreak/><LineBreak/>
-            <Bold>Effect:</Bold> Fire spreads faster in the direction the wind blows, slower against it.  
+            <Bold>Effect:</Bold> Fire spreads faster in the direction the wind blows, slower against it.
             <LineBreak/><LineBreak/>
             <Bold>Random Wind:</Bold> If "Random wind direction" is enabled, this value is the starting direction, and it fluctuates ±5° per simulation tick.
 							</TextBlock>
@@ -406,8 +406,8 @@ It only adds long-range spot fires.
 					<ComboBox Margin="4,5,4,0" x:Name="WindDirectionBox" SelectedIndex="0" MinWidth="150">
 						<ComboBox.ToolTip>
 							<TextBlock TextWrapping="Wrap" MaxWidth="300">
-            <Bold>Select Wind Direction:</Bold> Choose the compass direction from which the wind blows.  
-            <LineBreak/>- Changes affect fire spread alignment immediately.  
+            <Bold>Select Wind Direction:</Bold> Choose the compass direction from which the wind blows.
+            <LineBreak/>- Changes affect fire spread alignment immediately.
             <LineBreak/>- Works together with "Random wind direction" for dynamic wind behavior.
 							</TextBlock>
 						</ComboBox.ToolTip>
