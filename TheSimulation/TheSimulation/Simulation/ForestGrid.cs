@@ -83,30 +83,35 @@ public sealed class ForestGrid(int cols, int rows)
 
     /// <summary>
     /// Liefert alle gültigen Nachbarzellen (inklusive Diagonalen) der angegebenen Zelle.
-    /// Die Zelle selbst wird ausgeschlossen.
+    /// Allocation-free mit festen Offsets und Span.
     /// </summary>
     /// <param name="cell">Die Zelle, deren Nachbarn ermittelt werden sollen.</param>
-    /// <returns>Eine Aufzählung der benachbarten Zellen.</returns>
-    public IEnumerable<Cell> GetNeighbors(Cell cell)
+    /// <param name="neighbors">Ein Span, in den die Nachbarn geschrieben werden.</param>
+    /// <returns>Anzahl der gültigen Nachbarn.</returns>
+    public int GetNeighbors(Cell cell, Span<Cell> neighbors)
     {
-        for (var dx = -1; dx <= 1; dx++)
+        var count = 0;
+
+        foreach (var (dx, dy) in NeighborOffsets)
         {
-            for (var dy = -1; dy <= 1; dy++)
+            var nx = cell.X + dx;
+            var ny = cell.Y + dy;
+            var neighbor = new Cell(nx, ny);
+
+            if (IsInside(neighbor))
             {
-                if (dx == 0 && dy == 0)
-                {
-                    continue;
-                }
-
-                var nx = cell.X + dx;
-                var ny = cell.Y + dy;
-
-                var neighbor = new Cell(nx, ny);
-                if (IsInside(neighbor))
-                {
-                    yield return neighbor;
-                }
+                neighbors[count] = neighbor;
+                count++;
             }
         }
+
+        return count;
     }
+
+    private static readonly (int dx, int dy)[] NeighborOffsets =
+    [
+        (-1, -1), (0, -1), (1, -1),
+        (-1, 0),           (1, 0),
+        (-1, 1),  (0, 1),  (1, 1)
+    ];
 }

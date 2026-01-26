@@ -661,10 +661,16 @@ public sealed class ForestFireSimulation
         var toIgnite = new HashSet<Cell>();
         var toBurnDown = new List<Cell>();
 
+        Span<Cell> neighbors = stackalloc Cell[8];
+
         foreach (var burningCell in burningTrees)
         {
-            foreach (var neighbor in grid.GetNeighbors(burningCell))
+            var neighborCount = grid.GetNeighbors(burningCell, neighbors);
+
+            for (var i = 0; i < neighborCount; i++)
             {
+                var neighbor = neighbors[i];
+
                 if (randomHelper.NextDouble() <
                     simulationConfig.FireConfig.SpreadChancePercent / 100)
                 {
