@@ -72,7 +72,7 @@ public sealed class WindCompassVisualizer
     /// Updates the wind vector and redraws the arrows.
     /// </summary>
     /// <param name="newVector">The new wind vector representing direction and magnitude.</param>
-    public void UpdateWind(Vector newVector)
+    public void Update(Vector newVector)
     {
         currentWindVector = newVector;
         Draw();
