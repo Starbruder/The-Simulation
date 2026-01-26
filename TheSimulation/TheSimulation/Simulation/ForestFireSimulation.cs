@@ -693,13 +693,42 @@ public sealed class ForestFireSimulation
     }
 
     /// <summary>
-    /// Versucht, durch Hitze oder Funkenflug einen zusätzlichen Baum
-    /// im Umkreis von 2–3 Zellen zu entzünden.
-    /// Die Wahrscheinlichkeit nimmt mit der Distanz ab und wird stark
-    /// von Windrichtung und -stärke beeinflusst.
+    /// Versucht, durch Funkenflug (Spot Fire) einen zusätzlichen Baum
+    /// in mittlerer Entfernung von der aktuell brennenden Zelle zu entzünden.
     /// </summary>
-    /// <param name="source">Die aktuell brennende Zelle</param>
-    /// <param name="toIgnite">Sammlung neu zu entzündender Zellen im aktuellen FireStep</param>
+    /// <remarks>
+    /// Die Zielzelle wird zufällig in einem radialen Umkreis von
+    /// <c>2</c> bis <c>4</c> Zellen Entfernung gewählt.
+    /// Es wird höchstens ein Spot-Fire-Versuch pro Methodenaufruf durchgeführt.
+    ///
+    /// Die tatsächliche Entzündungschance nimmt mit zunehmender Distanz ab
+    /// und wird zusätzlich durch Umwelteinflüsse beeinflusst:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>
+    /// Windrichtung und -stärke (Ausrichtung zur Zielzelle)
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>
+    /// Luftfeuchtigkeit (trockenere Luft erhöht die Chance)
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>
+    /// Lufttemperatur (höhere Temperaturen erhöhen die Chance)
+    /// </description>
+    /// </item>
+    /// </list>
+    ///
+    /// Die Methode führt keine unmittelbare Zustandsänderung durch.
+    /// Erfolgreiche Zündungen werden lediglich in der übergebenen Sammlung
+    /// vorgemerkt und erst nach Abschluss des aktuellen FireSteps aktiviert.
+    /// </remarks>
+    /// <param name="source">Die aktuell brennende Ausgangszelle</param>
+    /// <param name="toIgnite">
+    /// Sammlung von Zellen, die im aktuellen FireStep neu entzündet werden sollen
+    /// </param>
     private void TryIgniteNearbyCell(Cell source, HashSet<Cell> toIgnite)
     {
         const int MinSpotFireRadius = 2;
@@ -827,11 +856,13 @@ public sealed class ForestFireSimulation
     {
         foreach (var burnedDownCell in toBurnDown)
         {
-            BurnDownTree(burnedDownCell);
+            BurnDownTreeInternal(burnedDownCell);
         }
+
+        UpdateTreeUI();
     }
 
-    private void BurnDownTree(Cell cell)
+    private void BurnDownTreeInternal(Cell cell)
     {
         grid.Clear(cell);
         burningTrees.Remove(cell);
@@ -851,8 +882,6 @@ public sealed class ForestFireSimulation
 
         activeTrees.Remove(cell);
         growableCells.Add(cell);
-
-        UpdateTreeUI();
     }
 
     private void UpdateGridForBurnedDownTree(Cell cell, Shape tree)
