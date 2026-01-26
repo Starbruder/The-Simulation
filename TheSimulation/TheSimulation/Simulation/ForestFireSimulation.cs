@@ -650,6 +650,43 @@ public sealed class ForestFireSimulation
         return color;
     }
 
+    /// <summary>
+    /// Führt einen einzelnen Simulationsschritt für die Brandausbreitung aus.
+    /// </summary>
+    /// <remarks>
+    /// In diesem Schritt werden alle aktuell brennenden Zellen ausgewertet,
+    /// ohne den zugrunde liegenden Brandzustand während der Iteration zu verändern.
+    ///
+    /// Für jede brennende Zelle werden dabei folgende Aktionen durchgeführt:
+    /// <list type="number">
+    /// <item>
+    /// <description>
+    /// Es wird mit einer konfigurierbaren Wahrscheinlichkeit versucht,
+    /// einen sogenannten Spot-Fire (Funkenflug) in größerer Entfernung auszulösen.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>
+    /// Es wird geprüft, ob sich das Feuer auf direkt benachbarte Zellen ausbreitet.
+    /// Die Ausbreitungswahrscheinlichkeit wird durch Umwelteinflüsse wie Wind,
+    /// Temperatur, Luftfeuchtigkeit und Topographie beeinflusst.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>
+    /// Die aktuell brennende Zelle wird zum Abbrennen markiert und nach Abschluss
+    /// des Simulationsschritts aus dem aktiven Brandzustand entfernt.
+    /// </description>
+    /// </item>
+    /// </list>
+    ///
+    /// Die tatsächliche Zustandsänderung (Entzünden neuer Zellen und Abbrennen
+    /// bestehender Brandzellen) erfolgt gesammelt nach der Auswertung aller
+    /// aktuell brennenden Zellen, um Seiteneffekte während der Iteration zu vermeiden.
+    ///
+    /// Wird in diesem Schritt kein aktiver Brand mehr festgestellt, wird der
+    /// Feuerzustand der Simulation entsprechend aktualisiert.
+    /// </remarks>
     private void FireStep()
     {
         if (burningTrees.Count == 0)
@@ -663,15 +700,14 @@ public sealed class ForestFireSimulation
 
         foreach (var burningCell in burningTrees)
         {
+            if (randomHelper.NextDouble() < simulationConfig.FireConfig.SpreadChancePercent / 100)
+            {
+                TryIgniteNearbyCell(burningCell, toIgnite);
+            }
+
             foreach (var neighbor in grid.GetNeighbors(burningCell))
             {
-                if (randomHelper.NextDouble() <
-                    simulationConfig.FireConfig.SpreadChancePercent / 100)
-                {
-                    TryIgniteNearbyCell(burningCell, toIgnite);
-                }
-
-                if (!grid.IsTree(neighbor))
+                if (!grid.IsTree(neighbor) || grid.IsBurning(neighbor))
                 {
                     continue;
                 }
