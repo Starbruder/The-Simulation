@@ -174,31 +174,22 @@ public sealed class ForestFireSimulation
     private void DestroyCell(Cell cell)
     {
         ResetCellState(cell);
-
-        if (burningTrees.Remove(cell))
-        {
-            if (fireAnimations.TryGetValue(cell, out var fire))
-            {
-                fire.Stop();
-                fireAnimations.Remove(cell);
-            }
-        }
-
-        grid.Clear(cell);
-
-        if (treeElements.TryGetValue(cell, out var tree))
-        {
-            ForestCanvas.Children.Remove(tree);
-            treeElements.Remove(cell);
-        }
-
-        activeTrees.Remove(cell);
-        growableCells.Add(cell);
-
         UpdateTreeUI();
     }
 
     private void ResetCellState(Cell cell)
+    {
+        RemoveCellAndFireAnimation(cell);
+
+        grid.Clear(cell);
+
+        RemoveTree(cell);
+
+        activeTrees.Remove(cell);
+        growableCells.Add(cell);
+    }
+
+    private void RemoveCellAndFireAnimation(Cell cell)
     {
         if (burningTrees.Remove(cell))
         {
@@ -208,18 +199,15 @@ public sealed class ForestFireSimulation
                 fireAnimations.Remove(cell);
             }
         }
+    }
 
+    private void RemoveTree(Cell cell)
+    {
         if (treeElements.TryGetValue(cell, out var tree))
         {
             ForestCanvas.Children.Remove(tree);
             treeElements.Remove(cell);
         }
-
-        activeTrees.Remove(cell);
-
-        grid.Clear(cell);
-
-        growableCells.Add(cell);
     }
 
     public void StartOrResumeSimulation()
@@ -967,13 +955,13 @@ public sealed class ForestFireSimulation
         ForestCanvas.Children.Remove(boltEffect);
     }
 
-	/// <summary>
-	/// Briefly flashes the screen by temporarily increasing the opacity of the screen overlay for ~1 Frame.
-	/// </summary>
-	/// <remarks>This method is intended to provide a quick visual feedback effect. It should be awaited to
-	/// ensure the flash completes before proceeding with subsequent UI updates.</remarks>
-	/// <returns>A task that represents the asynchronous flash operation.</returns>
-	private async Task FlashScreen()
+    /// <summary>
+    /// Briefly flashes the screen by temporarily increasing the opacity of the screen overlay for ~1 Frame.
+    /// </summary>
+    /// <remarks>This method is intended to provide a quick visual feedback effect. It should be awaited to
+    /// ensure the flash completes before proceeding with subsequent UI updates.</remarks>
+    /// <returns>A task that represents the asynchronous flash operation.</returns>
+    private async Task FlashScreen()
     {
         screenFlash.Opacity = 0.6;
         await Task.Delay(40);
