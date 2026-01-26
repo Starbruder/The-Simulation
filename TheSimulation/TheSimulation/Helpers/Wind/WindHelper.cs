@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace TheSimulation;
 
@@ -11,6 +12,7 @@ public sealed class WindHelper(WindConfig config)
 
     public double CurrentWindStrength { get; private set; } = config.Strength;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public double CalculateWindEffect(Cell from, Cell to)
     {
         var diffrenceX = to.X - from.X;

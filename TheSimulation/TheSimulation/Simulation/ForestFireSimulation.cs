@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -566,6 +567,7 @@ public sealed class ForestFireSimulation
         AddTree(cell);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private double CalculateSlopeEffect(Cell from, Cell to)
     {
         var hFrom = terrainGrid[from.X, from.Y].Elevation;
@@ -650,6 +652,7 @@ public sealed class ForestFireSimulation
         return color;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private void FireStep()
     {
         if (burningTrees.Count == 0)
@@ -735,6 +738,7 @@ public sealed class ForestFireSimulation
     /// <param name="toIgnite">
     /// Sammlung von Zellen, die im aktuellen FireStep neu entzündet werden sollen
     /// </param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void TryIgniteNearbyCell(Cell source, HashSet<Cell> toIgnite)
     {
         const int MinSpotFireRadius = 2;
@@ -774,6 +778,7 @@ public sealed class ForestFireSimulation
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private double CalculateFireSpreadChance(Cell burningCell, Cell neighbor)
     {
         // Uncommented later when impl. diffrent ground types
@@ -810,6 +815,7 @@ public sealed class ForestFireSimulation
         return chance;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void SpreadFire(HashSet<Cell> toIgnite)
     {
         foreach (var burningCell in toIgnite)
@@ -858,6 +864,7 @@ public sealed class ForestFireSimulation
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void BurnDownTrees(List<Cell> toBurnDown)
     {
         foreach (var burnedDownCell in toBurnDown)
