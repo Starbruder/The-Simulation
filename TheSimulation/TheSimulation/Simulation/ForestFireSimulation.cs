@@ -16,11 +16,11 @@ public sealed class ForestFireSimulation
     private readonly SimulationConfig simulationConfig;
     private readonly RandomHelper randomHelper;
 
-    public required Action<string> UpdateSimulationTimeText;
-    public required Action<string> UpdateTreeDensityText;
-    public required Action<string> UpdateWindStrengthText;
-    public required Action<string> UpdateTotalGrownTreesText;
-    public required Action<string> UpdateTotalBurnedTreesText;
+    public event Action<string> SimulationTimeUpdated;
+    public event Action<string> TreeDensityUpdated;
+    public event Action<string> WindStrengthUpdated;
+    public event Action<string> TotalGrownTreesUpdated;
+    public event Action<string> TotalBurnedTreesUpdated;
 
     private readonly WindHelper windHelper;
     private readonly WindCompassVisualizer windVisualizer;
@@ -317,7 +317,7 @@ public sealed class ForestFireSimulation
     private void InitializeSimulationClock()
     {
         var hours = (int)accumulatedSimulationTime.TotalHours;
-        UpdateSimulationTimeText?.Invoke(
+        SimulationTimeUpdated?.Invoke(
             $"Runtime: {hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}"
         );
 
@@ -339,7 +339,7 @@ public sealed class ForestFireSimulation
         accumulatedSimulationTime = accumulatedSimulationTime.Add(clock.TimerSecond);
 
         var hours = (int)accumulatedSimulationTime.TotalHours;
-        UpdateSimulationTimeText?.Invoke(
+        SimulationTimeUpdated?.Invoke(
             $"Runtime: {hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}"
         );
         RecordSimulationStats();
@@ -1057,12 +1057,12 @@ public sealed class ForestFireSimulation
 
     private void UpdateTreeUI()
     {
-        UpdateTreeDensityText?.Invoke(
+        TreeDensityUpdated?.Invoke(
             $"{activeTrees.Count} / {cachedMaxTreesPossible} ({CalculateCurrentTreeDensityPercent():F0}%)"
         );
 
-        UpdateTotalGrownTreesText?.Invoke(totalGrownTrees.ToString());
-        UpdateTotalBurnedTreesText?.Invoke(totalBurnedTrees.ToString());
+        TotalGrownTreesUpdated?.Invoke(totalGrownTrees.ToString());
+        TotalBurnedTreesUpdated?.Invoke(totalBurnedTrees.ToString());
     }
 
     private void UpdateWindUI()
@@ -1072,7 +1072,7 @@ public sealed class ForestFireSimulation
         var windStrengthReadablePercent = windStrength * 100;
         var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
 
-        UpdateWindStrengthText?.Invoke(
+        WindStrengthUpdated?.Invoke(
             $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)"
         );
     }

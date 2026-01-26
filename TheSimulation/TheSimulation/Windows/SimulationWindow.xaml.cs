@@ -16,14 +16,13 @@ public sealed partial class SimulationWindow : Window
         IconVisualizer.InitializeWindowIcon(this);
 
         simulation = new
-            (simulationConfig, random, ForestCanvas, SimulationSpeed.Ultra)
-        {
-            UpdateSimulationTimeText = text => SimulationTimeText.Text = text,
-            UpdateTreeDensityText = text => TreeDensityText.Text = text,
-            UpdateWindStrengthText = text => WindStrengthText.Text = text,
-            UpdateTotalGrownTreesText = text => TotalGrownTrees.Text = text,
-            UpdateTotalBurnedTreesText = text => TotalBurnedTrees.Text = text
-        };
+            (simulationConfig, random, ForestCanvas, SimulationSpeed.Ultra);
+
+        simulation.SimulationTimeUpdated += text => SimulationTimeText.Text = text;
+        simulation.TreeDensityUpdated += text => TreeDensityText.Text = text;
+        simulation.WindStrengthUpdated += text => WindStrengthText.Text = text;
+        simulation.TotalGrownTreesUpdated += text => TotalGrownTrees.Text = text;
+        simulation.TotalBurnedTreesUpdated += text => TotalBurnedTrees.Text = text;
 
         SetSimulationSpeedUltra();
 
