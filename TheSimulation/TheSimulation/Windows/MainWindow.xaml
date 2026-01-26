@@ -165,13 +165,13 @@ distanceFactor × windEffect × humidityEffect × temperatureEffect
 <LineBreak/><LineBreak/>
 
 <Bold>Distance factor:</Bold>
-distanceFactor = 2 / distance
+distanceFactor = (minDistance²) / (actualDistance²)
 <LineBreak/>
 • Distance 2 → 1.00
 <LineBreak/>
-• Distance 3 → 0.67
+• Distance 3 → 0.44
 <LineBreak/>
-• Distance 4 → 0.50
+• Distance 4 → 0.25
 <LineBreak/><LineBreak/>
 
 <Bold>Humidity effect:</Bold>
