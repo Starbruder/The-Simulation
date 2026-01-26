@@ -96,9 +96,7 @@ public sealed class ForestFireSimulation
     {
         var cell = GetMouseClickedCell(e);
 
-        // Löst das Problem, dass außerhalb geklickt wird und das Programm abstürzt.
-        // of out of bounds (Knapp außerhalb des Baumrasters klicken)
-        if (!grid.IsInside(cell))
+        if (IsOutOfBoundsClickOfCanvas(cell))
         {
             return;
         }
@@ -123,6 +121,14 @@ public sealed class ForestFireSimulation
                 break;
         }
     }
+
+    /// <summary>
+    /// Löst das Problem, dass außerhalb geklickt wird und das Programm abstürzt.
+    /// of out of bounds (Knapp außerhalb des Baumrasters klicken)
+    /// </summary>
+    /// <param name="cell"></param>
+    /// <returns></returns>
+    private bool IsOutOfBoundsClickOfCanvas(Cell cell) => !grid.IsInside(cell);
 
     private void MouseGrowClick(Cell cell)
     {
@@ -169,7 +175,6 @@ public sealed class ForestFireSimulation
     {
         ResetCellState(cell);
 
-        // 🔥 Falls der Baum brennt → Feuer & Effekte stoppen
         if (burningTrees.Remove(cell))
         {
             if (fireAnimations.TryGetValue(cell, out var fire))
@@ -513,7 +518,7 @@ public sealed class ForestFireSimulation
     {
         windHelper.RandomizeAndUpdateWind(); // Winkel und Strengh randomisieren
         var vector = windHelper.GetWindVector();
-        windVisualizer.UpdateWind(vector); // Pfeil aktualisieren
+        windVisualizer.Update(vector);
 
         UpdateWindUI();
     }
@@ -638,9 +643,13 @@ public sealed class ForestFireSimulation
         };
     }
 
+    /// <summary>
+    /// Simulate different tree types by using different colors
+    /// </summary>
+    /// <param name="cell"></param>
+    /// <returns></returns>
     private Brush GetTreeColor(Cell cell)
     {
-        // Simulate different tree types by using different colors
         var color = randomHelper.NextTreeColor();
 
         if (simulationConfig.TerrainConfig.UseTerrainGeneration)
@@ -671,7 +680,6 @@ public sealed class ForestFireSimulation
                 if (randomHelper.NextDouble() <
                     simulationConfig.FireConfig.SpreadChancePercent / 100)
                 {
-                    // Durch Funkenflug auch weiter entfernte Bäume anzünden
                     TryIgniteNearbyCell(burningCell, toIgnite);
                 }
 
@@ -959,10 +967,16 @@ public sealed class ForestFireSimulation
         ForestCanvas.Children.Remove(boltEffect);
     }
 
-    private async Task FlashScreen()
+	/// <summary>
+	/// Briefly flashes the screen by temporarily increasing the opacity of the screen overlay for ~1 Frame.
+	/// </summary>
+	/// <remarks>This method is intended to provide a quick visual feedback effect. It should be awaited to
+	/// ensure the flash completes before proceeding with subsequent UI updates.</remarks>
+	/// <returns>A task that represents the asynchronous flash operation.</returns>
+	private async Task FlashScreen()
     {
         screenFlash.Opacity = 0.6;
-        await Task.Delay(40);   // ~1 Frame
+        await Task.Delay(40);
         screenFlash.Opacity = 0;
     }
 
