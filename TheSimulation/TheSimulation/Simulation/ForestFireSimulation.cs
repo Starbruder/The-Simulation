@@ -244,6 +244,7 @@ public sealed class ForestFireSimulation
         ));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void IgniteTree(Cell cell)
     {
         if (!grid.IsTree(cell))
@@ -521,6 +522,7 @@ public sealed class ForestFireSimulation
         windVisualizer?.Draw();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private void GrowStep()
     {
         // Wenn irgendwo Feuer brennt → überspringen
@@ -585,6 +587,7 @@ public sealed class ForestFireSimulation
         return 1 + delta; // delta ist negativ
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void AddTree(Cell cell)
     {
         growableCells.Remove(cell);
@@ -710,8 +713,9 @@ public sealed class ForestFireSimulation
     /// <c>2</c> bis <c>4</c> Zellen Entfernung gewählt.
     /// Es wird höchstens ein Spot-Fire-Versuch pro Methodenaufruf durchgeführt.
     ///
-    /// Die tatsächliche Entzündungschance nimmt mit zunehmender Distanz ab
-    /// und wird zusätzlich durch Umwelteinflüsse beeinflusst:
+    /// Die tatsächliche Entzündungschance nimmt mit zunehmender Distanz ab,
+    /// wobei die Abnahme quadratisch mit der Entfernung erfolgt.
+    /// Zusätzlich wird die Chance durch Umwelteinflüsse beeinflusst:
     /// <list type="bullet">
     /// <item>
     /// <description>
@@ -738,7 +742,8 @@ public sealed class ForestFireSimulation
     /// <param name="toIgnite">
     /// Sammlung von Zellen, die im aktuellen FireStep neu entzündet werden sollen
     /// </param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     private void TryIgniteNearbyCell(Cell source, HashSet<Cell> toIgnite)
     {
         const int MinSpotFireRadius = 2;
@@ -748,10 +753,12 @@ public sealed class ForestFireSimulation
         var offsetX = randomHelper.NextInt(-MaxSpotFireRadius, MaxSpotFireRadius + 1);
         var offsetY = randomHelper.NextInt(-MaxSpotFireRadius, MaxSpotFireRadius + 1);
 
-        // Abstand zur Zielzelle berechnen (Hypotenuse)
-        var distanceToTarget = Math.Sqrt(offsetX * offsetX + offsetY * offsetY);
+        // Abstand zur Zielzelle berechnen: Qudratische Falloff-Kurve
+        var distanceSquared = offsetX * offsetX + offsetY * offsetY;
+        var minRadiusSquared = MinSpotFireRadius * MinSpotFireRadius;
+        var maxRadiusSquared = MaxSpotFireRadius * MaxSpotFireRadius;
 
-        if (distanceToTarget < MinSpotFireRadius || distanceToTarget > MaxSpotFireRadius)
+        if (distanceSquared < minRadiusSquared || distanceSquared > maxRadiusSquared)
         {
             return;
         }
@@ -764,7 +771,7 @@ public sealed class ForestFireSimulation
         }
 
         var windEffect = windHelper.CalculateWindEffect(source, target);
-        var distanceFalloff = MinSpotFireRadius / distanceToTarget;
+        var distanceFalloff = (double)minRadiusSquared / distanceSquared;
 
         var chance =
             distanceFalloff *
