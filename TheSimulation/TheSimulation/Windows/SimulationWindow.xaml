@@ -145,13 +145,18 @@
                     MouseDown="OverlayCanvas_MouseDown"/>
 
 				<!-- User-Info -->
-				<TextBlock Text="Click anywhere to edit the map"
-                   Foreground="White"
-                   FontSize="22"
-                   FontWeight="SemiBold"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   MouseDown="TextBlock_MouseDown"/>
+				<TextBlock
+                    Foreground="White"
+                    FontSize="22"
+                    FontWeight="SemiBold"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    TextAlignment="Center"
+                    MouseDown="TextBlock_MouseDown">
+					Simulation is paused.
+                    <LineBreak/>
+                    Click anywhere to edit the forest.
+				</TextBlock>
 
 				<!-- Close X -->
 				<Button Content="✕"
