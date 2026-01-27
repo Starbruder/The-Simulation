@@ -37,6 +37,12 @@ public sealed partial class SimulationWindow : Window
             PauseResume_Click(sender, e);
             e.Handled = true;
         }
+
+        if (e.Key == Key.Escape)
+        {
+            HideOverlaySmooth();
+            e.Handled = true;
+        }
     }
 
     private void PauseSimulation()
@@ -123,6 +129,11 @@ public sealed partial class SimulationWindow : Window
 
     private void HideOverlaySmooth()
     {
+        if (EditOverlay.Visibility == Visibility.Collapsed)
+        {
+            return;
+        }
+
         var fade = new DoubleAnimation
         {
             From = 1,
