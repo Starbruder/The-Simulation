@@ -117,8 +117,10 @@
                     VerticalAlignment="Center"
                     Margin="5,0,0,0" MinWidth="32"/>
 
-			<Button Content="Evaluation"
+			<Button x:Name="ShowEvaluationButton"
+                Content="Evaluation"
                 Grid.Column="2"
+                IsEnabled="False"
                 Margin="16,0,0,0"
                 VerticalAlignment="Center"
                 ToolTip="Opens a new window to show the result of this simulation"

@@ -134,6 +134,8 @@ public sealed partial class SimulationWindow : Window
             return;
         }
 
+        ActivateEvaluationWindowButton();
+
         var fade = new DoubleAnimation
         {
             From = 1,
@@ -153,6 +155,9 @@ public sealed partial class SimulationWindow : Window
 
         EditOverlay.BeginAnimation(OpacityProperty, fade);
     }
+
+    private void ActivateEvaluationWindowButton()
+        => ShowEvaluationButton.IsEnabled = true;
 
     private void OverlayCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         => HideOverlaySmooth();
