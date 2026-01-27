@@ -125,10 +125,46 @@
                 Click="ShowEvaluation_Click" Style="{StaticResource CustomButtonStyle}"/>
 		</StackPanel>
 
-		<!-- Canvas (Wald - Anzeige) -->
-		<Canvas x:Name="ForestCanvas"
-            Grid.Row="1"
-            Background="Black"/>
+		<!-- Canvas + Overlay -->
+		<Grid Grid.Row="1">
+
+			<!-- Main Canvas -->
+			<Canvas x:Name="ForestCanvas"
+                Background="Black"
+                Cursor="Cross"/>
+
+			<!-- Edit Overlay -->
+			<Grid x:Name="EditOverlay"
+              Background="#66000000"
+              Opacity="1"
+              IsHitTestVisible="True">
+
+				<!-- Overlay -->
+				<Canvas x:Name="OverlayCanvas"
+                    Background="Transparent"
+                    MouseDown="OverlayCanvas_MouseDown"/>
+
+				<!-- User-Info -->
+				<TextBlock Text="Click anywhere to edit the map"
+                   Foreground="White"
+                   FontSize="22"
+                   FontWeight="SemiBold"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   MouseDown="TextBlock_MouseDown"/>
+
+				<!-- Close X -->
+				<Button Content="✕"
+                    Width="32"
+                    Height="32"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="12"
+                    Style="{StaticResource CustomButtonStyle}"
+                    Click="CloseOverlay_Click"/>
+			</Grid>
+
+		</Grid>
 
 		<!-- Rechte Seite (Timer) -->
 		<TextBlock x:Name="SimulationTimeText"
