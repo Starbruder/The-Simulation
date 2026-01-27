@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+### --- Project specific overrides ---
+
+# Ignore obj folder of main project completely
+/TheSimulation/TheSimulation/obj/
+/TheSimulation/.vs/
