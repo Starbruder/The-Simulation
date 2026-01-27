@@ -51,6 +51,7 @@ public sealed partial class SimulationWindow : Window
         {
             simulation.StartOrResumeSimulation();
             PauseResumeButton.Content = "❚❚";
+            HideOverlaySmooth();
             return;
         }
 
