@@ -1,0 +1,26 @@
+## Build-Ausgaben
+bin/
+obj/
+
+## Visual Studio
+.vs/
+*.user
+*.suo
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+## Rider / VS Code
+.idea/
+.vscode/
+
+## NuGet
+packages/
+*.nupkg
+
+## Logs
+*.log
+
+## OS
+Thumbs.db
+.DS_Store
