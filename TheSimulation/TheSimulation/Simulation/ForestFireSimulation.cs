@@ -300,6 +300,7 @@ public sealed class ForestFireSimulation
         screenFlash.Width = ForestCanvas.ActualWidth;
         screenFlash.Height = ForestCanvas.ActualHeight;
         screenFlash.Fill = Brushes.White;
+        screenFlash.Opacity = 0;
 
         Panel.SetZIndex(screenFlash, int.MaxValue);
 
