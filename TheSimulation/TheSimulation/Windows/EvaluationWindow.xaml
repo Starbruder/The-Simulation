@@ -8,20 +8,6 @@
         WindowStartupLocation="CenterScreen"
 		ResizeMode="CanMinimize">
 
-	<Window.Resources>
-		<Style x:Key="CustomButtonStyle" TargetType="Button">
-			<Setter Property="Background" Value="#FF4C8F94"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="Padding" Value="10,5"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="Height" Value="40"/>
-			<Setter Property="Width" Value="140"/>
-			<Setter Property="HorizontalAlignment" Value="Right"/>
-			<Setter Property="VerticalAlignment" Value="Top"/>
-		</Style>
-	</Window.Resources>
-
 	<Grid Background="White" Margin="20">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
