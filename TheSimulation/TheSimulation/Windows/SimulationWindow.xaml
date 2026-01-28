@@ -9,7 +9,7 @@
         Height="700"
         Width="1000"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown">
+        KeyDown="Window_KeyDown">
 
 	<Window.Resources>
 		<!-- Style für Buttons -->

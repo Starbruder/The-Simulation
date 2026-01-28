@@ -10,7 +10,8 @@
         Height="700"
         Width="1000"
         ResizeMode="CanMinimize"
-        WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown">
+        WindowStartupLocation="CenterScreen"
+		KeyDown="Window_KeyDown">
 
 	<Window.Resources>
 		<!-- Tooltips als Resources im Window -->
