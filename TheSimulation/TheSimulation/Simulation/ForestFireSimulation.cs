@@ -980,7 +980,7 @@ public sealed class ForestFireSimulation
 
     private async Task ShowLightning(Cell cell)
     {
-        var lightningCell = CreateCellShape(cell, Colors.LightningColor);
+        var lightningCell = CreateCellShape(cell, ColorsData.LightningColor);
 
         Canvas.SetLeft(lightningCell, cell.X * simulationConfig.TreeConfig.Size);
         Canvas.SetTop(lightningCell, cell.Y * simulationConfig.TreeConfig.Size);

@@ -20,8 +20,8 @@ public sealed class RandomHelper
 
     public Brush NextTreeColor()
     {
-        var index = NextInt(0, Colors.TreeColors.Length);
-        return Colors.TreeColors[index];
+        var index = NextInt(0, ColorsData.TreeColors.Length);
+        return ColorsData.TreeColors[index];
     }
 
     public Cell NextCell(HashSet<Cell> cell)

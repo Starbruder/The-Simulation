@@ -2,7 +2,7 @@
 
 namespace TheSimulation;
 
-public static class Colors
+public static class ColorsData
 {
     public static Brush[] TreeColors
     {
