@@ -75,10 +75,7 @@ public sealed class ForestFireSimulation
 
         ForestCanvas.Loaded += async (_, _) => await InitializeSimulationAsync();
 
-        ForestCanvas.PreviewMouseDown += (_, e) =>
-        {
-            MouseClick(e);
-        };
+        ForestCanvas.PreviewMouseDown += (_, e) => MouseClick(e);
 
         StartOrResumeSimulation();
     }
