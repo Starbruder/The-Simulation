@@ -76,11 +76,15 @@ public sealed class ForestFireSimulation
         ForestCanvas.Loaded += async (_, _) => await InitializeSimulationAsync();
 
         ForestCanvas.PreviewMouseDown += (_, e) => MouseClick(e);
+        ForestCanvas.MouseMove += (_, e) => OnMouseMove(e);
 
         StartOrResumeSimulation();
     }
 
-    private Cell GetMouseClickedCell(MouseButtonEventArgs e)
+    private void OnMouseMove(MouseEventArgs e)
+        => MouseClick(e);
+
+    private Cell GetMouseClickedCell(MouseEventArgs e)
     {
         var pos = e.GetPosition(ForestCanvas);
 
@@ -90,7 +94,7 @@ public sealed class ForestFireSimulation
         return new(x, y);
     }
 
-    private void MouseClick(MouseButtonEventArgs e)
+    private void MouseClick(MouseEventArgs e)
     {
         var cell = GetMouseClickedCell(e);
 
@@ -99,24 +103,17 @@ public sealed class ForestFireSimulation
             return;
         }
 
-        switch (e.ChangedButton)
+        if (e.LeftButton == MouseButtonState.Pressed)
         {
-            case MouseButton.Left:
-                MouseBurnClick(cell);
-                break;
-
-            case MouseButton.Middle:
-                MouseDestoryClick(cell);
-                break;
-
-            case MouseButton.Right:
-                MouseGrowClick(cell);
-                break;
-
-            case MouseButton.XButton1: // Hier könnte man noch andere Funktionen hinzufügen
-                break;
-            case MouseButton.XButton2: // Z.b: Zoom In/Out oder Simulationsgeschwindigkeit ändern
-                break;
+            MouseBurnClick(cell);
+        }
+        else if (e.RightButton == MouseButtonState.Pressed)
+        {
+            MouseGrowClick(cell);
+        }
+        else if (e.MiddleButton == MouseButtonState.Pressed)
+        {
+            MouseDestoryClick(cell);
         }
     }
 
