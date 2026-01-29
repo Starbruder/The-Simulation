@@ -337,9 +337,6 @@ public sealed class ForestFireSimulation
         var timeText = $"{hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}";
 
         SimulationLiveStats.SimulationTime = timeText;
-
-        // Keep the event for backward compatibility/other listeners
-        SimulationTimeUpdated?.Invoke($"Runtime: {timeText}");
     }
 
     private bool LowDensityMinimumReached()
