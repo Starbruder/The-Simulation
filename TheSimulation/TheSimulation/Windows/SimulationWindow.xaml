@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheSimulation"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="Forest fire simulation"
         Height="700"
@@ -149,7 +150,8 @@
 				<StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
-        TextOptions.TextFormattingMode="Display">
+        TextOptions.TextFormattingMode="Display"
+        IsHitTestVisible="False">
 
 					<!-- User-Info -->
 					<TextBlock
@@ -168,39 +170,46 @@
 
 						<!-- Left click -->
 						<StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-							<TextBlock Text="🖱️ Left Click"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Foreground="White"
-                           Width="130"/>
+							<fa:ImageAwesome Icon="Fire" Width="24" Height="24" Foreground="OrangeRed" Margin="0,0,8,0"/>
+
+							<TextBlock Text="Left Click"
+               FontSize="16"
+               FontWeight="SemiBold"
+               Foreground="White"
+               Width="110"/>
 							<TextBlock Text="Burn trees"
-                           FontSize="16"
-                           Foreground="White"/>
+               FontSize="16"
+               Foreground="White"/>
 						</StackPanel>
 
 						<!-- Right click -->
 						<StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-							<TextBlock Text="🖱️ Right Click"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Foreground="White"
-                           Width="130"/>
+							<fa:ImageAwesome Icon="Leaf" Width="24" Height="24" Foreground="Green" Margin="0,0,8,0"/>
+
+							<TextBlock Text="Right Click"
+               FontSize="16"
+               FontWeight="SemiBold"
+               Foreground="White"
+               Width="110"/>
 							<TextBlock Text="Grow trees"
-                           FontSize="16"
-                           Foreground="White"/>
+               FontSize="16"
+               Foreground="White"/>
 						</StackPanel>
 
 						<!-- Middle click -->
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="🖱️ Middle Click"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Foreground="White"
-                           Width="130"/>
+							<fa:ImageAwesome Icon="Ban" Width="24" Height="24" Foreground="DarkGray" Margin="0,0,8,0"/>
+
+							<TextBlock Text="Middle Click"
+               FontSize="16"
+               FontWeight="SemiBold"
+               Foreground="White"
+               Width="110"/>
 							<TextBlock Text="Destroy trees"
-                           FontSize="16"
-                           Foreground="White"/>
+               FontSize="16"
+               Foreground="White"/>
 						</StackPanel>
+
 
 					</StackPanel>
 				</StackPanel>
