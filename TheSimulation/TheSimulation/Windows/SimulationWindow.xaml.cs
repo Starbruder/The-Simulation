@@ -108,11 +108,13 @@ public sealed partial class SimulationWindow : Window
 
         ActivateEvaluationWindowButton();
 
-        UIAnimationHelper.FadeOut(EditOverlay, () =>
-        {
-            EditOverlay.Visibility = Visibility.Collapsed;
-            EditOverlay.IsHitTestVisible = false;
-        });
+        UIAnimationHelper.FadeOut(EditOverlay, SetEditOverlayCollapsedValues);
+    }
+
+    private void SetEditOverlayCollapsedValues()
+    {
+        EditOverlay.Visibility = Visibility.Collapsed;
+        EditOverlay.IsHitTestVisible = false;
     }
 
     private void ActivateEvaluationWindowButton()
