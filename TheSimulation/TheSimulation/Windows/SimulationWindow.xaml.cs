@@ -29,11 +29,11 @@ public sealed partial class SimulationWindow : Window
         PauseSimulation();
     }
 
-    private void Window_KeyDown(object sender, KeyEventArgs e)
+    private void Window_KeyDown(object s, KeyEventArgs e)
     {
         if (e.Key == Key.Space)
         {
-            PauseResume_Click(sender, e);
+            PauseResume_Click(s, e);
             e.Handled = true;
         }
 
@@ -50,7 +50,7 @@ public sealed partial class SimulationWindow : Window
         PauseResumeButton.Content = "▶";
     }
 
-    private void PauseResume_Click(object sender, RoutedEventArgs e)
+    private void PauseResume_Click(object s, RoutedEventArgs e)
     {
         if (simulation.IsPaused)
         {
@@ -86,7 +86,7 @@ public sealed partial class SimulationWindow : Window
         SpeedUltraButton.IsEnabled = speed != SimulationSpeed.Ultra;
     }
 
-    private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
+    private void ShowEvaluation_Click(object s, RoutedEventArgs e)
         => simulation.OpenEvalualtionWindow();
 
     // Stop timers when window is closed protection against memory leaks
@@ -96,7 +96,7 @@ public sealed partial class SimulationWindow : Window
         simulation.StopOrPauseSimulation();
     }
 
-    private void CloseOverlay_Click(object sender, RoutedEventArgs e)
+    private void CloseOverlay_Click(object s, RoutedEventArgs e)
         => HideOverlaySmooth();
 
     private void HideOverlaySmooth()
@@ -120,6 +120,6 @@ public sealed partial class SimulationWindow : Window
     private void ActivateEvaluationWindowButton()
         => ShowEvaluationButton.IsEnabled = true;
 
-    private void OverlayCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+    private void OverlayCanvas_MouseDown(object s, MouseButtonEventArgs e)
         => HideOverlaySmooth();
 }
