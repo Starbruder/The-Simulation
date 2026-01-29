@@ -122,7 +122,4 @@ public sealed partial class SimulationWindow : Window
 
     private void OverlayCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         => HideOverlaySmooth();
-
-    private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
-        => HideOverlaySmooth();
 }
