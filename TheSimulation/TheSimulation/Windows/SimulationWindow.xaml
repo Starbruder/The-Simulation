@@ -137,28 +137,73 @@
 
 			<!-- Edit Overlay -->
 			<Grid x:Name="EditOverlay"
-              Background="#66000000"
-              Opacity="1"
-              IsHitTestVisible="True">
+      Background="#66000000"
+      IsHitTestVisible="True">
 
-				<!-- Overlay -->
+				<!-- Klicks abfangen -->
 				<Canvas x:Name="OverlayCanvas"
-                    Background="Transparent"
-                    MouseDown="OverlayCanvas_MouseDown"/>
+            Background="Transparent"
+            MouseDown="OverlayCanvas_MouseDown"/>
 
-				<!-- User-Info -->
-				<TextBlock
-                    Foreground="White"
-                    FontSize="22"
-                    FontWeight="SemiBold"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    TextAlignment="Center"
-                    MouseDown="TextBlock_MouseDown">
-					Simulation is paused.
-                    <LineBreak/>
-                    Click anywhere to edit the forest.
-				</TextBlock>
+				<!-- ZENTRALER CONTAINER -->
+				<StackPanel
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        TextOptions.TextFormattingMode="Display">
+
+					<!-- User-Info -->
+					<TextBlock
+            Foreground="White"
+            FontSize="22"
+            FontWeight="SemiBold"
+            TextAlignment="Center"
+            Margin="0,0,0,24">
+            Simulation is paused.
+            <LineBreak/>
+            Click anywhere to edit the forest.
+					</TextBlock>
+
+					<!-- Aktionen -->
+					<StackPanel HorizontalAlignment="Center">
+
+						<!-- Left click -->
+						<StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+							<TextBlock Text="🖱️ Left Click"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                           Width="130"/>
+							<TextBlock Text="Burn trees"
+                           FontSize="16"
+                           Foreground="White"/>
+						</StackPanel>
+
+						<!-- Right click -->
+						<StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+							<TextBlock Text="🖱️ Right Click"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                           Width="130"/>
+							<TextBlock Text="Grow trees"
+                           FontSize="16"
+                           Foreground="White"/>
+						</StackPanel>
+
+						<!-- Middle click -->
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="🖱️ Middle Click"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                           Width="130"/>
+							<TextBlock Text="Destroy trees"
+                           FontSize="16"
+                           Foreground="White"/>
+						</StackPanel>
+
+					</StackPanel>
+				</StackPanel>
 
 				<!-- Close X -->
 				<Button Content="✕"
