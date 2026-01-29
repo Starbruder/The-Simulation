@@ -313,12 +313,7 @@ public sealed class ForestFireSimulation
 
     private void InitializeSimulationClock()
     {
-        var hours = (int)accumulatedSimulationTime.TotalHours;
-        var timeText = $"{hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}";
-
-        SimulationLiveStats.SimulationTime = timeText;
-
-        SimulationTimeUpdated?.Invoke($"Runtime: {timeText}");
+        UpdateSimulationTimeUI();
 
         clock.Tick1s += OnSimulationTick;
     }
@@ -337,12 +332,7 @@ public sealed class ForestFireSimulation
 
         accumulatedSimulationTime = accumulatedSimulationTime.Add(clock.TimerSecond);
 
-        var hours = (int)accumulatedSimulationTime.TotalHours;
-        var timeText = $"{hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}";
-
-        SimulationLiveStats.SimulationTime = timeText;
-
-        SimulationTimeUpdated?.Invoke($"Runtime: {timeText}");
+        UpdateSimulationTimeUI();
 
         RecordSimulationStats();
     }
