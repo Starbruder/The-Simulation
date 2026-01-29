@@ -16,8 +16,6 @@ public sealed class ForestFireSimulation
     private readonly SimulationConfig simulationConfig;
     private readonly RandomHelper randomHelper;
 
-    public event Action<string> SimulationTimeUpdated;
-
     public SimulationStats SimulationLiveStats { get; } = new();
 
     private readonly WindHelper windHelper;
