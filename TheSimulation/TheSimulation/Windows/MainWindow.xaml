@@ -312,7 +312,7 @@ It only adds long-range spot fires.
 			HorizontalAlignment="Left" VerticalAlignment="Top"
 			Click="OpenGraphicsSettingsWindow"
 			Style="{StaticResource CustomButtonStyle}"
-			ToolTip="Open graphics settings window">
+			ToolTip="Open graphics settings dialog">
 			<Button.Content>
 				<StackPanel Orientation="Horizontal">
 					<fa:ImageAwesome Icon="Cog" Width="10" Height="10"/>

@@ -172,11 +172,11 @@
 						<StackPanel Orientation="Horizontal" Margin="0,0,0,12">
 							<fa:ImageAwesome Icon="Fire" Width="24" Height="24" Foreground="OrangeRed" Margin="0,0,8,0"/>
 
-							<TextBlock Text="Left Click"
+							<TextBlock Text="Left Mouse Button"
                FontSize="16"
                FontWeight="SemiBold"
                Foreground="White"
-               Width="110"/>
+               Width="170"/>
 							<TextBlock Text="Burn trees"
                FontSize="16"
                Foreground="White"/>
@@ -186,11 +186,11 @@
 						<StackPanel Orientation="Horizontal" Margin="0,0,0,12">
 							<fa:ImageAwesome Icon="Leaf" Width="24" Height="24" Foreground="Green" Margin="0,0,8,0"/>
 
-							<TextBlock Text="Right Click"
+							<TextBlock Text="Right Mouse Button"
                FontSize="16"
                FontWeight="SemiBold"
                Foreground="White"
-               Width="110"/>
+               Width="170"/>
 							<TextBlock Text="Grow trees"
                FontSize="16"
                Foreground="White"/>
@@ -198,13 +198,13 @@
 
 						<!-- Middle click -->
 						<StackPanel Orientation="Horizontal">
-							<fa:ImageAwesome Icon="Ban" Width="24" Height="24" Foreground="DarkGray" Margin="0,0,8,0"/>
+							<fa:ImageAwesome Icon="TrashOutline" Width="22" Height="22" Foreground="DarkGray" Margin="1,0,8,0"/>
 
-							<TextBlock Text="Middle Click"
+							<TextBlock Text="Middle Mouse Button"
                FontSize="16"
                FontWeight="SemiBold"
                Foreground="White"
-               Width="110"/>
+               Width="169.5"/>
 							<TextBlock Text="Destroy trees"
                FontSize="16"
                Foreground="White"/>
