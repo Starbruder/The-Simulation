@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 
 namespace TheSimulation;
 
@@ -136,24 +135,11 @@ public sealed partial class SimulationWindow : Window
 
         ActivateEvaluationWindowButton();
 
-        var fade = new DoubleAnimation
-        {
-            From = 1,
-            To = 0,
-            Duration = TimeSpan.FromMilliseconds(300),
-            EasingFunction = new QuadraticEase
-            {
-                EasingMode = EasingMode.EaseOut
-            }
-        };
-
-        fade.Completed += (_, __) =>
+        UIAnimationHelper.FadeOut(EditOverlay, () =>
         {
             EditOverlay.Visibility = Visibility.Collapsed;
             EditOverlay.IsHitTestVisible = false;
-        };
-
-        EditOverlay.BeginAnimation(OpacityProperty, fade);
+        });
     }
 
     private void ActivateEvaluationWindowButton()
