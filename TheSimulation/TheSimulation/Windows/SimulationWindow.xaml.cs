@@ -24,7 +24,7 @@ public sealed partial class SimulationWindow : Window
         simulation.TotalGrownTreesUpdated += text => TotalGrownTrees.Text = text;
         simulation.TotalBurnedTreesUpdated += text => TotalBurnedTrees.Text = text;
 
-        SetSimulationSpeedUltra();
+        UpdateSpeedUI(SimulationSpeed.Ultra);
 
         PauseSimulation();
     }
@@ -64,53 +64,26 @@ public sealed partial class SimulationWindow : Window
     }
 
     private void SpeedSlow_Click(object s, RoutedEventArgs e)
-    {
-        simulation.SetSimulationSpeed(SimulationSpeed.Slow);
-
-        SpeedSlowButton.IsEnabled = false;
-
-        SpeedNormalButton.IsEnabled = true;
-        SpeedFastButton.IsEnabled = true;
-        SpeedUltraButton.IsEnabled = true;
-    }
+        => UpdateSpeedUI(SimulationSpeed.Slow);
 
     private void SpeedNormal_Click(object s, RoutedEventArgs e)
-        => SetSimulationSpeedNormal();
-
-    private void SetSimulationSpeedNormal()
-    {
-        simulation.SetSimulationSpeed(SimulationSpeed.Normal);
-
-        SpeedNormalButton.IsEnabled = false;
-
-        SpeedSlowButton.IsEnabled = true;
-        SpeedFastButton.IsEnabled = true;
-        SpeedUltraButton.IsEnabled = true;
-    }
+        => UpdateSpeedUI(SimulationSpeed.Normal);
 
     private void SpeedFast_Click(object s, RoutedEventArgs e)
-    {
-        simulation.SetSimulationSpeed(SimulationSpeed.Fast);
-
-        SpeedFastButton.IsEnabled = false;
-
-        SpeedSlowButton.IsEnabled = true;
-        SpeedNormalButton.IsEnabled = true;
-        SpeedUltraButton.IsEnabled = true;
-    }
+        => UpdateSpeedUI(SimulationSpeed.Fast);
 
     private void SpeedUltra_Click(object s, RoutedEventArgs e)
-        => SetSimulationSpeedUltra();
+        => UpdateSpeedUI(SimulationSpeed.Ultra);
 
-    private void SetSimulationSpeedUltra()
+    private void UpdateSpeedUI(SimulationSpeed speed)
     {
-        simulation.SetSimulationSpeed(SimulationSpeed.Ultra);
+        simulation.SetSimulationSpeed(speed);
 
-        SpeedUltraButton.IsEnabled = false;
-
-        SpeedSlowButton.IsEnabled = true;
-        SpeedNormalButton.IsEnabled = true;
-        SpeedFastButton.IsEnabled = true;
+        // Check which button to disable (showing current speed as mimicing a clicked button)
+        SpeedSlowButton.IsEnabled = speed != SimulationSpeed.Slow;
+        SpeedNormalButton.IsEnabled = speed != SimulationSpeed.Normal;
+        SpeedFastButton.IsEnabled = speed != SimulationSpeed.Fast;
+        SpeedUltraButton.IsEnabled = speed != SimulationSpeed.Ultra;
     }
 
     private void ShowEvaluation_Click(object sender, RoutedEventArgs e)
