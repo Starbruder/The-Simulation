@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheSimulation"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        d:DataContext="{d:DesignInstance Type=local:SimulationStats}"
         mc:Ignorable="d"
         Title="Forest fire simulation"
         Height="700"
@@ -31,13 +32,18 @@
 	</Window.Resources>
 
 	<Grid>
-
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<!-- Steuerleiste oben -->
+		<Grid Grid.Row="0" Background="#222">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<!-- Steuerleiste oben -->
 		<StackPanel Orientation="Horizontal"
             Background="#222"
             Grid.Row="0">
@@ -81,8 +87,7 @@
                Foreground="White"
                VerticalAlignment="Center"
                Margin="16,0,0,0"/>
-			<TextBlock x:Name="TotalGrownTrees"
-               Text="0"
+			<TextBlock Text="{Binding TotalGrownDisplay}"
                Foreground="White"
                VerticalAlignment="Center"
                Margin="5,0,0,0" MinWidth="32"/>
@@ -91,8 +96,7 @@
                Foreground="White"
                VerticalAlignment="Center"
                Margin="8,0,0,0"/>
-			<TextBlock x:Name="TotalBurnedTrees"
-               Text="0"
+			<TextBlock Text="{Binding TotalBurnedDisplay}"
                Foreground="White"
                VerticalAlignment="Center"
                Margin="5,0,0,0" MinWidth="32"/>
@@ -101,8 +105,7 @@
                Foreground="White"
                VerticalAlignment="Center"
                Margin="8,0,0,0"/>
-			<TextBlock x:Name="TreeDensityText"
-                Text="0 / 0 (0%)"
+			<TextBlock Text="{Binding TreeDensityDisplay}"
                 Foreground="White"
                 VerticalAlignment="Center"
                 Margin="16,0,0,0"/>
@@ -112,8 +115,7 @@
                        Foreground="White"
                        VerticalAlignment="Center"
                        Margin="16,0,0,0"/>
-			<TextBlock x:Name="WindStrengthText"
-                    Text="0% (0 Bft)"
+			<TextBlock Text="{Binding WindDisplay}"
                     Foreground="White"
                     VerticalAlignment="Center"
                     Margin="5,0,0,0" MinWidth="32"/>
@@ -128,29 +130,39 @@
                 Click="ShowEvaluation_Click" Style="{StaticResource CustomButtonStyle}"/>
 		</StackPanel>
 
-		<!-- Canvas + Overlay -->
-		<Grid Grid.Row="1">
+			<TextBlock x:Name="SimulationTimeText"
+                       Grid.Column="1"
+                       Text="{Binding SimulationTime,
+                       StringFormat='Runtime: \{0\}',
+                       FallbackValue='Runtime: 00:00:00'}"
+                       Foreground="White"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="0,0,16,0"/>
+		</Grid>
 
-			<!-- Main Canvas -->
+	    <!-- Canvas + Overlay -->
+	    <Grid Grid.Row="1">
+		    <!-- Main Canvas -->
 			<Canvas x:Name="ForestCanvas"
                 Background="Black"
                 Cursor="Cross"/>
 
 			<!-- Edit Overlay -->
-			<Grid x:Name="EditOverlay"
-                  Background="#66000000"
-                  IsHitTestVisible="True">
+		    <Grid x:Name="EditOverlay"
+                      Background="#66000000"
+                      IsHitTestVisible="True">
 
-				<Canvas x:Name="OverlayCanvas"
+			<Canvas x:Name="OverlayCanvas"
                         Background="Transparent"
                         MouseDown="OverlayCanvas_MouseDown"/>
 
-				<StackPanel TextOptions.TextFormattingMode="Display"
+			<StackPanel TextOptions.TextFormattingMode="Display"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     IsHitTestVisible="False">
 
-					<TextBlock Foreground="White"
+				<TextBlock Foreground="White"
                         FontSize="22"
                         FontWeight="SemiBold"
                         TextAlignment="Center"
@@ -158,52 +170,52 @@
                         Simulation is paused.
                         <LineBreak/>
                         Click anywhere to edit the forest.
-					</TextBlock>
+				</TextBlock>
 
-					<StackPanel HorizontalAlignment="Center">
-						<StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-							<fa:ImageAwesome Icon="Fire" Width="24" Height="24" Foreground="OrangeRed" Margin="0,0,8,0"/>
+				    <StackPanel HorizontalAlignment="Center">
+					    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+						    <fa:ImageAwesome Icon="Fire" Width="24" Height="24" Foreground="OrangeRed" Margin="0,0,8,0"/>
 
-							<TextBlock Text="Left Mouse Button"
-                               FontSize="16"
-                               FontWeight="SemiBold"
-                               Foreground="White"
-                               Width="170"/>
-							<TextBlock Text="Burn trees"
-                               FontSize="16"
-                               Foreground="White"/>
-						</StackPanel>
+						    <TextBlock Text="Left Mouse Button"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="White"
+                                   Width="170"/>
+						    <TextBlock Text="Burn trees"
+                                   FontSize="16"
+                                   Foreground="White"/>
+					    </StackPanel>
 
-						<StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-							<fa:ImageAwesome Icon="Leaf" Width="24" Height="24" Foreground="Green" Margin="0,0,8,0"/>
+					    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+						    <fa:ImageAwesome Icon="Leaf" Width="24" Height="24" Foreground="Green" Margin="0,0,8,0"/>
 
-							<TextBlock Text="Right Mouse Button"
-                               FontSize="16"
-                               FontWeight="SemiBold"
-                               Foreground="White"
-                               Width="170"/>
-							<TextBlock Text="Grow trees"
-                               FontSize="16"
-                               Foreground="White"/>
-						</StackPanel>
+						    <TextBlock Text="Right Mouse Button"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="White"
+                                   Width="170"/>
+						    <TextBlock Text="Grow trees"
+                                   FontSize="16"
+                                   Foreground="White"/>
+					    </StackPanel>
 
-						<StackPanel Orientation="Horizontal">
-							<fa:ImageAwesome Icon="TrashOutline" Width="22" Height="22"
-                                Foreground="DarkGray" Margin="1,0,8,0"/>
+					    <StackPanel Orientation="Horizontal">
+						    <fa:ImageAwesome Icon="TrashOutline" Width="22" Height="22"
+                                    Foreground="DarkGray" Margin="1,0,8,0"/>
 
-							<TextBlock Text="Middle Mouse Button"
-                               FontSize="16"
-                               FontWeight="SemiBold"
-                               Foreground="White"
-                               Width="169.5"/>
-							<TextBlock Text="Destroy trees"
-                               FontSize="16"
-                               Foreground="White"/>
-						</StackPanel>
-					</StackPanel>
-				</StackPanel>
+						    <TextBlock Text="Middle Mouse Button"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="White"
+                                   Width="169.5"/>
+						    <TextBlock Text="Destroy trees"
+                                   FontSize="16"
+                                   Foreground="White"/>
+					    </StackPanel>
+				    </StackPanel>
+			    </StackPanel>
 
-				<Button Content="✕"
+			    <Button Content="✕"
                     Width="32"
                     Height="32"
                     HorizontalAlignment="Right"
@@ -211,17 +223,8 @@
                     Margin="12"
                     Style="{StaticResource CustomButtonStyle}"
                     Click="CloseOverlay_Click"/>
-			</Grid>
-
-		</Grid>
-
-		<TextBlock x:Name="SimulationTimeText"
-           Text="Runtime: 00:00:00"
-           Foreground="White"
-           VerticalAlignment="Center"
-           HorizontalAlignment="Right"
-           Margin="0,0,16,0"
-           Grid.Column="1"/>
+		    </Grid>
+	    </Grid>
 	</Grid>
 
 </Window>

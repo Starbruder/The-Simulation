@@ -18,11 +18,7 @@ public sealed partial class SimulationWindow : Window
         simulation = new
             (simulationConfig, random, ForestCanvas, SimulationSpeed.Ultra);
 
-        simulation.SimulationTimeUpdated += text => SimulationTimeText.Text = text;
-        simulation.TreeDensityUpdated += text => TreeDensityText.Text = text;
-        simulation.WindStrengthUpdated += text => WindStrengthText.Text = text;
-        simulation.TotalGrownTreesUpdated += text => TotalGrownTrees.Text = text;
-        simulation.TotalBurnedTreesUpdated += text => TotalBurnedTrees.Text = text;
+        DataContext = simulation.SimulationLiveStats;
 
         UpdateSpeedUI(SimulationSpeed.Ultra);
 

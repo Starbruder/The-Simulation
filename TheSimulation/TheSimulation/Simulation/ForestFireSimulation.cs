@@ -22,6 +22,8 @@ public sealed class ForestFireSimulation
     public event Action<string> TotalGrownTreesUpdated;
     public event Action<string> TotalBurnedTreesUpdated;
 
+    public SimulationStats SimulationLiveStats { get; } = new();
+
     private readonly WindHelper windHelper;
     private readonly WindCompassVisualizer windVisualizer;
     private readonly ParticleGenerator particleGenerator;
@@ -312,9 +314,11 @@ public sealed class ForestFireSimulation
     private void InitializeSimulationClock()
     {
         var hours = (int)accumulatedSimulationTime.TotalHours;
-        SimulationTimeUpdated?.Invoke(
-            $"Runtime: {hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}"
-        );
+        var timeText = $"{hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}";
+
+        SimulationLiveStats.SimulationTime = timeText;
+
+        SimulationTimeUpdated?.Invoke($"Runtime: {timeText}");
 
         clock.Tick1s += OnSimulationTick;
     }
@@ -334,10 +338,24 @@ public sealed class ForestFireSimulation
         accumulatedSimulationTime = accumulatedSimulationTime.Add(clock.TimerSecond);
 
         var hours = (int)accumulatedSimulationTime.TotalHours;
-        SimulationTimeUpdated?.Invoke(
-            $"Runtime: {hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}"
-        );
+        var timeText = $"{hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}";
+
+        SimulationLiveStats.SimulationTime = timeText;
+
+        SimulationTimeUpdated?.Invoke($"Runtime: {timeText}");
+
         RecordSimulationStats();
+    }
+
+    private void UpdateSimulationTimeUI()
+    {
+        var hours = (int)accumulatedSimulationTime.TotalHours;
+        var timeText = $"{hours:D2}:{accumulatedSimulationTime.Minutes:D2}:{accumulatedSimulationTime.Seconds:D2}";
+
+        SimulationLiveStats.SimulationTime = timeText;
+
+        // Keep the event for backward compatibility/other listeners
+        SimulationTimeUpdated?.Invoke($"Runtime: {timeText}");
     }
 
     private bool LowDensityMinimumReached()
@@ -1052,23 +1070,30 @@ public sealed class ForestFireSimulation
 
     private void UpdateTreeUI()
     {
-        TreeDensityUpdated?.Invoke(
-            $"{activeTrees.Count} / {cachedMaxTreesPossible} ({CalculateCurrentTreeDensityPercent():F0}%)"
-        );
+        //TreeDensityUpdated?.Invoke(
+        //    $"{activeTrees.Count} / {cachedMaxTreesPossible} ({CalculateCurrentTreeDensityPercent():F0}%)"
+        //);
 
-        TotalGrownTreesUpdated?.Invoke(totalGrownTrees.ToString());
-        TotalBurnedTreesUpdated?.Invoke(totalBurnedTrees.ToString());
+        //TotalGrownTreesUpdated?.Invoke(totalGrownTrees.ToString());
+        //TotalBurnedTreesUpdated?.Invoke(totalBurnedTrees.ToString());
+
+        SimulationLiveStats.ActiveTrees = activeTrees.Count;
+        SimulationLiveStats.MaxTrees = cachedMaxTreesPossible;
+        SimulationLiveStats.TotalGrown = totalGrownTrees;
+        SimulationLiveStats.TotalBurned = totalBurnedTrees;
     }
 
     private void UpdateWindUI()
     {
-        var windStrength = windHelper.CurrentWindStrength;
+        //var windStrength = windHelper.CurrentWindStrength;
 
-        var windStrengthReadablePercent = windStrength * 100;
-        var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
+        //var windStrengthReadablePercent = windStrength * 100;
+        //var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
 
-        WindStrengthUpdated?.Invoke(
-            $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)"
-        );
+        //WindStrengthUpdated?.Invoke(
+        //    $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)"
+        //);
+
+        SimulationLiveStats.WindStrength = windHelper.CurrentWindStrength;
     }
 }
