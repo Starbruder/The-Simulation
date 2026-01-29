@@ -17,10 +17,6 @@ public sealed class ForestFireSimulation
     private readonly RandomHelper randomHelper;
 
     public event Action<string> SimulationTimeUpdated;
-    public event Action<string> TreeDensityUpdated;
-    public event Action<string> WindStrengthUpdated;
-    public event Action<string> TotalGrownTreesUpdated;
-    public event Action<string> TotalBurnedTreesUpdated;
 
     public SimulationStats SimulationLiveStats { get; } = new();
 
@@ -1059,31 +1055,17 @@ public sealed class ForestFireSimulation
         => Math.Max(1, (int)(grid.Cols * grid.Rows * simulationConfig.TreeConfig.ForestDensity));
 
     private void UpdateTreeUI()
+        => UpdateLiveStats();
+
+    private void UpdateLiveStats()
     {
-        //TreeDensityUpdated?.Invoke(
-        //    $"{activeTrees.Count} / {cachedMaxTreesPossible} ({CalculateCurrentTreeDensityPercent():F0}%)"
-        //);
-
-        //TotalGrownTreesUpdated?.Invoke(totalGrownTrees.ToString());
-        //TotalBurnedTreesUpdated?.Invoke(totalBurnedTrees.ToString());
-
         SimulationLiveStats.ActiveTrees = activeTrees.Count;
         SimulationLiveStats.MaxTrees = cachedMaxTreesPossible;
         SimulationLiveStats.TotalGrown = totalGrownTrees;
         SimulationLiveStats.TotalBurned = totalBurnedTrees;
+        SimulationLiveStats.WindStrength = windHelper.CurrentWindStrength;
     }
 
     private void UpdateWindUI()
-    {
-        //var windStrength = windHelper.CurrentWindStrength;
-
-        //var windStrengthReadablePercent = windStrength * 100;
-        //var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
-
-        //WindStrengthUpdated?.Invoke(
-        //    $"{windStrengthReadablePercent:F0}% ({beaufortScale} Bft)"
-        //);
-
-        SimulationLiveStats.WindStrength = windHelper.CurrentWindStrength;
-    }
+        => SimulationLiveStats.WindStrength = windHelper.CurrentWindStrength;
 }
