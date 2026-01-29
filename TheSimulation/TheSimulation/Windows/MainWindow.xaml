@@ -1,4 +1,4 @@
-﻿<Window x:Class="TheSimulation.MainWindow"
+<Window x:Class="TheSimulation.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -71,6 +71,8 @@ Fire spreads faster uphill and slower downhill. Effect is calculated from height
 
 		<!-- Trees -->
 		<TextBlock TextWrapping="Wrap" MaxWidth="300" x:Key="GrowForestTooltip">
+<Bold>Grow Forest:</Bold>
+<LineBreak/>
 When enabled, trees will grow over time to replenish the forest.
 <LineBreak/>
 <LineBreak/>
