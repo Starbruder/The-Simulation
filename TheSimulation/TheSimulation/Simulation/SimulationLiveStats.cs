@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace TheSimulation;
 
-public sealed class SimulationStats : INotifyPropertyChanged
+public sealed class SimulationLiveStats : INotifyPropertyChanged
 {
     private int _activeTrees;
     private int _maxTrees;

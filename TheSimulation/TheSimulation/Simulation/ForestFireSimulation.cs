@@ -16,7 +16,7 @@ public sealed class ForestFireSimulation
     private readonly SimulationConfig simulationConfig;
     private readonly RandomHelper randomHelper;
 
-    public SimulationStats SimulationLiveStats { get; } = new();
+    public SimulationLiveStats SimulationLiveStats { get; } = new();
 
     private readonly WindHelper windHelper;
     private readonly WindCompassVisualizer windVisualizer;
