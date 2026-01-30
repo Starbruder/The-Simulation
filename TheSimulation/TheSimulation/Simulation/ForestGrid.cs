@@ -63,7 +63,7 @@ public sealed class ForestGrid(int cols, int rows)
         // and the upper bound check (c.X < Cols) in one operation.
         // This works because casting a negative integer to uint results in a very large positive number,
         // which will always be greater than or equal to Cols or Rows.
-        // This optimization reduces the number of comparisons needed from four to two.
+        // This optimization reduces the number of comparisons needed from four to two. (for exapmle in the assembly)
         var withinHorizontalBounds = IsInUpperLimit(c.X, Cols);
         var withinVerticalBounds = IsInUpperLimit(c.Y, Rows);
 
