@@ -1,4 +1,6 @@
-﻿namespace TheSimulation;
+﻿using System.Runtime.CompilerServices;
+
+namespace TheSimulation;
 
 /// <summary>
 /// Repräsentiert das zweidimensionale Gitter (Grid) des Waldes,
@@ -54,8 +56,22 @@ public sealed class ForestGrid(int cols, int rows)
     /// </summary>
     /// <param name="c">Die zu prüfende Zelle.</param>
     /// <returns>True, wenn die Zelle gültige Koordinaten im Raster hat, sonst False.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsInside(Cell c)
-        => c.X >= 0 && c.Y >= 0 && c.X < Cols && c.Y < Rows;
+    {
+        // Casting to uint handles the negative check (c.X >= 0)
+        // and the upper bound check (c.X < Cols) in one operation.
+        // This works because casting a negative integer to uint results in a very large positive number,
+        // which will always be greater than or equal to Cols or Rows.
+        // This optimization reduces the number of comparisons needed from four to two.
+        var withinHorizontalBounds = IsInUpperLimit(c.X, Cols);
+        var withinVerticalBounds = IsInUpperLimit(c.Y, Rows);
+
+        return withinHorizontalBounds && withinVerticalBounds;
+
+        // Local function for clarification
+        static bool IsInUpperLimit(int value, int limit) => (uint)value < (uint)limit;
+    }
 
     /// <summary>
     /// Prüft, ob die angegebene Zelle einen Baum enthält.
