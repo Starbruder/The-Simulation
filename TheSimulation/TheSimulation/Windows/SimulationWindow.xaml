@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheSimulation"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
-        d:DataContext="{d:DesignInstance Type=local:SimulationStats}"
+        d:DataContext="{d:DesignInstance Type=local:SimulationLiveStats}"
         mc:Ignorable="d"
         Title="Forest fire simulation"
         Height="700"
