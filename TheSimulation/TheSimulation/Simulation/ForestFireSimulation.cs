@@ -153,11 +153,6 @@ public sealed class ForestFireSimulation
 
     private void MouseDestroyClick(Cell cell)
     {
-        if (grid.IsEmpty(cell))
-        {
-            return;
-        }
-
         if (activeTrees.Contains(cell))
         {
             totalGrownTrees--;
@@ -193,32 +188,38 @@ public sealed class ForestFireSimulation
 
     private void HardResetCell(Cell cell)
     {
-        // 1. Logik-Zustand zurücksetzen
+        // 1. Logik-Zustand im Grid (ForestGrid.cs)
         grid.Clear(cell);
+
+        // 2. Alle Listen/Sets bereinigen
         activeTrees.Remove(cell);
         burningTrees.Remove(cell);
+        growableCells.Add(cell);
 
-        // Zelle wieder für Wachstum freigeben (falls Soil)
-        if (simulationConfig.TerrainConfig.UseTerrainGeneration)
-        {
-            if (terrainGrid[cell.X, cell.Y].Type == TerrainType.Soil)
-                growableCells.Add(cell);
-        }
-        else
-        {
-            growableCells.Add(cell);
-        }
-
-        // 2. Visuelle Elemente (Dictionary & Canvas) entfernen
+        // 3. UI-Elemente entfernen (Dictionary)
         if (treeElements.Remove(cell, out var shape))
         {
             ForestCanvas.Children.Remove(shape);
         }
 
-        // 3. Animationen hart stoppen
+        // 4. Animationen stoppen
         if (fireAnimations.Remove(cell, out var fire))
         {
             fire.Stop();
+        }
+
+        // 5. SICHERHEITS-CHECK (Der "Visual Tree" Cleanup)
+        // Falls das Dictionary aus irgendeinem Grund die Referenz verloren hat, 
+        // suchen wir direkt auf dem Canvas nach Objekten an dieser Position.
+        var size = simulationConfig.TreeConfig.Size;
+        var centerX = cell.X * size + (size / 2);
+        var centerY = cell.Y * size + (size / 2);
+
+        // Wir schauen physisch nach, was am Canvas an dieser Stelle liegt
+        var element = ForestCanvas.InputHitTest(new System.Windows.Point(centerX, centerY)) as Shape;
+        if (element is not null && element != screenFlash) // screenFlash nicht löschen!
+        {
+            ForestCanvas.Children.Remove(element);
         }
     }
 
