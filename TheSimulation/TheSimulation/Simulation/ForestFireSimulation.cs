@@ -943,18 +943,6 @@ public sealed class ForestFireSimulation
         }
     }
 
-    private void UpdateGridForBurnedDownTree(Cell cell, Shape tree)
-    {
-        if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
-        {
-            tree.Fill = ColorsData.BurnedTreeColor;
-            return;
-        }
-
-        ForestCanvas.Children.Remove(tree);
-        treeElements.Remove(cell);
-    }
-
     private void UpdateTreeColor(Cell cell, Brush color)
     {
         if (treeElements.TryGetValue(cell, out var tree))
