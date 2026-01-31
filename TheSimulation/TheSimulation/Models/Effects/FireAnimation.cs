@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
@@ -70,7 +69,7 @@ public sealed class FireAnimation
             {
                 Width = width,
                 Height = height,
-                Fill = Brushes.OrangeRed,
+                Fill = ColorsData.DefaultFireColor,
                 Opacity = 0.85,
                 IsHitTestVisible = false
             };

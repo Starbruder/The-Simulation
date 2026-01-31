@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -271,7 +270,7 @@ public sealed class ForestFireSimulation
 
         grid.SetBurning(cell);
         burningTrees.Add(cell);
-        UpdateTreeColor(cell, Brushes.Red);
+        UpdateTreeColor(cell, ColorsData.DefaultFireColor);
 
         SpawnFireEffect(cell);
     }
@@ -321,7 +320,7 @@ public sealed class ForestFireSimulation
     {
         screenFlash.Width = ForestCanvas.ActualWidth;
         screenFlash.Height = ForestCanvas.ActualHeight;
-        screenFlash.Fill = Brushes.White;
+        screenFlash.Fill = ColorsData.FlashColor;
         screenFlash.Opacity = 0;
 
         Panel.SetZIndex(screenFlash, int.MaxValue);
@@ -623,6 +622,8 @@ public sealed class ForestFireSimulation
 
     private void AddTreeWithoutUIUpdate(Cell cell)
     {
+        HardResetCell(cell);
+
         grid.SetTree(cell);
 
         var color = GetTreeColor(cell);
@@ -669,16 +670,17 @@ public sealed class ForestFireSimulation
     /// <returns></returns>
     private Brush GetTreeColor(Cell cell)
     {
-        var color = randomHelper.NextTreeColor();
+        var frozenBrush = randomHelper.NextTreeColor();
 
         if (simulationConfig.TerrainConfig.UseTerrainGeneration)
         {
             // 🌍 TOPOGRAPHIE-COLOR-LOGIK
             var elevation = terrainGrid[cell.X, cell.Y].Elevation;
-            return ColorHelper.AdjustColorByElevation(color, elevation);
+            var frozenElavatedBrush = ColorHelper.AdjustColorByElevation(frozenBrush, elevation);
+            return frozenElavatedBrush;
         }
 
-        return color;
+        return frozenBrush;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
@@ -857,12 +859,12 @@ public sealed class ForestFireSimulation
         }
     }
 
-	/// <summary>
-	/// Spawnt die Feueranimation für eine Zelle.
-	/// Bei extrem hoher Simulation-Geschwindigkeit (>= 40x) wird die Animation deaktiviert.
-	/// </summary>
-	/// <param name="burningCell">Die Zelle, die brennt</param>
-	private void SpawnFireEffect(Cell burningCell)
+    /// <summary>
+    /// Spawnt die Feueranimation für eine Zelle.
+    /// Bei extrem hoher Simulation-Geschwindigkeit (>= 40x) wird die Animation deaktiviert.
+    /// </summary>
+    /// <param name="burningCell">Die Zelle, die brennt</param>
+    private void SpawnFireEffect(Cell burningCell)
     {
         // Bei sehr hoher Geschwindigkeit keine Animation abspielen
         const SimulationSpeed MaxSpeedForAnimation = SimulationSpeed.Ultra;
@@ -927,7 +929,9 @@ public sealed class ForestFireSimulation
 
             if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
             {
-                tree.Fill = ColorsData.BurnedTreeColor;
+                var frozenBurnedTreeBrush = ColorsData.BurnedTreeColor;
+
+                tree.Fill = frozenBurnedTreeBrush;
                 return;
             }
 
@@ -1010,7 +1014,8 @@ public sealed class ForestFireSimulation
 
     private async Task ShowLightning(Cell cell)
     {
-        var lightningCell = CreateCellShape(cell, ColorsData.LightningColor);
+        var frozenLightningBrush = ColorsData.LightningColor;
+        var lightningCell = CreateCellShape(cell, frozenLightningBrush);
 
         Canvas.SetLeft(lightningCell, cell.X * simulationConfig.TreeConfig.Size);
         Canvas.SetTop(lightningCell, cell.Y * simulationConfig.TreeConfig.Size);
@@ -1068,10 +1073,12 @@ public sealed class ForestFireSimulation
 
         points.Add(new(endX, endY));
 
+        var frozenLightningBrush = ColorsData.LightningColor;
+
         return new Polyline
         {
             Points = points,
-            Stroke = Brushes.LightBlue,
+            Stroke = frozenLightningBrush,
             StrokeThickness = 2.5,
             Opacity = 1
         };

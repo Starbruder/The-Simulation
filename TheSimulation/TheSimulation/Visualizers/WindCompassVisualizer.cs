@@ -27,9 +27,9 @@ public sealed class WindCompassVisualizer
     private Vector currentWindVector = new();
 
     private Ellipse compassCircle;
-    private readonly Brush CompassForeGroundColor = Brushes.Gray;
+    private readonly Brush compassForeGroundColor = ColorHelper.GetFrozenBrush(Colors.Gray);
     private Ellipse compassBackground;
-    private readonly Brush CompassBackgroundColor = new SolidColorBrush(Color.FromArgb(165, 35, 35, 35));
+    private readonly Brush compassBackgroundColor = ColorHelper.GetFrozenBrush(Color.FromArgb(165, 35, 35, 35));
     private readonly TextBlock[] directionLabels = new TextBlock[4];
 
     private const double CompassMargin = 20;
@@ -48,8 +48,11 @@ public sealed class WindCompassVisualizer
         this.config = config;
         this.windHelper = windHelper;
 
-        mainArrow = new WindArrow(Brushes.LightSkyBlue);
-        oppositeArrow = new WindArrow(Brushes.Red);
+        var frozenMainArrowBrush = ColorHelper.GetFrozenBrush(Colors.LightSkyBlue);
+        var frozenOppositeArrowBrush = ColorHelper.GetFrozenBrush(Colors.Red);
+
+        mainArrow = new WindArrow(frozenMainArrowBrush);
+        oppositeArrow = new WindArrow(frozenOppositeArrowBrush);
 
         AddToCanvas(mainArrow.Line);
         AddToCanvas(mainArrow.Head);
@@ -143,7 +146,7 @@ public sealed class WindCompassVisualizer
 
         compassCircle ??= new Ellipse
         {
-            Stroke = CompassForeGroundColor,
+            Stroke = compassForeGroundColor,
             StrokeThickness = 2,
             IsHitTestVisible = false
         };
@@ -176,9 +179,12 @@ public sealed class WindCompassVisualizer
 
     private void AddCompassBackground(double centerX, double centerY)
     {
+        var backgroundColor = compassBackgroundColor;
+        backgroundColor.Freeze(); // Macht den Brush schreibgeschützt und performant
+
         compassBackground ??= new Ellipse
         {
-            Fill = CompassBackgroundColor,
+            Fill = backgroundColor,
             IsHitTestVisible = false
         };
 
@@ -201,7 +207,7 @@ public sealed class WindCompassVisualizer
             existing = new TextBlock
             {
                 Text = text,
-                Foreground = CompassForeGroundColor,
+                Foreground = compassForeGroundColor,
                 FontWeight = FontWeights.Bold,
                 IsHitTestVisible = false,
                 RenderTransformOrigin = new(0.5, 0.5)

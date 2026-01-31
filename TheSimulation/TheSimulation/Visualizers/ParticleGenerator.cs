@@ -104,12 +104,12 @@ public sealed class ParticleGenerator
         cell.X * simulationConfig.TreeConfig.Size,
         cell.Y * simulationConfig.TreeConfig.Size);
 
-        var fireColors = ColorsData.FireColors;
-        var color = fireColors[randomHelper.NextInt(0, fireColors.Length)];
+        var frozenFireBrushes = ColorsData.FireColors;
+        var frozenBrush = frozenFireBrushes[randomHelper.NextInt(0, frozenFireBrushes.Length)];
 
         SpawnParticle(
             pos,
-            color,
+            frozenBrush,
             size: 2 + randomHelper.NextInt(0, 3),
             lifetime: 0.6 + randomHelper.NextDouble() * 0.5
         );
@@ -131,9 +131,11 @@ public sealed class ParticleGenerator
             cell.X * config.TreeConfig.Size,
             cell.Y * config.TreeConfig.Size);
 
+        var frozenBurnedTreeBrush = ColorsData.BurnedTreeColor;
+
         SpawnParticle(
             pos,
-            Brushes.Gray,
+            frozenBurnedTreeBrush,
             size: 5 + randomHelper.NextInt(0, 4),
             lifetime: 1.2 + randomHelper.NextDouble()
         );
