@@ -102,9 +102,9 @@ These insights help users understand the impact of environmental conditions on w
 ### UI & Visualization
 - Clear, minimalistic interface
 - Color-coded grid:
-  - Green → healthy tree  
+  - Green → healthy tree (diffrent randomly choosen shades of green)
   - Red → burning  
-  - Black → burned  
+  - Gray → burned (configurable)
 - Optional visual effects
   - Lighning strikes
   - Bolt flashes
@@ -118,6 +118,8 @@ These insights help users understand the impact of environmental conditions on w
   - Blue arrow: Where the wind is heading towards
   - Arrow length: Determines the windstrength
 - Terrain-influenced tree coloring (brightness)
+  - Bright: Far up (hill)
+  - Dark: Down (sea level)
 
 ---
 
