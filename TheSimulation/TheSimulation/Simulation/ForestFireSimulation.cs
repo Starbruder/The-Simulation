@@ -857,13 +857,12 @@ public sealed class ForestFireSimulation
         }
     }
 
-    /// <summary>
-    /// Spawnt die Feueranimation für eine Zelle.
-    /// Bei extrem hoher Simulation-Geschwindigkeit (>= 40x) wird die Animation deaktiviert.
-    /// </summary>
-    /// <param name="cell">Die Zelle, die brennt</param>
-    /// <param name="simulationSpeed">Die aktuelle Simulation-Geschwindigkeit</param>
-    private void SpawnFireEffect(Cell burningCell)
+	/// <summary>
+	/// Spawnt die Feueranimation für eine Zelle.
+	/// Bei extrem hoher Simulation-Geschwindigkeit (>= 40x) wird die Animation deaktiviert.
+	/// </summary>
+	/// <param name="burningCell">Die Zelle, die brennt</param>
+	private void SpawnFireEffect(Cell burningCell)
     {
         // Bei sehr hoher Geschwindigkeit keine Animation abspielen
         const SimulationSpeed MaxSpeedForAnimation = SimulationSpeed.Ultra;
@@ -913,7 +912,6 @@ public sealed class ForestFireSimulation
         grid.Clear(cell);
         burningTrees.Remove(cell);
 
-        // WICHTIG: Er muss aus den aktiven Bäumen raus, damit growableCells wieder Sinn ergibt
         activeTrees.Remove(cell);
         growableCells.Add(cell);
 
@@ -930,14 +928,10 @@ public sealed class ForestFireSimulation
             if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
             {
                 tree.Fill = ColorsData.BurnedTreeColor;
-                // Hier bleibt er in treeElements, da er ja als "Leiche" sichtbar sein soll
+                return;
             }
-            else
-            {
-                // Wenn er nicht angezeigt werden soll, MUSS er physisch vom Canvas
-                // UND aus dem Dictionary gelöscht werden.
-                RemoveTree(cell);
-            }
+
+            RemoveTree(cell);
         }
     }
 
