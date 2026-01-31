@@ -109,7 +109,7 @@ public sealed class ForestFireSimulation
         }
         else if (e.MiddleButton == MouseButtonState.Pressed)
         {
-            MouseDestoryClick(cell);
+            MouseDestroyClick(cell);
         }
     }
 
@@ -151,20 +151,19 @@ public sealed class ForestFireSimulation
         AddTree(cell);
     }
 
-    private void MouseDestoryClick(Cell cell)
+    private void MouseDestroyClick(Cell cell)
     {
         if (grid.IsEmpty(cell))
         {
             return;
         }
 
-        totalGrownTrees--;
-        DestroyCell(cell);
-    }
+        if (activeTrees.Contains(cell))
+        {
+            totalGrownTrees--;
+        }
 
-    private void DestroyCell(Cell cell)
-    {
-        ResetCellState(cell);
+        HardResetCell(cell);
         UpdateTreeUI();
     }
 
@@ -192,12 +191,42 @@ public sealed class ForestFireSimulation
         }
     }
 
+    private void HardResetCell(Cell cell)
+    {
+        // 1. Logik-Zustand zurücksetzen
+        grid.Clear(cell);
+        activeTrees.Remove(cell);
+        burningTrees.Remove(cell);
+
+        // Zelle wieder für Wachstum freigeben (falls Soil)
+        if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+        {
+            if (terrainGrid[cell.X, cell.Y].Type == TerrainType.Soil)
+                growableCells.Add(cell);
+        }
+        else
+        {
+            growableCells.Add(cell);
+        }
+
+        // 2. Visuelle Elemente (Dictionary & Canvas) entfernen
+        if (treeElements.Remove(cell, out var shape))
+        {
+            ForestCanvas.Children.Remove(shape);
+        }
+
+        // 3. Animationen hart stoppen
+        if (fireAnimations.Remove(cell, out var fire))
+        {
+            fire.Stop();
+        }
+    }
+
     private void RemoveTree(Cell cell)
     {
-        if (treeElements.TryGetValue(cell, out var tree))
+        if (treeElements.Remove(cell, out var tree))
         {
             ForestCanvas.Children.Remove(tree);
-            treeElements.Remove(cell);
         }
     }
 
@@ -886,8 +915,11 @@ public sealed class ForestFireSimulation
         grid.Clear(cell);
         burningTrees.Remove(cell);
 
-        if (simulationConfig.VisualEffectsConfig.ShowFlameAnimations &&
-            fireAnimations.TryGetValue(cell, out var fire))
+        // WICHTIG: Er muss aus den aktiven Bäumen raus, damit growableCells wieder Sinn ergibt
+        activeTrees.Remove(cell);
+        growableCells.Add(cell);
+
+        if (fireAnimations.TryGetValue(cell, out var fire))
         {
             fire.Stop();
             fireAnimations.Remove(cell);
@@ -896,11 +928,19 @@ public sealed class ForestFireSimulation
         if (treeElements.TryGetValue(cell, out var tree))
         {
             totalBurnedTrees++;
-            UpdateGridForBurnedDownTree(cell, tree);
-        }
 
-        activeTrees.Remove(cell);
-        growableCells.Add(cell);
+            if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
+            {
+                tree.Fill = ColorsData.BurnedTreeColor;
+                // Hier bleibt er in treeElements, da er ja als "Leiche" sichtbar sein soll
+            }
+            else
+            {
+                // Wenn er nicht angezeigt werden soll, MUSS er physisch vom Canvas
+                // UND aus dem Dictionary gelöscht werden.
+                RemoveTree(cell);
+            }
+        }
     }
 
     private void UpdateGridForBurnedDownTree(Cell cell, Shape tree)
