@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -59,8 +60,8 @@ public sealed class ForestFireSimulation
         // To get rid of the warning CS8618
         terrainGrid = new TerrainCell[0, 0];
 
+        randomHelper = random;
         this.ForestCanvas = ForestCanvas;
-        this.randomHelper = random;
         this.simulationConfig = simulationConfig;
         this.simulationSpeed = simulationSpeed;
         windHelper = new(simulationConfig.EnvironmentConfig.WindConfig);
@@ -119,7 +120,8 @@ public sealed class ForestFireSimulation
     /// </summary>
     /// <param name="cell"></param>
     /// <returns></returns>
-    private bool IsOutOfBoundsClickOfCanvas(Cell cell) => !grid.IsInside(cell);
+    private bool IsOutOfBoundsClickOfCanvas(Cell cell)
+        => !grid.IsInside(cell);
 
     private void MouseGrowClick(Cell cell)
     {
@@ -188,27 +190,22 @@ public sealed class ForestFireSimulation
 
     private void HardResetCell(Cell cell)
     {
-        // 1. Logik-Zustand im Grid (ForestGrid.cs)
         grid.Clear(cell);
 
-        // 2. Alle Listen/Sets bereinigen
         activeTrees.Remove(cell);
         burningTrees.Remove(cell);
         growableCells.Add(cell);
 
-        // 3. UI-Elemente entfernen (Dictionary)
         if (treeElements.Remove(cell, out var shape))
         {
             ForestCanvas.Children.Remove(shape);
         }
 
-        // 4. Animationen stoppen
         if (fireAnimations.Remove(cell, out var fire))
         {
             fire.Stop();
         }
 
-        // 5. SICHERHEITS-CHECK (Der "Visual Tree" Cleanup)
         // Falls das Dictionary aus irgendeinem Grund die Referenz verloren hat, 
         // suchen wir direkt auf dem Canvas nach Objekten an dieser Position.
         var size = simulationConfig.TreeConfig.Size;
@@ -216,7 +213,7 @@ public sealed class ForestFireSimulation
         var centerY = cell.Y * size + (size / 2);
 
         // Wir schauen physisch nach, was am Canvas an dieser Stelle liegt
-        var element = ForestCanvas.InputHitTest(new System.Windows.Point(centerX, centerY)) as Shape;
+        var element = ForestCanvas.InputHitTest(new(centerX, centerY)) as Shape;
         if (element is not null && element != screenFlash) // screenFlash nicht löschen!
         {
             ForestCanvas.Children.Remove(element);
