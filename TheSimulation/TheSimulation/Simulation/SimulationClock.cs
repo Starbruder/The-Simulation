@@ -120,14 +120,16 @@ public sealed class SimulationClock
     /// <summary>
     /// Setzt die Geschwindigkeit der Simulation, d.h. die Intervalle der Timer.
     /// </summary>
-    /// <param name="speed">Die gewünschte SimulationSpeed, die die Intervalle beeinflusst.</param>
+    /// <param name="speed">
+    /// Die gewünschte SimulationSpeed, die die Intervalle beeinflusst.
+    /// </param>
     public void SetSpeed(SimulationSpeed speed)
     {
         var baseMs = (int)speed;
 
         growTimer.Interval = TimeSpan.FromMilliseconds(baseMs);
         fireTimer.Interval = TimeSpan.FromMilliseconds(baseMs);
-        igniteTimer.Interval = TimeSpan.FromMilliseconds(baseMs * 750); // 90 sek bei Normal-Speed
+        igniteTimer.Interval = TimeSpan.FromMilliseconds(baseMs * 125); // 15 sek (Normal-Speed)
         windTimer.Interval = TimeSpan.FromMilliseconds(baseMs + windChangeIntervalMs);
     }
 }

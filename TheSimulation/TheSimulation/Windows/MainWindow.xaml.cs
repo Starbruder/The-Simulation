@@ -57,12 +57,17 @@ public sealed partial class MainWindow : Window
         );
 
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
-        var fireChance = FireSpreadChanceSlider.Value; // (Additional fire spread chance percent)
+        var fireChance = FireSpreadChanceSlider.Value; // (Additional fire spread chance)
+        var lightningStrikeChance = LightningChanceSlider.Value;
+        var enableLightningStrikes =
+            graphicsSettings.ShowLightning && lightningStrikeChance != 0;
 
         var fireConfig = new FireConfig
         (
             fireChance,
-            pauseDuringFire
+            pauseDuringFire,
+            lightningStrikeChance,
+            enableLightningStrikes
         );
 
         var environmentConfig = GetEnvironmentConfigFromUI();
@@ -235,6 +240,7 @@ public sealed partial class MainWindow : Window
         // Bäume zurücksetzen
         GrowForestCheckBox.IsChecked = true;
         PrefillDensitySlider.Value = 80;
+        LightningChanceSlider.Value = 15;
 
         // Feuer zurücksetzen
         PauseFireCheckBox.IsChecked = true;

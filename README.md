@@ -28,6 +28,7 @@ The goal is to provide an intuitive and visual understanding of how environmenta
   - Air humidity
   - Terrain elevation and slope
 - Randomized ignition point (lightning strike)
+  - Adjustable by using the lightning frequency slider in the configuration
 
 ### Weather System
 - **Wind direction** N, NE, E, SE, S, SW, W, NW (static or randomized)

@@ -269,7 +269,12 @@ public sealed class ForestFireSimulation
         {
             clock.GrowTick += GrowStep;
         }
-        clock.IgniteTick += async () => await IgniteRandomCell();
+
+        if (simulationConfig.FireConfig.EnableLightningStrikes)
+        {
+            clock.IgniteTick += async () => await IgniteRandomCell();
+        }
+
         clock.FireTick += FireStep;
 
         SetSimulationSpeed(simulationSpeed);
@@ -950,6 +955,12 @@ public sealed class ForestFireSimulation
 
     private async Task IgniteRandomCell()
     {
+        var chanceToStrike = simulationConfig.FireConfig.LightningStrikeChancePercent / 100;
+        if (randomHelper.NextDouble() > chanceToStrike)
+        {
+            return;
+        }
+
         var minChanceToHitTree = CalculateCurrentTreeDensityPercent() / 100;
 
         var cell = GetCellByChance(minChanceToHitTree);
