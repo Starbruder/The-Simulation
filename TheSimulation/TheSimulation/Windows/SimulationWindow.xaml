@@ -146,7 +146,14 @@
 		    <!-- Main Canvas -->
 			<Canvas x:Name="ForestCanvas"
                 Background="Black"
-                Cursor="Cross"/>
+                Cursor="Cross">
+				<!-- Trees will be drawn in Image dynamically via using WritableBitmap -->
+				<Image x:Name="ForestImage" 
+                       Stretch="Fill" 
+                       Width="{Binding ElementName=ForestCanvas, Path=ActualWidth}"
+                       Height="{Binding ElementName=ForestCanvas, Path=ActualHeight}"
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+			</Canvas>
 
 			<!-- Edit Overlay -->
 		    <Grid x:Name="EditOverlay"

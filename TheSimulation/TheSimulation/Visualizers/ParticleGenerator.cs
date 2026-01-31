@@ -104,7 +104,7 @@ public sealed class ParticleGenerator
         cell.X * simulationConfig.TreeConfig.Size,
         cell.Y * simulationConfig.TreeConfig.Size);
 
-        var fireColors = ColorsData.FireColors;
+        var fireColors = ColorsData.FireColorsBrushes;
         var color = fireColors[randomHelper.NextInt(0, fireColors.Length)];
 
         SpawnParticle(

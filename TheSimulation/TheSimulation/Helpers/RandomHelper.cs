@@ -18,10 +18,16 @@ public sealed class RandomHelper
     public Cell NextCell(int columns, int rows)
         => new(NextInt(0, columns), NextInt(0, rows));
 
-    public Brush NextTreeColor()
+    //public Brush NextTreeColor()
+    //{
+    //    var index = NextInt(0, ColorsData.TreeGridColorBrushes.Length);
+    //    return ColorsData.TreeGridColorBrushes[index];
+    //}
+
+    public uint NextTreeColorUint()
     {
-        var index = NextInt(0, ColorsData.TreeColors.Length);
-        return ColorsData.TreeColors[index];
+        var index = NextInt(0, ColorsData.TreeGridColors.Length);
+        return ColorsData.TreeGridColors[index];
     }
 
     public Cell NextCell(HashSet<Cell> cell)

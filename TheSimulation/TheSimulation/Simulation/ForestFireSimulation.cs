@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace TheSimulation;
@@ -39,7 +40,6 @@ public sealed class ForestFireSimulation
 
     private SimulationSpeed simulationSpeed;
 
-    private readonly Dictionary<Cell, Shape> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
     private readonly HashSet<Cell> growableCells = [];
     private readonly HashSet<Cell> burningTrees = [];
@@ -53,6 +53,14 @@ public sealed class ForestFireSimulation
     private TerrainCell[,] terrainGrid;
 
     private readonly Rectangle screenFlash = new();
+
+    // Bitmap fields
+    private WriteableBitmap forestBitmap;
+    private Image forestImage;
+    private int stride;
+    private uint[] pixelBuffer;
+
+    private uint[,] treeColorMap; // Speichert die Farbe (uint) jedes Baums
 
     public ForestFireSimulation(SimulationConfig simulationConfig, RandomHelper random, Canvas ForestCanvas, SimulationSpeed simulationSpeed = SimulationSpeed.Normal)
     {
@@ -111,6 +119,8 @@ public sealed class ForestFireSimulation
         {
             MouseDestoryClick(cell);
         }
+
+        RenderGridToBitmap();
     }
 
     /// <summary>
@@ -192,13 +202,16 @@ public sealed class ForestFireSimulation
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void RemoveTree(Cell cell)
     {
-        if (treeElements.TryGetValue(cell, out var tree))
-        {
-            ForestCanvas.Children.Remove(tree);
-            treeElements.Remove(cell);
-        }
+        //if (treeElements.TryGetValue(cell, out var tree))
+        //{
+        //    ForestCanvas.Children.Remove(tree);
+        //    treeElements.Remove(cell);
+        //}
+
+        treeColorMap[cell.X, cell.Y] = 0;
     }
 
     public void StartOrResumeSimulation()
@@ -244,7 +257,10 @@ public sealed class ForestFireSimulation
 
         grid.SetBurning(cell);
         burningTrees.Add(cell);
-        UpdateTreeColor(cell, Brushes.Red);
+
+        // Wir brauchen hier kein UpdateTreeColor mehr! 
+        // RenderGridToBitmap übernimmt das beim nächsten Tick.
+        //UpdateTreeColor(cell, Brushes.Red);
 
         SpawnFireEffect(cell);
     }
@@ -263,6 +279,7 @@ public sealed class ForestFireSimulation
         if (simulationConfig.PrefillConfig.ShouldPrefillMap)
         {
             await PrefillForest();
+            RenderGridToBitmap();
         }
 
         if (simulationConfig.TreeConfig.AllowRegrowForest)
@@ -408,6 +425,10 @@ public sealed class ForestFireSimulation
 
         grid = new(cols, rows);
 
+        treeColorMap = new uint[cols, rows];
+
+        InitializeWritableBitmapImage(cols, rows);
+
         cachedMaxTreesPossible = CalculateMaxTreesPossible();
 
         if (simulationConfig.TerrainConfig.UseTerrainGeneration)
@@ -417,6 +438,101 @@ public sealed class ForestFireSimulation
         }
 
         InitializeGrowableCells();
+    }
+
+    private void InitializeWritableBitmapImage(int cols, int rows)
+    {
+        // 1 Pixel pro Zelle (wir lassen das Image-Control im XAML skalieren)
+        forestBitmap = new WriteableBitmap(cols, rows, 96, 96, PixelFormats.Bgra32, null);
+
+        // Wir suchen das Image-Control im Canvas (das wir vorhin im XAML ForestImage genannt haben)
+        forestImage = ForestCanvas.Children.OfType<Image>().FirstOrDefault(x => x.Name == "ForestImage");
+        if (forestImage != null)
+        {
+            forestImage.Source = forestBitmap;
+        }
+
+        stride = cols * 4;
+        pixelBuffer = new uint[cols * rows];
+    }
+
+    private void RenderGridToBitmap()
+    {
+        var width = grid.Cols;
+        var height = grid.Rows;
+
+        // Fix: Korrektes Pattern Matching für den Typ (is Ellipse)
+        var useRoundTrees = simulationConfig.VisualEffectsConfig.TreeShape switch
+        {
+            Ellipse => true,
+            Rectangle => false,
+            _ => throw new NotSupportedException("Unsupported tree shape")
+        };
+
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                var cell = new Cell(x, y);
+                uint color;
+
+                // 1. Farblogik bestimmen
+                if (grid.IsBurning(cell))
+                {
+                    color = ColorsData.FireColors[randomHelper.NextInt(0, ColorsData.FireColors.Length)];
+                }
+                else if (grid.IsTree(cell))
+                {
+                    color = treeColorMap[x, y];
+
+                    // 2. SHAPE-LOGIK (Rund-Simulation)
+                    // Bei 1 Pixel pro Zelle simulieren wir "Rundheit", indem wir 
+                    // einen winzigen Kontrast-Rahmen oder ein Punktmuster erzeugen.
+                    if (useRoundTrees)
+                    {
+                        // Erzeugt ein Punkt-Muster: Nur Pixel auf geraden Koordinaten-Summen 
+                        // behalten die volle Farbe, andere werden leicht abgedunkelt oder 
+                        // erhalten einen Anteil der Bodenfarbe.
+                        if ((x + y) % 2 != 0)
+                        {
+                            // Mische die Baumfarbe mit Schwarz oder Bodenfarbe für einen "Anti-Aliasing" Effekt
+                            // Hier: Einfache Abdunkelung um 30%, damit es punktförmig wirkt.
+                            color = ColorHelper.AdjustColorByElevation(color, 0.7f);
+                        }
+                    }
+                }
+                // Da grid.IsBurned() fehlt, nutzen wir die Farbinformation aus der treeColorMap
+                else if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees &&
+                         treeColorMap[x, y] == ColorsData.BurnedGridTreeColor)
+                {
+                    color = ColorsData.BurnedGridTreeColor;
+                }
+                else
+                {
+                    color = GetTerrainColor(x, y);
+                }
+
+                pixelBuffer[y * width + x] = color;
+            }
+        }
+
+        forestBitmap.Lock();
+        forestBitmap.WritePixels(new(0, 0, width, height), pixelBuffer, stride, 0);
+        forestBitmap.Unlock();
+    }
+
+    private uint GetTerrainColor(int x, int y)
+    {
+        if (!simulationConfig.TerrainConfig.UseTerrainGeneration)
+            return 0; // Schwarz oder Transparenz
+
+        var terrain = terrainGrid[x, y];
+        return terrain.Type switch
+        {
+            TerrainType.Soil => ColorsData.SoilColor,
+            // TerrainType.Rock => ColorsData.RockColor,
+            _ => ColorsData.SoilColor
+        };
     }
 
     private void InitializeGrowableCells()
@@ -566,6 +682,7 @@ public sealed class ForestFireSimulation
         }
 
         AddTree(cell);
+        RenderGridToBitmap();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -598,14 +715,17 @@ public sealed class ForestFireSimulation
     {
         grid.SetTree(cell);
 
-        var color = GetTreeColor(cell);
-        var tree = CreateCellShape(cell, color);
+        //var color = GetTreeColor(cell);
+        //var tree = CreateCellShape(cell, color);
 
-        Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
-        Canvas.SetTop(tree, cell.Y * simulationConfig.TreeConfig.Size);
-        ForestCanvas.Children.Add(tree);
+        // Farbe aus ColorsData auswählen (Index-basiert oder zufällig)
+        // Wir nutzen hier die uint-Werte für die Bitmap
+        var colorIndex = randomHelper.NextInt(0, ColorsData.TreeGridColors.Length);
+        var treeColor = ColorsData.TreeGridColors[colorIndex];
 
-        treeElements[cell] = tree;
+        // In der ColorMap für das spätere Rendering speichern
+        treeColorMap[cell.X, cell.Y] = treeColor;
+
         activeTrees.Add(cell);
 
         totalGrownTrees++;
@@ -635,20 +755,41 @@ public sealed class ForestFireSimulation
         };
     }
 
+    ///// <summary>
+    ///// Simulate different tree types by using different colors
+    ///// </summary>
+    ///// <param name="cell"></param>
+    ///// <returns></returns>
+    //private Brush GetTreeColor(Cell cell)
+    //{
+    //    var color = randomHelper.NextTreeColor();
+
+    //    if (simulationConfig.TerrainConfig.UseTerrainGeneration)
+    //    {
+    //        // 🌍 TOPOGRAPHIE-COLOR-LOGIK
+    //        var elevation = terrainGrid[cell.X, cell.Y].Elevation;
+    //        return ColorHelper.AdjustColorByElevation(color, elevation);
+    //    }
+
+    //    return color;
+    //}
+
     /// <summary>
-    /// Simulate different tree types by using different colors
+    /// Simuliert verschiedene Baumtypen durch unterschiedliche uint-Farben.
+    /// Berücksichtigt die Geländehöhe für die farbliche Schattierung.
     /// </summary>
-    /// <param name="cell"></param>
-    /// <returns></returns>
-    private Brush GetTreeColor(Cell cell)
+    private uint GetTreeColor(Cell cell)
     {
-        var color = randomHelper.NextTreeColor();
+        // Holt eine zufällige Grundfarbe (uint) aus dem RandomHelper
+        uint color = randomHelper.NextTreeColorUint();
 
         if (simulationConfig.TerrainConfig.UseTerrainGeneration)
         {
             // 🌍 TOPOGRAPHIE-COLOR-LOGIK
             var elevation = terrainGrid[cell.X, cell.Y].Elevation;
-            return ColorHelper.AdjustColorByElevation(color, elevation);
+
+            // Die Adjust-Methode muss nun ebenfalls mit uint arbeiten
+            return ColorHelper.AdjustColorByElevation(color, (float)elevation);
         }
 
         return color;
@@ -701,6 +842,8 @@ public sealed class ForestFireSimulation
         BurnDownTrees(toBurnDown);
 
         isFireActiveThenPause = burningTrees.Count > 0;
+
+        RenderGridToBitmap();
     }
 
     /// <summary>
@@ -881,11 +1024,35 @@ public sealed class ForestFireSimulation
         UpdateTreeUI();
     }
 
+    //private void BurnDownTreeInternal(Cell cell)
+    //{
+    //    grid.Clear(cell);
+    //    burningTrees.Remove(cell);
+
+    //    if (simulationConfig.VisualEffectsConfig.ShowFlameAnimations &&
+    //        fireAnimations.TryGetValue(cell, out var fire))
+    //    {
+    //        fire.Stop();
+    //        fireAnimations.Remove(cell);
+    //    }
+
+    //    if (treeElements.TryGetValue(cell, out var tree))
+    //    {
+    //        totalBurnedTrees++;
+    //        UpdateGridForBurnedDownTree(cell, tree);
+    //    }
+
+    //    activeTrees.Remove(cell);
+    //    growableCells.Add(cell);
+    //}
+
     private void BurnDownTreeInternal(Cell cell)
     {
+        // 1. Logischen Zustand in der Grid-Klasse aktualisieren
         grid.Clear(cell);
         burningTrees.Remove(cell);
 
+        // 2. Feuer-Animation stoppen, falls vorhanden
         if (simulationConfig.VisualEffectsConfig.ShowFlameAnimations &&
             fireAnimations.TryGetValue(cell, out var fire))
         {
@@ -893,35 +1060,50 @@ public sealed class ForestFireSimulation
             fireAnimations.Remove(cell);
         }
 
-        if (treeElements.TryGetValue(cell, out var tree))
-        {
-            totalBurnedTrees++;
-            UpdateGridForBurnedDownTree(cell, tree);
-        }
+        // 3. Statistik erhöhen
+        totalBurnedTrees++;
 
+        // 4. Visuellen Zustand in der ColorMap für das Bitmap-Rendering setzen
+        UpdateGridForBurnedDownTree(cell);
+
+        // 5. Zell-Listen für das Wachstum aktualisieren
         activeTrees.Remove(cell);
         growableCells.Add(cell);
     }
 
-    private void UpdateGridForBurnedDownTree(Cell cell, Shape tree)
+    private void UpdateGridForBurnedDownTree(Cell cell)
     {
         if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
         {
-            tree.Fill = ColorsData.BurnedTreeColor;
-            return;
+            // Baum durch Asche-Farbe ersetzen
+            treeColorMap[cell.X, cell.Y] = ColorsData.BurnedGridTreeColor;
         }
-
-        ForestCanvas.Children.Remove(tree);
-        treeElements.Remove(cell);
-    }
-
-    private void UpdateTreeColor(Cell cell, Brush color)
-    {
-        if (treeElements.TryGetValue(cell, out var tree))
+        else
         {
-            tree.Fill = color;
+            // Baum komplett entfernen (Transparent/Hintergrund)
+            treeColorMap[cell.X, cell.Y] = 0;
         }
     }
+
+    //private void UpdateGridForBurnedDownTree(Cell cell, Shape tree)
+    //   {
+    //       if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
+    //       {
+    //           tree.Fill = ColorsData.BurnedGridTreeColorBrush;
+    //           return;
+    //       }
+
+    //       ForestCanvas.Children.Remove(tree);
+    //       treeElements.Remove(cell);
+    //}
+
+    //private void UpdateTreeColor(Cell cell, Brush color)
+    //{
+    //    if (treeElements.TryGetValue(cell, out var tree))
+    //    {
+    //        tree.Fill = color;
+    //    }
+    //}
 
     private void GenerateTerrain()
     {
@@ -990,11 +1172,21 @@ public sealed class ForestFireSimulation
 
     private async Task ShowLightning(Cell cell)
     {
-        var lightningCell = CreateCellShape(cell, ColorsData.LightningColor);
+        //var lightningCell = CreateCellShape(cell, ColorsData.LightningGridColorBrush);
 
-        Canvas.SetLeft(lightningCell, cell.X * simulationConfig.TreeConfig.Size);
-        Canvas.SetTop(lightningCell, cell.Y * simulationConfig.TreeConfig.Size);
-        ForestCanvas.Children.Add(lightningCell);
+        //Canvas.SetLeft(lightningCell, cell.X * simulationConfig.TreeConfig.Size);
+        //Canvas.SetTop(lightningCell, cell.Y * simulationConfig.TreeConfig.Size);
+        //ForestCanvas.Children.Add(lightningCell);
+
+        // 1. Die ursprüngliche Farbe sichern, um sie nach dem Blitz wiederherzustellen
+        var originalColor = treeColorMap[cell.X, cell.Y];
+
+        // 2. Die Zelle in der ColorMap auf die Blitz-Farbe setzen
+        // (Ich nehme an, ColorsData.LightningGridColor ist ein uint, analog zu deinen anderen Farben)
+        treeColorMap[cell.X, cell.Y] = ColorsData.LightningGridColor;
+
+        // 3. Sofortiges Neuzeichnen erzwingen, damit der User die helle Zelle sieht
+        RenderGridToBitmap();
 
         var boltEffect = CreateLightningBolt(cell);
         ForestCanvas.Children.Add(boltEffect);
@@ -1005,8 +1197,13 @@ public sealed class ForestFireSimulation
         }
         await Task.Delay(millisecondsDelay: 80);
 
-        ForestCanvas.Children.Remove(lightningCell);
+        // 6. Aufräumen: Ursprüngliche Farbe wiederherstellen und Bolt entfernen
+        treeColorMap[cell.X, cell.Y] = originalColor;
+        //ForestCanvas.Children.Remove(lightningCell);
         ForestCanvas.Children.Remove(boltEffect);
+
+        // Erneutes Rendering, damit die Zelle wieder normal (oder brennend) aussieht
+        RenderGridToBitmap();
     }
 
     /// <summary>
