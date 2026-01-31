@@ -907,7 +907,7 @@ public sealed class ForestFireSimulation
     {
         if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
         {
-            tree.Fill = Brushes.Gray;
+            tree.Fill = ColorsData.BurnedTreeColor;
             return;
         }
 

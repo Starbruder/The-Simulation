@@ -14,6 +14,8 @@ public static class ColorsData
         ];
     }
 
+    public static Brush BurnedTreeColor = Brushes.Gray;
+
     public static Brush[] FireColors
     {
         get => [
