@@ -127,7 +127,7 @@ public sealed class SimulationClock
 
         growTimer.Interval = TimeSpan.FromMilliseconds(baseMs);
         fireTimer.Interval = TimeSpan.FromMilliseconds(baseMs);
-        igniteTimer.Interval = TimeSpan.FromMilliseconds(baseMs * 750);
+        igniteTimer.Interval = TimeSpan.FromMilliseconds(baseMs * 750); // 90 sek bei Normal-Speed
         windTimer.Interval = TimeSpan.FromMilliseconds(baseMs + windChangeIntervalMs);
     }
 }
