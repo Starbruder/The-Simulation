@@ -7,8 +7,13 @@
 /// between 0 and 100 inclusive.</param>
 /// <param name="PauseDuringFire">Indicates whether the simulation should pause while fire is active. Set to <see langword="true"/> to pause;
 /// otherwise, <see langword="false"/>.</param>
+/// /// <paramref name="LightningStrikeChancePercent"/> will determine the frequency of strikes.
+/// <see langword="default"/> is 0,15 %.</param>
+/// <param name="EnableLightningStrikes">Indicates whether lightning strikes are enabled in the simulation. Set to <see langword="true"/> to enable;
 public sealed record FireConfig
 (
     double SpreadChancePercent,
-    bool PauseDuringFire
+    bool PauseDuringFire,
+    double LightningStrikeChancePercent,
+    bool EnableLightningStrikes
 );
