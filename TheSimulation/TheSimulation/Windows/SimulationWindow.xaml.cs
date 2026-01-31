@@ -15,12 +15,14 @@ public sealed partial class SimulationWindow : Window
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
 
+        var startSpeed = SimulationDefaultsData.DefaultSimulationSpeed;
+
         simulation = new
-            (simulationConfig, random, ForestCanvas, SimulationSpeed.Ultra);
+            (simulationConfig, random, ForestCanvas, startSpeed);
 
         DataContext = simulation.SimulationLiveStats;
 
-        UpdateSpeedUI(SimulationSpeed.Ultra);
+        UpdateSpeedUI(startSpeed);
 
         PauseSimulation();
     }

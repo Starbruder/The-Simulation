@@ -59,6 +59,8 @@ public sealed class SimulationClock
     /// </summary>
     public SimulationClock()
     {
+        SetSpeed(SimulationDefaultsData.DefaultSimulationSpeed);
+
         secondTimer.Interval = TimerSecond;
         secondTimer.Tick += (_, _) => Tick1s?.Invoke();
 

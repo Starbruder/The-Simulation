@@ -8,8 +8,8 @@
 /// progresses.</remarks>
 public enum ForestCellState
 {
-	Empty,     // kein Baum
-	Tree,      // Baum
-	Burning,   // brennt
-	Burned     // verbrannt
+    Empty,     // kein Baum
+    Tree,      // Baum
+    Burning,   // brennt
+    Burned     // verbrannt
 }
