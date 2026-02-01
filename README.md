@@ -1,3 +1,7 @@
+<p align="center">
+  ![wide-burning-tree-in-circle](https://github.com/user-attachments/assets/3dbaae20-8d2e-4adc-8a4c-222f17bf7867)
+</p>
+
 # Forest Fire Simulation  
 *Visualize how forest fires spread under different environmental conditions.*
 
