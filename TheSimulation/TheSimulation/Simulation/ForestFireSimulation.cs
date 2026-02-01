@@ -643,24 +643,26 @@ public sealed class ForestFireSimulation
     {
         var size = simulationConfig.TreeConfig.Size;
 
-        return simulationConfig.VisualEffectsConfig.TreeShape switch
+        Shape shape = simulationConfig.VisualEffectsConfig.TreeShape switch
         {
-            Ellipse => new Ellipse
-            {
-                Width = size,
-                Height = size,
-                Fill = color,
-                Tag = cell
-            },
-            Rectangle => new Rectangle
-            {
-                Width = size,
-                Height = size,
-                Fill = color,
-                Tag = cell
-            },
-            _ => throw new NotSupportedException("Unsupported tree shape")
+            TreeShapeType.Ellipse => new Ellipse(),
+            TreeShapeType.Rectangle => new Rectangle(),
+            _ => throw new NotSupportedException(
+                $"Shape {simulationConfig.VisualEffectsConfig.TreeShape} is not supported."
+            )
         };
+
+        if (!color.IsFrozen)
+        {
+            color.Freeze();
+        }
+
+        shape.Width = size;
+        shape.Height = size;
+        shape.Fill = color;
+        shape.Tag = cell;
+
+        return shape;
     }
 
     /// <summary>

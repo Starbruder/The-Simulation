@@ -1,6 +1,4 @@
-﻿using System.Windows.Shapes;
-
-namespace TheSimulation;
+﻿namespace TheSimulation;
 
 /// <summary>
 /// <see langword="new"/> <see langword="class"/> representing graphics settings for the simulation.
@@ -16,7 +14,7 @@ public sealed class GraphicsSettings
     public bool ShowSmokeParticles { get; set; } = true;
     public bool ShowFlamesOnTrees { get; set; } = true;
     public bool ShowBurnedDownTrees { get; set; } = false;
-    public Shape TreeShape { get; set; } = new Ellipse();
+    public TreeShapeType TreeShape { get; set; } = SimulationDefaultsData.DefaultTreeShapeType;
 
     public GraphicsSettings() { }
 
@@ -28,7 +26,7 @@ public sealed class GraphicsSettings
         bool showSmokeParticles,
         bool showFlamesOnTrees,
         bool showBurnedDownTrees,
-        Shape treeShape
+        TreeShapeType treeShape
     )
     {
         ShowLightning = showLightning;
