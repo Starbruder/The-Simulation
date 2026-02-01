@@ -1,21 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>disable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
+<PropertyGroup>
+  <OutputType>WinExe</OutputType>
+  <TargetFramework>net8.0-windows</TargetFramework>
+  <Nullable>disable</Nullable>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <UseWPF>true</UseWPF>
 
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  <PublishSingleFile>true</PublishSingleFile>
+  <SelfContained>true</SelfContained>
+  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  <PublishReadyToRun>true</PublishReadyToRun>
+  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
-    <BundleReadyToRun>true</BundleReadyToRun>
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-  </PropertyGroup>
+  <BundleReadyToRun>true</BundleReadyToRun>
+  <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+
+  <ApplicationIcon>Assets\Icons\burning-tree.ico</ApplicationIcon>
+</PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Assets\Sounds\**" />
