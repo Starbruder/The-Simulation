@@ -155,3 +155,9 @@ This project demonstrates:
 - How randomness and probability affect outcomes  
 
 It was created as part of a school assignment focusing on simulation, GUI development, and clean code principles.
+
+## 🚀 Quick Start
+To run the simulation without setting up a development environment:
+1. Go to the [Releases](https://github.com/Starbruder/The-Simulation/releases) page.
+2. Download `TheSimulation.exe`.
+3. Run it directly (no installation or .NET runtime required).
