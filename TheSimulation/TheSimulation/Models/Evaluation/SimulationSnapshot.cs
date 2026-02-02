@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace TheSimulation;
+﻿namespace TheSimulation;
 
 /// <summary>
 /// <see cref="SimulationSnapshot"/> ist ein <see langword="public"/> <see langword="record"/>, das einen bestimmten Zeitpunkt in der Simulation darstellt.
