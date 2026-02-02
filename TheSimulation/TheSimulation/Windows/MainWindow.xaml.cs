@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace TheSimulation;
@@ -30,12 +29,8 @@ public sealed partial class MainWindow : Window
 
     private void InitailizeWindDirectionDropdown()
     {
-        var enumtypes = Enum.GetValues<WindDirection>();
-        foreach (var enumtype in enumtypes)
-        {
-            var windDirectionItem = new ComboBoxItem().Content = enumtype;
-            WindDirectionBox.Items.Add(windDirectionItem);
-        }
+        WindDirectionBox.ItemsSource = Enum.GetValues<WindDirection>();
+        WindDirectionBox.SelectedItem = SimulationDefaultsData.DefaultWindDirection;
     }
 
     private void StartSimulation_Click(object sender, RoutedEventArgs e)
@@ -166,20 +161,16 @@ public sealed partial class MainWindow : Window
 
     private WindDirection GetParsedWindDirectionFromUI()
     {
-        var selectedComboBoxItem = WindDirectionBox.SelectedItem;
-
-        var selectedString = selectedComboBoxItem.ToString();
-
-        return Enum.TryParse<WindDirection>(selectedString, out var windDir)
-            ? windDir
-            : WindDirection.North;
+        return WindDirectionBox.SelectedItem is WindDirection direction
+            ? direction
+            : SimulationDefaultsData.DefaultWindDirection;
     }
 
     private WindDirection GetRandomWindDirection()
     {
-        var values = Enum.GetValues(typeof(WindDirection));
+        var values = Enum.GetValues<WindDirection>();
         var randomIndex = random.NextInt(0, values.Length);
-        return (WindDirection)values.GetValue(randomIndex);
+        return values[randomIndex];
     }
 
     private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
