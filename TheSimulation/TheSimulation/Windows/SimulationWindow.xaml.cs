@@ -78,10 +78,10 @@ public sealed partial class SimulationWindow : Window
         simulation.SetSimulationSpeed(speed);
 
         // Check which button to disable (showing current speed as mimicing a clicked button)
-        SpeedSlowButton.IsEnabled = speed != SimulationSpeed.Slow;
-        SpeedNormalButton.IsEnabled = speed != SimulationSpeed.Normal;
-        SpeedFastButton.IsEnabled = speed != SimulationSpeed.Fast;
-        SpeedUltraButton.IsEnabled = speed != SimulationSpeed.Ultra;
+        SpeedSlowButton.IsEnabled = speed is not SimulationSpeed.Slow;
+        SpeedNormalButton.IsEnabled = speed is not SimulationSpeed.Normal;
+        SpeedFastButton.IsEnabled = speed is not SimulationSpeed.Fast;
+        SpeedUltraButton.IsEnabled = speed is not SimulationSpeed.Ultra;
     }
 
     private void ShowEvaluation_Click(object s, RoutedEventArgs e)
@@ -91,7 +91,7 @@ public sealed partial class SimulationWindow : Window
     protected override void OnClosed(EventArgs e)
     {
         base.OnClosed(e);
-        simulation.Dispose();
+        simulation?.Dispose();
     }
 
     private void CloseOverlay_Click(object s, RoutedEventArgs e)
