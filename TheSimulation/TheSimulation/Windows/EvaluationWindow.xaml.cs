@@ -5,21 +5,34 @@ using System.Windows;
 namespace TheSimulation;
 
 /// <summary>
-/// Interaktionslogik für EvaluationWindow.xaml
+/// Das Auswertungsfenster der Simulation. 
+/// Visualisiert die gesammelten historischen Daten in Form von Liniendiagrammen und statistischen Kennzahlen.
 /// </summary>
+/// <remarks>
+/// Nutzt die OxyPlot-Bibliothek zur Darstellung der Branddynamik und bietet eine Export-Schnittstelle für CSV-Daten.
+/// </remarks>
 public sealed partial class EvaluationWindow : Window
 {
+    /// <summary>
+    /// Der zugrunde liegende Datensatz der abgeschlossenen oder pausierten Simulation.
+    /// </summary>
     private readonly Evaluation data;
 
+    /// <summary>
+    /// Initialisiert eine neue Instanz des Auswertungsfensters und bereitet die Statistiken auf.
+    /// </summary>
+    /// <param name="data">Das <see cref="Evaluation"/>-Objekt mit allen historischen Snapshots der Simulation.</param>
     public EvaluationWindow(Evaluation data)
     {
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
         this.data = data;
 
+        // Statische Wetterdaten und Laufzeit anzeigen
         EvalHumidity.Text = $"Air Humidity: {data.AirHumidityPercentage * 100:F0} %";
         EvalTemperature.Text = $"Air Temperature: {data.AirTemperatureCelsius}°C";
 
+        // Durchschnittliche Windgeschwindigkeit berechnen und in Beaufort umrechnen
         var averageWindSpeed = data.History.Count > 0
             ? data.History.Average(h => h.WindSpeed)
             : 0;
@@ -35,6 +48,10 @@ public sealed partial class EvaluationWindow : Window
         DrawCharts(data);
     }
 
+    /// <summary>
+    /// Prüft die Datenintegrität und stößt den Zeichenprozess für alle Diagramme an.
+    /// </summary>
+    /// <param name="data">Die zu visualisierenden Simulationsdaten.</param>
     private void DrawCharts(Evaluation data)
     {
         if (data.History.Count < 1)
@@ -44,6 +61,7 @@ public sealed partial class EvaluationWindow : Window
             return;
         }
 
+        // Zeichnen erst starten, wenn die UI-Elemente (PlotViews) bereit sind
         Loaded += (_, _) =>
         {
             DrawSimulationChart();
@@ -51,14 +69,16 @@ public sealed partial class EvaluationWindow : Window
         };
     }
 
+    /// <summary>
+    /// Erstellt das Diagramm für die kumulativen Werte (Gerechnet über die gesamte Laufzeit).
+    /// Zeigt den Vergleich zwischen insgesamt gewachsenen und insgesamt verbrannten Bäumen.
+    /// </summary>
     private void DrawSimulationChart()
     {
         var model = ChartVisualizer.CreateLineChart("Grown / Burned Trees", "Time (s)", "Trees");
 
-        var grown =
-            ChartVisualizer.CreateLineSeries("Total Grown Trees", OxyColors.Green);
-        var burned =
-            ChartVisualizer.CreateLineSeries("Total Burned Trees", OxyColors.Red);
+        var grown = ChartVisualizer.CreateLineSeries("Total Grown Trees", OxyColors.Green);
+        var burned = ChartVisualizer.CreateLineSeries("Total Burned Trees", OxyColors.Red);
 
         foreach (var historySnapshot in data.History)
         {
@@ -73,22 +93,25 @@ public sealed partial class EvaluationWindow : Window
         GrownBurnedPlot.Model = model;
     }
 
+    /// <summary>
+    /// Erstellt das Diagramm für den aktuellen Bestand ("Active Trees").
+    /// Berechnet die Differenz zwischen gewachsenen und verbrannten Bäumen pro Zeitpunkt.
+    /// </summary>
     private void DrawActiveTreesChart()
     {
-        var model =
-            ChartVisualizer.CreateLineChart("Active Trees", "Time (s)", "Trees");
-
-        var active =
-            ChartVisualizer.CreateLineSeries("Active Trees", OxyColors.DarkGreen);
+        var model = ChartVisualizer.CreateLineChart("Active Trees", "Time (s)", "Trees");
+        var active = ChartVisualizer.CreateLineSeries("Active Trees", OxyColors.DarkGreen);
 
         foreach (var h in data.History)
         {
+            // Logik: Bestand = Alles was je gewachsen ist - Alles was bereits zerstört wurde
             var activeCount = (int)h.Grown - (int)h.Burned;
             active.Points.Add(new(h.Time.TotalSeconds, activeCount));
         }
 
         model.Series.Add(active);
 
+        // Durchschnittslinie hinzufügen, um Trends besser erkennbar zu machen
         model.Series.Add(
             ChartVisualizer.CreateAverageLine(
                 data.History, "Average Active Trees", OxyColors.Orange)
@@ -97,6 +120,9 @@ public sealed partial class EvaluationWindow : Window
         ActiveTreesPlot.Model = model;
     }
 
+    /// <summary>
+    /// Startet den Datei-Exportdialog und speichert die Simulationshistorie als CSV-Datei.
+    /// </summary>
     private void ExportCsv_Click(object sender, RoutedEventArgs e)
     {
         if (data.History.Count == 0)
@@ -112,7 +138,6 @@ public sealed partial class EvaluationWindow : Window
             FileName = $"ForestFireEvaluation_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
         };
 
-        // Diese Zeile sorgt dafür, dass: kein Export passiert, wenn der Nutzer abbricht
         if (dialog.ShowDialog() != true)
         {
             return;
@@ -121,7 +146,6 @@ public sealed partial class EvaluationWindow : Window
         try
         {
             EvaluationExporter.ExportCsv(data, dialog.FileName);
-
             MessageBox.Show("CSV export completed successfully.", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
