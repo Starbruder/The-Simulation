@@ -43,16 +43,16 @@ public sealed partial class MainWindow : Window
     {
         return new
         (
-            GetTreeConfig(),
-            GetFireConfig(),
+            CreateTreeConfig(),
+            CreateFireConfig(),
             GetEnvironmentConfigFromUI(),
             GetPrefillConfigFromUI(),
-            GetVisualEffectsConfigFromUI(),
-            GetTerrainConfig()
+            CreateVisualEffectsConfigFromUI(),
+            CreateTerrainConfig()
         );
     }
 
-    private TreeConfig GetTreeConfig()
+    private TreeConfig CreateTreeConfig()
     {
         var regrowForest = GrowForestCheckBox.IsChecked ?? true;
 
@@ -65,7 +65,7 @@ public sealed partial class MainWindow : Window
         );
     }
 
-    private FireConfig GetFireConfig()
+    private FireConfig CreateFireConfig()
     {
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
         var fireChance = FireSpreadChanceSlider.Value; // (Additional fire spread chance)
@@ -82,7 +82,7 @@ public sealed partial class MainWindow : Window
         );
     }
 
-    private VisualEffectsConfig GetVisualEffectsConfigFromUI()
+    private VisualEffectsConfig CreateVisualEffectsConfigFromUI()
     {
         return new
         (
@@ -96,7 +96,7 @@ public sealed partial class MainWindow : Window
         );
     }
 
-    private TerrainConfig GetTerrainConfig()
+    private TerrainConfig CreateTerrainConfig()
     {
         var useTerrainGeneration = TerrainGenerationCheckBox.IsChecked ?? true;
 
