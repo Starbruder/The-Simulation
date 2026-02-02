@@ -40,7 +40,7 @@ public static class ColorHelper
 
         // Wir runden die Elevation auf 2 Dezimalstellen (0.01 Schritte), 
         // damit der Cache nicht für winzigste Unterschiede explodiert.
-        int elevationKey = (int)(elevation * 100);
+        var elevationKey = (int)(elevation * 100);
         var key = (baseColor, elevationKey);
 
         if (_elevationCache.TryGetValue(key, out var cachedBrush))
