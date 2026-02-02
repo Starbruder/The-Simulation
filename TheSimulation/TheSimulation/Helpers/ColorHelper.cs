@@ -2,21 +2,29 @@
 
 namespace TheSimulation;
 
+/// <summary>
+/// Hilfsklasse für die Farbverwaltung und grafische Optimierung.
+/// Bietet Funktionen zum Einfrieren von Brushes und zur dynamischen Helligkeitsanpassung basierend auf Geländehöhen.
+/// </summary>
 public static class ColorHelper
 {
-    // Cache für Höhen-Farben: Key ist eine Kombination aus Basis-Farbe und Elevation
+    /// <summary>
+    /// Stellt einen Cache bereit, der eine Kombination aus Basisfarbe und Höhenwert auf eine entsprechende Brush-Instanz abbildet.
+    /// </summary>
+    /// <remarks>
+    /// Dieser Cache wird verwendet, um die Performance zu verbessern, indem Brush-Instanzen für wiederholte Farb- und 
+    /// Höhenkombinationen wiederverwendet werden.
+    /// </remarks>
     private static readonly Dictionary<(Color, int), Brush> _elevationCache = [];
 
     /// <summary>
-    /// Creates a new solid color brush with the specified color and returns a frozen (read-only) instance for improved
-    /// performance.
+    /// Erstellt einen neuen SolidColorBrush mit der angegebenen Farbe und gibt eine eingefrorene (schreibgeschützte) Instanz zurück.
     /// </summary>
-    /// <remarks>Freezing the brush makes it immutable and can improve performance, especially when the brush
-    /// is used in multiple places or across threads.</remarks>
-    /// <param name="color">The color to use for the solid color brush.</param>
-    /// <returns>A frozen <see cref="SolidColorBrush"/> with the specified color.
-    /// The returned brush is read-only and can be safely shared
-    /// across threads.</returns>
+    /// <remarks>
+    /// Das Einfrieren (Freeze) macht den Brush unveränderlich und verbessert die Performance erheblich.
+    /// </remarks>
+    /// <param name="color">Die Farbe, die für den Brush verwendet werden soll.</param>
+    /// <returns>Ein eingefrorener <see cref="SolidColorBrush"/>. Dieser ist schreibgeschützt.</returns>
     public static Brush GetFrozenBrush(Color color)
     {
         var brush = new SolidColorBrush(color);
@@ -25,15 +33,15 @@ public static class ColorHelper
     }
 
     /// <summary>
-    /// Creates a new brush with its color brightness adjusted according to the specified elevation value.
+    /// Erstellt einen neuen Brush, dessen Helligkeit basierend auf einem angegebenen Höhenwert (Elevation) angepasst wurde.
     /// </summary>
-    /// <remarks>This method linearly interpolates the brightness of the base color according to the elevation
-    /// parameter. The returned brush is optimized for performance by being frozen.</remarks>
-    /// <param name="baseColor">The base brush whose color will be adjusted. Must be a non-null instance of SolidColorBrush.</param>
-    /// <param name="elevation">A value between 0.0 and 1.0 representing the elevation, where 0.0 produces a darker color and 1.0 produces a
-    /// lighter color.</param>
-    /// <returns>A new SolidColorBrush with its color brightness modified based on the elevation value. The returned brush is
-    /// frozen and cannot be modified.</returns>
+    /// <remarks>
+    /// Diese Methode berechnet die Helligkeit der Basisfarbe linear in Abhängigkeit vom Höhenparameter. 
+    /// Der zurückgegebene Brush ist für eine bessere Performance eingefroren.
+    /// </remarks>
+    /// <param name="baseBrush">Der Basis-Brush, dessen Farbe angepasst werden soll. Muss eine Instanz von SolidColorBrush sein.</param>
+    /// <param name="elevation">Ein Wert zwischen 0.0 und 1.0, der die Höhe repräsentiert (0.0 = dunkler, 1.0 = heller/original).</param>
+    /// <returns>Ein neuer, eingefrorener SolidColorBrush mit angepasster Helligkeit.</returns>
     public static Brush AdjustColorByElevation(Brush baseBrush, float elevation)
     {
         var baseColor = ((SolidColorBrush)baseBrush).Color;

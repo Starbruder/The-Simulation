@@ -2,8 +2,18 @@
 
 namespace TheSimulation;
 
+/// <summary>
+/// Statische Hilfsklasse zur Umrechnung zwischen verschiedenen Wind-Repräsentationen.
+/// Wandelt Richtungen (Enums), Winkel (Grad) und Vektoren ineinander um.
+/// </summary>
 public static class WindMapper
 {
+    /// <summary>
+    /// Konvertiert eine <see cref="WindDirection"/> in einen Richtungsvektor.
+    /// Berücksichtigt eine Korrektur von 90°, um die grafische Ausrichtung im Koordinatensystem anzupassen.
+    /// </summary>
+    /// <param name="direction">Die gewünschte Windrichtung als <see cref="enum"/>.</param>
+    /// <returns>Ein normalisierter Vektor, der in die entsprechende Richtung zeigt.</returns>
     public static Vector GetWindVector(WindDirection direction)
     {
         const int correctionDegrees = 90;
@@ -17,6 +27,12 @@ public static class WindMapper
         return new(x, y);
     }
 
+    /// <summary>
+    /// Erzeugt einen Windvektor basierend auf einem präzisen Winkel und einer Windstärke.
+    /// </summary>
+    /// <param name="angleDegrees">Der Windwinkel in Grad (0-360°).</param>
+    /// <param name="windStrength">Die Länge (Intensität) des resultierenden Vektors.</param>
+    /// <returns>Ein skalierter Vektor, der Richtung und Stärke repräsentiert.</returns>
     public static Vector ConvertWindAngleDegreesToVector(double angleDegrees, double windStrength)
     {
         // in Radiant umrechnen
@@ -31,6 +47,11 @@ public static class WindMapper
         return vector;
     }
 
+    /// <summary>
+    /// Berechnet den Winkel in Grad aus einem gegebenen Windvektor.
+    /// </summary>
+    /// <param name="windVector">Der zu analysierende Vektor.</param>
+    /// <returns>Ein Winkel zwischen 0 und 360°.</returns>
     public static double ConvertVectorToWindAngleDegrees(Vector windVector)
     {
         // atan2 liefert den Winkel in Radiant (-π bis π)
@@ -47,6 +68,11 @@ public static class WindMapper
         return angleDeg;
     }
 
+    /// <summary>
+    /// Rechnet die prozentuale Windstärke (0.0 bis 1.0) grob in die Beaufort-Skala (0-12) um.
+    /// </summary>
+    /// <param name="windPercentStrength">Die Windstärke als Dezimalwert.</param>
+    /// <returns>Die entsprechende Stufe auf der <see cref="BeaufortScale"/>.</returns>
     public static BeaufortScale ConvertWindPercentStrenghToBeaufort(double windPercentStrength)
     {
         // WindStrength ist ein Wert zwischen 0 und 1, daher multiplizieren wir mit 12, um den Bereich 0 bis 12 zu erhalten
@@ -54,24 +80,11 @@ public static class WindMapper
         return (BeaufortScale)Math.Min(beaufortScale, (int)BeaufortScale.Hurricane); // Maximalwert Hurricane (Stufe 11)
     }
 
-    private static BeaufortScale ConvertWindKmPerHourToBeaufortScale(double windSpeed)
-    {
-        // Windgeschwindigkeit in m/s bestimmt die Beaufort-Stufe
-        if (windSpeed < 0.3) return BeaufortScale.Calm;
-        if (windSpeed < 1.6) return BeaufortScale.LightAir;
-        if (windSpeed < 3.4) return BeaufortScale.LightBreeze;
-        if (windSpeed < 5.5) return BeaufortScale.GentleBreeze;
-        if (windSpeed < 8.0) return BeaufortScale.ModerateBreeze;
-        if (windSpeed < 10.8) return BeaufortScale.FreshBreeze;
-        if (windSpeed < 13.9) return BeaufortScale.StrongBreeze;
-        if (windSpeed < 17.2) return BeaufortScale.StrongWind;
-        if (windSpeed < 20.8) return BeaufortScale.SevereWind;
-        if (windSpeed < 24.5) return BeaufortScale.Storm;
-        if (windSpeed < 28.5) return BeaufortScale.ViolentStorm;
-        if (windSpeed < 32.7) return BeaufortScale.Hurricane;
-        return BeaufortScale.Hurricane;
-    }
-
+    /// <summary>
+    /// Erweiterungsmethode, die einen beliebigen Winkel in die nächstgelegene <see cref="WindDirection"/> (Haupt- und Zwischenhimmelsrichtungen) umwandelt.
+    /// </summary>
+    /// <param name="angle">Der Winkel in Grad.</param>
+    /// <returns>Die entsprechende <see cref="WindDirection"/> (z.B. North, NorthEast).</returns>
     public static WindDirection ToWindDirection(this float angle)
     {
         angle = NormalizeWindAngleToMax360Degrees(angle);
@@ -79,11 +92,17 @@ public static class WindMapper
         return (WindDirection)snapped;
     }
 
+    /// <summary>
+    /// Rundet einen Winkel auf den nächsten 45°-Schritt (0, 45, 90, ..., 315).
+    /// </summary>
     private static int SnapToNearest45Degrees(float angle)
     {
         return (int)(MathF.Round(angle / 45f) * 45f) % 360;
     }
 
+    /// <summary>
+    /// Normalisiert einen Winkel so, dass er immer im Bereich von [0, 360[ Grad liegt.
+    /// </summary>
     private static float NormalizeWindAngleToMax360Degrees(float angle)
     {
         angle = (angle % 360 + 360) % 360;
