@@ -23,7 +23,7 @@ public sealed class SimulationRenderer
     private readonly Dictionary<Cell, Shape> treeShapes = [];
     private readonly Dictionary<Cell, FireAnimation> fireAnimations = [];
 
-    private readonly Rectangle _screenFlash;
+    private readonly Rectangle screenFlash;
 
     public SimulationRenderer(
         Canvas forestCanvas,
@@ -49,13 +49,13 @@ public sealed class SimulationRenderer
 
     private void InitializeScreenFlash()
     {
-        _screenFlash.Width = forestCanvas.ActualWidth;
-        _screenFlash.Height = forestCanvas.ActualHeight;
-        _screenFlash.Fill = ColorsData.FlashColor;
-        _screenFlash.Opacity = 0;
+        screenFlash.Width = forestCanvas.ActualWidth;
+        screenFlash.Height = forestCanvas.ActualHeight;
+        screenFlash.Fill = ColorsData.FlashColor;
+        screenFlash.Opacity = 0;
 
-        Panel.SetZIndex(_screenFlash, int.MaxValue);
-        forestCanvas.Children.Add(_screenFlash);
+        Panel.SetZIndex(screenFlash, int.MaxValue);
+        forestCanvas.Children.Add(screenFlash);
     }
 
     public void DrawTree(Cell cell, Brush color, double size, TreeShapeType shapeType)
@@ -238,9 +238,9 @@ public sealed class SimulationRenderer
     /// <returns>A task that represents the asynchronous flash operation.</returns>
     private async Task FlashScreen()
     {
-        _screenFlash.Opacity = 0.6;
+        screenFlash.Opacity = 0.6;
         await Task.Delay(40);
-        _screenFlash.Opacity = 0;
+        screenFlash.Opacity = 0;
     }
 
     /// <summary>
