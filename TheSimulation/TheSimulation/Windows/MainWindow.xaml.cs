@@ -226,7 +226,7 @@ public sealed partial class MainWindow : Window
         AirHumiditySlider.Value = 50;
         AirTemperatureSlider.Value = 30;
         RandomWindDirectionCheckBox.IsChecked = false;
-        WindDirectionBox.SelectedIndex = 0;
+        WindDirectionBox.SelectedItem = SimulationDefaultsData.DefaultWindDirection;
         RandomWindStrengthCheckBox.IsChecked = false;
         WindStrengthSlider.Value = 0.75;
     }
