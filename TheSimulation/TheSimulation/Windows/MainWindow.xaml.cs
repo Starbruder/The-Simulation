@@ -192,22 +192,7 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        var randomDirection = GetRandomWindDirection();
-
-        ShowRandomsetWinddirection(randomDirection);
-    }
-
-    private void ShowRandomsetWinddirection(WindDirection randomDirection)
-    {
-        foreach (var item in WindDirectionBox.Items)
-        {
-            if (Enum.TryParse<WindDirection>(item.ToString(), out var dir)
-                && dir == randomDirection)
-            {
-                WindDirectionBox.SelectedItem = item;
-                break;
-            }
-        }
+        WindDirectionBox.SelectedItem = GetRandomWindDirection();
     }
 
     private void OpenGraphicsSettingsWindow(object sender, RoutedEventArgs e)
