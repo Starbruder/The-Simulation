@@ -72,6 +72,8 @@ public sealed class WindHelper(WindConfig config)
         // Wir nehmen die Windstärke (z.B. 0.5 für mäßigen Wind) und verrechnen sie.
         // Bei Rückenwind: 1 + (0.5 * 1) = 1.5 (50% höhere Chance).
         // Bei Gegenwind: 1 + (0.5 * -1) = 0.5 (50% geringere Chance).
+        // Die '1' ist der Basiswert (100% Chance bei Windstille). 
+        // Alles andere ist nur der Aufschlag oder Abzug
         var effect = 1 + CurrentWindStrength * alignment;
 
         // 6. Schritt: Sicherheitscheck
