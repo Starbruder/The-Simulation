@@ -7,8 +7,14 @@ using System.Windows.Shapes;
 namespace TheSimulation;
 
 /// <summary>
-/// Repräsentiert den gesamten Simulationsprozess einer Waldbrand-Simulation.
+/// Das Kernstück der Simulation. Verwaltet den Lebenszyklus von Bäumen, die Brandausbreitung, 
+/// Umwelteinflüsse und die Synchronisation zwischen Logik und <see cref="SimulationRenderer"/>.
 /// </summary>
+/// <remarks>
+/// Die Klasse nutzt ein zellbasiertes Gitter (<see cref="ForestGrid"/>) und optimiert die 
+/// Performance durch Caching von Umwelteffekten sowie die Minimierung von Garbage Collection 
+/// Pressure mittels wiederverwendbarer Listen.
+/// </remarks>
 public sealed class ForestFireSimulation : IDisposable
 {
     private Canvas ForestCanvas { get; }
@@ -52,6 +58,9 @@ public sealed class ForestFireSimulation : IDisposable
     private readonly List<Cell> _cacheToIgnite = [];
     private readonly List<Cell> _cacheToBurnDown = [];
 
+    /// <summary>
+    /// Erstellt eine neue Simulationsebene.
+    /// </summary>
     public ForestFireSimulation(SimulationConfig simulationConfig, RandomHelper random, Canvas ForestCanvas, SimulationSpeed simulationSpeed = SimulationSpeed.Normal)
     {
         // To get rid of the warning CS8618
@@ -926,6 +935,9 @@ public sealed class ForestFireSimulation : IDisposable
     private void UpdateWindUI()
         => SimulationLiveStats.WindStrength = windHelper.CurrentWindStrength;
 
+    /// <summary>
+    /// Stoppt alle Timer und gibt die Ressourcen des Renderers frei.
+    /// </summary>
     public void Dispose()
     {
         ForestCanvas?.Children.Clear();
