@@ -19,8 +19,7 @@ public sealed class ForestFireSimulation : IDisposable
     public SimulationLiveStats SimulationLiveStats { get; } = new();
 
     private readonly WindHelper windHelper;
-    private readonly WindCompassVisualizer windVisualizer;
-    private readonly ParticleGenerator particleGenerator;
+    private readonly SimulationRenderer renderer;
     private TimeSpan accumulatedSimulationTime = TimeSpan.Zero;
 
     private readonly SimulationClock clock = new();
@@ -39,20 +38,15 @@ public sealed class ForestFireSimulation : IDisposable
 
     private SimulationSpeed simulationSpeed;
 
-    private readonly Dictionary<Cell, Shape> treeElements = [];
     private readonly HashSet<Cell> activeTrees = [];
     private readonly HashSet<Cell> growableCells = [];
     private readonly HashSet<Cell> burningTrees = [];
-
-    private readonly Dictionary<Cell, FireAnimation> fireAnimations = [];
 
     private readonly List<SimulationSnapshot> simulationHistory = [];
 
     private readonly List<FireEvent> fireEventsHistory = [];
 
     private TerrainCell[,] terrainGrid;
-
-    private readonly Rectangle screenFlash = new();
 
     public ForestFireSimulation(SimulationConfig simulationConfig, RandomHelper random, Canvas ForestCanvas, SimulationSpeed simulationSpeed = SimulationSpeed.Normal)
     {
@@ -63,11 +57,9 @@ public sealed class ForestFireSimulation : IDisposable
         this.ForestCanvas = ForestCanvas;
         this.simulationConfig = simulationConfig;
         this.simulationSpeed = simulationSpeed;
-        windHelper = new(simulationConfig.EnvironmentConfig.WindConfig);
-        windVisualizer =
-            new(ForestCanvas, simulationConfig.EnvironmentConfig.WindConfig, windHelper);
 
-        particleGenerator = new ParticleGenerator(ForestCanvas);
+        windHelper = new(simulationConfig.EnvironmentConfig.WindConfig);
+        renderer = new SimulationRenderer(ForestCanvas, simulationConfig, randomHelper);
 
         ForestCanvas.Loaded += async (_, _) => await InitializeSimulationAsync();
 
@@ -169,7 +161,7 @@ public sealed class ForestFireSimulation : IDisposable
 
         grid.Clear(cell);
 
-        RemoveTree(cell);
+        renderer.RemoveTree(cell);
 
         activeTrees.Remove(cell);
         growableCells.Add(cell);
@@ -179,11 +171,7 @@ public sealed class ForestFireSimulation : IDisposable
     {
         if (burningTrees.Remove(cell))
         {
-            if (fireAnimations.TryGetValue(cell, out var fire))
-            {
-                fire.Stop();
-                fireAnimations.Remove(cell);
-            }
+            renderer.StopFireAnimation(cell);
         }
     }
 
@@ -195,15 +183,7 @@ public sealed class ForestFireSimulation : IDisposable
         burningTrees.Remove(cell);
         growableCells.Add(cell);
 
-        if (treeElements.Remove(cell, out var shape))
-        {
-            ForestCanvas.Children.Remove(shape);
-        }
-
-        if (fireAnimations.Remove(cell, out var fire))
-        {
-            fire.Stop();
-        }
+        renderer.ClearCell(cell);
 
         // Falls das Dictionary aus irgendeinem Grund die Referenz verloren hat, 
         // suchen wir direkt auf dem Canvas nach Objekten an dieser Position.
@@ -213,17 +193,9 @@ public sealed class ForestFireSimulation : IDisposable
 
         // Wir schauen physisch nach, was am Canvas an dieser Stelle liegt
         var element = ForestCanvas.InputHitTest(new(centerX, centerY)) as Shape;
-        if (element is not null && element != screenFlash) // screenFlash nicht löschen!
+        if (element is not null)
         {
             ForestCanvas.Children.Remove(element);
-        }
-    }
-
-    private void RemoveTree(Cell cell)
-    {
-        if (treeElements.Remove(cell, out var tree))
-        {
-            ForestCanvas.Children.Remove(tree);
         }
     }
 
@@ -247,7 +219,7 @@ public sealed class ForestFireSimulation : IDisposable
             return;
         }
 
-        windVisualizer.Draw();
+        renderer.DrawWindVisualizer();
         UpdateWindUI();
     }
 
@@ -270,7 +242,7 @@ public sealed class ForestFireSimulation : IDisposable
 
         grid.SetBurning(cell);
         burningTrees.Add(cell);
-        UpdateTreeColor(cell, ColorsData.DefaultFireColor);
+        renderer.UpdateTreeColor(cell, ColorsData.DefaultFireColor);
 
         SpawnFireEffect(cell);
     }
@@ -280,11 +252,6 @@ public sealed class ForestFireSimulation : IDisposable
         CacheEnvironmentFactors();
         InitializeSimulationClock();
         InitializeGrid();
-
-        if (simulationConfig.VisualEffectsConfig.ShowBoltScreenFlash)
-        {
-            InitializeScreenFlash();
-        }
 
         if (simulationConfig.PrefillConfig.ShouldPrefillMap)
         {
@@ -312,20 +279,8 @@ public sealed class ForestFireSimulation : IDisposable
             return;
         }
 
-        windVisualizer.Draw();
+        renderer.DrawWindVisualizer();
         UpdateWindUI();
-    }
-
-    private void InitializeScreenFlash()
-    {
-        screenFlash.Width = ForestCanvas.ActualWidth;
-        screenFlash.Height = ForestCanvas.ActualHeight;
-        screenFlash.Fill = ColorsData.FlashColor;
-        screenFlash.Opacity = 0;
-
-        Panel.SetZIndex(screenFlash, int.MaxValue);
-
-        ForestCanvas.Children.Add(screenFlash);
     }
 
     private void CacheEnvironmentFactors()
@@ -482,6 +437,7 @@ public sealed class ForestFireSimulation : IDisposable
         await LoadTreesInBatches(maxTrees, allCells, treesBatchSize);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private async Task LoadTreesInBatches(int maxTrees, List<Cell> allCells, int treesBatchSize)
     {
         var loaded = 0;
@@ -497,7 +453,7 @@ public sealed class ForestFireSimulation : IDisposable
             {
                 foreach (var cell in batch)
                 {
-                    AddTreeWithoutUIUpdate(cell);
+                    AddInitialTreePlacement(cell);
                 }
             });
         }
@@ -533,7 +489,7 @@ public sealed class ForestFireSimulation : IDisposable
     {
         windHelper.RandomizeAndUpdateWind(); // Winkel und Strengh randomisieren
         var vector = windHelper.GetWindVector();
-        windVisualizer.Update(vector);
+        renderer.UpdateWindVisualizer(vector);
 
         UpdateWindUI();
     }
@@ -544,7 +500,7 @@ public sealed class ForestFireSimulation : IDisposable
 
         clock.SetSpeed(simulationSpeed);
 
-        windVisualizer?.Draw();
+        renderer.DrawWindVisualizer();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
@@ -623,46 +579,18 @@ public sealed class ForestFireSimulation : IDisposable
     private void AddTreeWithoutUIUpdate(Cell cell)
     {
         HardResetCell(cell);
-
-        grid.SetTree(cell);
-
-        var color = GetTreeColor(cell);
-        var tree = CreateCellShape(cell, color);
-
-        Canvas.SetLeft(tree, cell.X * simulationConfig.TreeConfig.Size);
-        Canvas.SetTop(tree, cell.Y * simulationConfig.TreeConfig.Size);
-        ForestCanvas.Children.Add(tree);
-
-        treeElements[cell] = tree;
-        activeTrees.Add(cell);
-
-        totalGrownTrees++;
+        AddInitialTreePlacement(cell);
     }
 
-    private Shape CreateCellShape(Cell cell, Brush color)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void AddInitialTreePlacement(Cell cell)
     {
-        var size = simulationConfig.TreeConfig.Size;
+        grid.SetTree(cell);
+        activeTrees.Add(cell);
+        totalGrownTrees++;
 
-        Shape shape = simulationConfig.VisualEffectsConfig.TreeShape switch
-        {
-            TreeShapeType.Ellipse => new Ellipse(),
-            TreeShapeType.Rectangle => new Rectangle(),
-            _ => throw new NotSupportedException(
-                $"Shape {simulationConfig.VisualEffectsConfig.TreeShape} is not supported."
-            )
-        };
-
-        if (!color.IsFrozen)
-        {
-            color.Freeze();
-        }
-
-        shape.Width = size;
-        shape.Height = size;
-        shape.Fill = color;
-        shape.Tag = cell;
-
-        return shape;
+        var color = GetTreeColor(cell);
+        renderer.DrawTree(cell, color, simulationConfig.TreeConfig.Size, simulationConfig.VisualEffectsConfig.TreeShape);
     }
 
     /// <summary>
@@ -875,29 +803,7 @@ public sealed class ForestFireSimulation : IDisposable
             return;
         }
 
-        if (simulationConfig.VisualEffectsConfig.ShowFlameAnimations)
-        {
-            var fire = new FireAnimation(
-                burningCell,
-                ForestCanvas,
-                simulationConfig.TreeConfig.Size
-            );
-
-            fireAnimations[burningCell] = fire;
-            fire.Start();
-        }
-
-        if (simulationConfig.VisualEffectsConfig.ShowFireParticles
-             && randomHelper.NextDouble() < 0.7)
-        {
-            particleGenerator.AddFireParticle(burningCell, simulationConfig);
-            return;
-        }
-
-        if (simulationConfig.VisualEffectsConfig.ShowSmokeParticles)
-        {
-            particleGenerator.AddSmoke(burningCell, simulationConfig);
-        }
+        renderer.StartFireAnimation(burningCell, simulationConfig);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -911,42 +817,25 @@ public sealed class ForestFireSimulation : IDisposable
         UpdateTreeUI();
     }
 
-    private void BurnDownTreeInternal(Cell cell)
+    private void BurnDownTreeInternal(Cell treeCell)
     {
-        grid.Clear(cell);
-        burningTrees.Remove(cell);
+        grid.Clear(treeCell);
+        burningTrees.Remove(treeCell);
 
-        activeTrees.Remove(cell);
-        growableCells.Add(cell);
+        activeTrees.Remove(treeCell);
+        growableCells.Add(treeCell);
 
-        if (fireAnimations.TryGetValue(cell, out var fire))
+        renderer.StopFireAnimation(treeCell);
+
+        totalBurnedTrees++;
+
+        if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
         {
-            fire.Stop();
-            fireAnimations.Remove(cell);
+            renderer.UpdateTreeColor(treeCell, ColorsData.BurnedTreeColor);
+            return;
         }
 
-        if (treeElements.TryGetValue(cell, out var tree))
-        {
-            totalBurnedTrees++;
-
-            if (simulationConfig.VisualEffectsConfig.ShowBurnedDownTrees)
-            {
-                var frozenBurnedTreeBrush = ColorsData.BurnedTreeColor;
-
-                tree.Fill = frozenBurnedTreeBrush;
-                return;
-            }
-
-            RemoveTree(cell);
-        }
-    }
-
-    private void UpdateTreeColor(Cell cell, Brush color)
-    {
-        if (treeElements.TryGetValue(cell, out var tree))
-        {
-            tree.Fill = color;
-        }
+        renderer.RemoveTree(treeCell);
     }
 
     private void GenerateTerrain()
@@ -993,7 +882,7 @@ public sealed class ForestFireSimulation : IDisposable
 
         if (simulationConfig.VisualEffectsConfig.ShowLightning)
         {
-            await ShowLightning(cell);
+            await renderer.ShowLightningEffectAsync(cell);
 
             fireEventsHistory.Add(new(
                 FireEventType.Lightning,
@@ -1012,78 +901,6 @@ public sealed class ForestFireSimulation : IDisposable
         }
 
         return randomHelper.NextCell(grid.Cols, grid.Rows);
-    }
-
-    private async Task ShowLightning(Cell cell)
-    {
-        var frozenLightningBrush = ColorsData.LightningColor;
-        var lightningCell = CreateCellShape(cell, frozenLightningBrush);
-
-        Canvas.SetLeft(lightningCell, cell.X * simulationConfig.TreeConfig.Size);
-        Canvas.SetTop(lightningCell, cell.Y * simulationConfig.TreeConfig.Size);
-        ForestCanvas.Children.Add(lightningCell);
-
-        var boltEffect = CreateLightningBolt(cell);
-        ForestCanvas.Children.Add(boltEffect);
-
-        if (simulationConfig.VisualEffectsConfig.ShowBoltScreenFlash)
-        {
-            await FlashScreen();
-        }
-        await Task.Delay(millisecondsDelay: 80);
-
-        ForestCanvas.Children.Remove(lightningCell);
-        ForestCanvas.Children.Remove(boltEffect);
-    }
-
-    /// <summary>
-    /// Briefly flashes the screen by temporarily increasing the opacity of the screen overlay for ~1 Frame.
-    /// </summary>
-    /// <remarks>This method is intended to provide a quick visual feedback effect. It should be awaited to
-    /// ensure the flash completes before proceeding with subsequent UI updates.</remarks>
-    /// <returns>A task that represents the asynchronous flash operation.</returns>
-    private async Task FlashScreen()
-    {
-        screenFlash.Opacity = 0.6;
-        await Task.Delay(40);
-        screenFlash.Opacity = 0;
-    }
-
-    private Polyline CreateLightningBolt(Cell target)
-    {
-        var size = simulationConfig.TreeConfig.Size;
-
-        var startX = target.X * size + size / 2f;
-        var startY = 0f;
-
-        var endX = startX;
-        var endY = target.Y * size + size / 2f;
-
-        var points = new PointCollection
-        {
-            new(startX, startY)
-        };
-
-        const byte boltSegments = 8;
-        for (var i = 1; i < boltSegments; i++)
-        {
-            var t = i / (float)boltSegments;
-            var x = startX + randomHelper.NextDouble(-15, 15);
-            var y = startY + (endY - startY) * t;
-            points.Add(new(x, y));
-        }
-
-        points.Add(new(endX, endY));
-
-        var frozenLightningBrush = ColorsData.LightningColor;
-
-        return new Polyline
-        {
-            Points = points,
-            Stroke = frozenLightningBrush,
-            StrokeThickness = 2.5,
-            Opacity = 1
-        };
     }
 
     private int CalculateMaxTreesPossible()
@@ -1110,13 +927,8 @@ public sealed class ForestFireSimulation : IDisposable
 
         StopOrPauseSimulation();
 
-        foreach (var fire in fireAnimations.Values)
-        {
-            fire.Stop();
-        }
-        fireAnimations.Clear();
+        renderer.Dispose();
 
-        treeElements.Clear();
         activeTrees.Clear();
         burningTrees.Clear();
         growableCells.Clear();
