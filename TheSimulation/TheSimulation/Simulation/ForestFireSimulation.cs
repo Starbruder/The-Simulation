@@ -48,6 +48,10 @@ public sealed class ForestFireSimulation : IDisposable
 
     private TerrainCell[,] terrainGrid;
 
+    // Cache-Collections um GC Pressure zu eliminieren
+    private readonly List<Cell> _cacheToIgnite = [];
+    private readonly List<Cell> _cacheToBurnDown = [];
+
     public ForestFireSimulation(SimulationConfig simulationConfig, RandomHelper random, Canvas ForestCanvas, SimulationSpeed simulationSpeed = SimulationSpeed.Normal)
     {
         // To get rid of the warning CS8618
@@ -622,8 +626,8 @@ public sealed class ForestFireSimulation : IDisposable
             return;
         }
 
-        var toIgnite = new HashSet<Cell>();
-        var toBurnDown = new List<Cell>();
+        _cacheToIgnite.Clear();
+        _cacheToBurnDown.Clear();
 
         Span<Cell> neighbors = stackalloc Cell[8];
 
@@ -638,7 +642,7 @@ public sealed class ForestFireSimulation : IDisposable
                 if (randomHelper.NextDouble() <
                     simulationConfig.FireConfig.SpreadChancePercent / 100)
                 {
-                    TryIgniteNearbyCell(burningCell, toIgnite);
+                    TryIgniteNearbyCell(burningCell, _cacheToIgnite);
                 }
 
                 if (!grid.IsTree(neighbor))
@@ -649,15 +653,15 @@ public sealed class ForestFireSimulation : IDisposable
                 var chance = CalculateFireSpreadChance(burningCell, neighbor);
                 if (randomHelper.NextDouble() < chance)
                 {
-                    toIgnite.Add(neighbor);
+                    _cacheToIgnite.Add(neighbor);
                 }
             }
 
-            toBurnDown.Add(burningCell);
+            _cacheToBurnDown.Add(burningCell);
         }
 
-        SpreadFire(toIgnite);
-        BurnDownTrees(toBurnDown);
+        SpreadFire(_cacheToIgnite);
+        BurnDownTrees(_cacheToBurnDown);
 
         isFireActiveThenPause = burningTrees.Count > 0;
     }
@@ -702,7 +706,7 @@ public sealed class ForestFireSimulation : IDisposable
     /// </param>
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    private void TryIgniteNearbyCell(Cell source, HashSet<Cell> toIgnite)
+    private void TryIgniteNearbyCell(Cell source, List<Cell> toIgnite)
     {
         const int MinSpotFireRadius = 2;
         const int MaxSpotFireRadius = 4;
@@ -781,7 +785,7 @@ public sealed class ForestFireSimulation : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void SpreadFire(HashSet<Cell> toIgnite)
+    private void SpreadFire(List<Cell> toIgnite)
     {
         foreach (var burningCell in toIgnite)
         {
