@@ -76,6 +76,6 @@ public sealed partial class GraphicsWindow : Window
 
         // Trees zurücksetzen
         BurnedTreeCheckBox.IsChecked = false;
-        TreeShapeComboBox.SelectedIndex = 0;
+        TreeShapeComboBox.SelectedItem = SimulationDefaultsData.DefaultTreeShapeType;
     }
 }
