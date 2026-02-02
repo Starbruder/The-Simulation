@@ -41,62 +41,70 @@ public sealed partial class MainWindow : Window
 
     private SimulationConfig GetSimulationConfigFromUI()
     {
+        return new
+        (
+            GetTreeConfig(),
+            GetFireConfig(),
+            GetEnvironmentConfigFromUI(),
+            GetPrefillConfigFromUI(),
+            GetVisualEffectsConfigFromUI(),
+            GetTerrainConfig()
+        );
+    }
+
+    private TreeConfig GetTreeConfig()
+    {
         var regrowForest = GrowForestCheckBox.IsChecked ?? true;
 
-        var treeConfig = new TreeConfig
+        return new
         (
             MaxCount: 50_000,
             ForestDensity: 0.7f,
             Size: 9,
-            AllowRegrowForest: regrowForest
+            regrowForest
         );
+    }
 
+    private FireConfig GetFireConfig()
+    {
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
         var fireChance = FireSpreadChanceSlider.Value; // (Additional fire spread chance)
         var lightningStrikeChance = LightningChanceSlider.Value;
         var enableLightningStrikes =
             graphicsSettings.ShowLightning && lightningStrikeChance != 0;
 
-        var fireConfig = new FireConfig
+        return new
         (
             fireChance,
             pauseDuringFire,
             lightningStrikeChance,
             enableLightningStrikes
         );
+    }
 
-        var environmentConfig = GetEnvironmentConfigFromUI();
-
-        var prefillConfig = GetPrefillConfigFromUI();
-
-        var effectsConfig = new VisualEffectsConfig
+    private VisualEffectsConfig GetVisualEffectsConfigFromUI()
+    {
+        return new
         (
             graphicsSettings.ShowLightning,
             graphicsSettings.ShowBoltFlashes,
             graphicsSettings.ShowFireParticles,
             graphicsSettings.ShowSmokeParticles,
             graphicsSettings.ShowFlamesOnTrees,
-            graphicsSettings.ShowBurnedDownTrees, // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen
+            graphicsSettings.ShowBurnedDownTrees, // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen oder auch andere Farben nutzen als standard grau
             graphicsSettings.TreeShape
         );
+    }
 
+    private TerrainConfig GetTerrainConfig()
+    {
         var useTerrainGeneration = TerrainGenerationCheckBox.IsChecked ?? true;
-
-        var terrainConfig = new TerrainConfig
-        (
-            UseTerrainGeneration: useTerrainGeneration,
-            EnableWaterBodies: false,
-            EnableRocks: false
-        );
 
         return new
         (
-            treeConfig,
-            fireConfig,
-            environmentConfig,
-            prefillConfig,
-            effectsConfig,
-            terrainConfig
+            useTerrainGeneration,
+            EnableWaterBodies: false,
+            EnableRocks: false
         );
     }
 
