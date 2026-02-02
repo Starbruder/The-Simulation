@@ -476,7 +476,8 @@ public sealed class ForestFireSimulation : IDisposable
 
     private List<Cell> GenerateCells()
     {
-        var allCells = new List<Cell>(grid.Cols * grid.Rows);
+        var capacity = grid.Cols * grid.Rows * simulationConfig.PrefillConfig.Density;
+        var allCells = new List<Cell>((int)capacity);
 
         for (var x = 0; x < grid.Cols; x++)
         {
