@@ -6,9 +6,13 @@ using System.Windows.Shapes;
 namespace TheSimulation;
 
 /// <summary>
-/// Visualizes wind direction and strength on a canvas using arrows.
-/// Also includes a small compass with cardinal direction labels (N, E, S, W).
+/// Visualisiert die Windrichtung und -stärke auf einem Canvas mithilfe von dynamischen Pfeilen.
+/// Enthält zusätzlich ein Kompass-Overlay mit Beschriftungen der Haupthimmelsrichtungen (N, O, S, W).
 /// </summary>
+/// <remarks>
+/// Die Klasse berechnet die Positionen in der oberen rechten Ecke des Canvas und reagiert 
+/// automatisch auf Größenänderungen des Containers.
+/// </remarks>
 public sealed class WindCompassVisualizer
 {
     private readonly Canvas canvas;
@@ -19,7 +23,7 @@ public sealed class WindCompassVisualizer
     private readonly WindArrow oppositeArrow;
 
     /// <summary>
-    /// The Z-index used to ensure the overlay appears above other canvas elements.
+    /// Der Z-Index für das Wind-Overlay, um sicherzustellen, dass es über der Simulation erscheint.
     /// </summary>
     public const int OverlayZIndex = 1_000;
 
@@ -37,11 +41,11 @@ public sealed class WindCompassVisualizer
     private const double LabelInset = 10;
 
     /// <summary>
-    /// Creates a new WindCompassVisualizer instance on the specified canvas.
+    /// Initialisiert eine neue Instanz des <see cref="WindCompassVisualizer"/>.
     /// </summary>
-    /// <param name="canvas">The Canvas on which wind arrows and compass are rendered.</param>
-    /// <param name="config">Wind configuration determining direction settings.</param>
-    /// <param name="windHelper">Helper providing current wind strength.</param>
+    /// <param name="canvas">Das Ziel-Canvas für die Darstellung.</param>
+    /// <param name="config">Die Wind-Konfiguration (Zufall vs. Fixiert).</param>
+    /// <param name="windHelper">Hilfsklasse für die aktuelle Windstärke.</param>
     public WindCompassVisualizer(Canvas canvas, WindConfig config, WindHelper windHelper)
     {
         this.canvas = canvas;
@@ -59,6 +63,7 @@ public sealed class WindCompassVisualizer
         AddToCanvas(oppositeArrow.Line);
         AddToCanvas(oppositeArrow.Head);
 
+        // Sicherstellen, dass der Kompass erst gezeichnet wird, wenn das Canvas geladen ist
         if (canvas.IsLoaded)
         {
             CreateCompass();
@@ -72,9 +77,9 @@ public sealed class WindCompassVisualizer
     }
 
     /// <summary>
-    /// Updates the wind vector and redraws the arrows.
+    /// Aktualisiert den internen Windvektor und löst eine Neuzeichnung der Pfeile aus.
     /// </summary>
-    /// <param name="newVector">The new wind vector representing direction and magnitude.</param>
+    /// <param name="newVector">Der neue Windvektor (Richtung und Magnitude).</param>
     public void Update(Vector newVector)
     {
         currentWindVector = newVector;
@@ -82,21 +87,17 @@ public sealed class WindCompassVisualizer
     }
 
     /// <summary>
-    /// Draws the main and opposite wind arrows on the canvas based on the current wind vector.
+    /// Berechnet die Pfeillängen basierend auf der Windstärke und zeichnet die Vektorpfeile neu.
     /// </summary>
     public void Draw()
     {
         var (centerX, centerY) = GetCompassCenter();
         var windVector = GetWindVector();
 
-        if (windVector.Length == 0)
-        {
-            return;
-        }
+        if (windVector.Length == 0) return;
 
         const int MinArrowLength = 10;
-        var length =
-            MinArrowLength + BaseFactor * windHelper.CurrentWindStrength;
+        var length = MinArrowLength + BaseFactor * windHelper.CurrentWindStrength;
 
         windVector.Normalize();
 
@@ -105,8 +106,9 @@ public sealed class WindCompassVisualizer
     }
 
     /// <summary>
-    /// Gets the wind vector based on configuration (random or fixed direction).
+    /// Ermittelt den effektiven Windvektor unter Berücksichtigung der Konfiguration.
     /// </summary>
+    /// <returns>Ein Vektor, der die aktuelle Windrichtung beschreibt.</returns>
     private Vector GetWindVector()
     {
         return config.RandomDirection
@@ -115,7 +117,7 @@ public sealed class WindCompassVisualizer
     }
 
     /// <summary>
-    /// Returns the coordinates of the center point for the compass on the canvas.
+    /// Berechnet den dynamischen Mittelpunkt des Kompasses relativ zur Canvas-Größe.
     /// </summary>
     private (double x, double y) GetCompassCenter()
     {
@@ -125,7 +127,7 @@ public sealed class WindCompassVisualizer
     }
 
     /// <summary>
-    /// Adds a UIElement to the canvas if it is not already present and sets its Z-index.
+    /// Fügt ein Element zum Canvas hinzu und erzwingt die Platzierung auf der Overlay-Ebene.
     /// </summary>
     private void AddToCanvas(UIElement element)
     {
@@ -138,7 +140,7 @@ public sealed class WindCompassVisualizer
     }
 
     /// <summary>
-    /// Creates or updates the compass circle and cardinal direction labels (N, E, S, W).
+    /// Erzeugt die grafischen Basiselemente des Kompasses (Kreis und Labels).
     /// </summary>
     private void CreateCompass()
     {
@@ -157,10 +159,10 @@ public sealed class WindCompassVisualizer
 
         var directions = new (string Text, double Angle)[]
         {
-            ("N", 270),
-            ("E", 0),
-            ("S", 90),
-            ("W", 180)
+            ("N", 270), // Norden oben
+            ("O", 0),   // Osten rechts (0 Grad in WPF/Trigonometrie)
+            ("S", 90),  // Süden unten
+            ("W", 180)  // Westen links
         };
 
         for (var i = 0; i < directions.Length; i++)
@@ -177,29 +179,39 @@ public sealed class WindCompassVisualizer
         AddCompassBackground(centerX, centerY);
     }
 
+    /// <summary>
+    /// Erzeugt oder aktualisiert den abgedunkelten Hintergrund des Kompasses für bessere Lesbarkeit.
+    /// </summary>
     private void AddCompassBackground(double centerX, double centerY)
     {
-        var backgroundColor = compassBackgroundColor;
-        backgroundColor.Freeze(); // Macht den Brush schreibgeschützt und performant
-
-        compassBackground ??= new Ellipse
+        if (compassBackground == null)
         {
-            Fill = backgroundColor,
-            IsHitTestVisible = false
-        };
+            compassBackground = new Ellipse
+            {
+                Fill = compassBackgroundColor,
+                IsHitTestVisible = false
+            };
+            AddToCanvas(compassBackground);
+        }
 
         compassBackground.Width = compassBackground.Height = CompassRadius * 2;
         Canvas.SetLeft(compassBackground, centerX - CompassRadius);
         Canvas.SetTop(compassBackground, centerY - CompassRadius);
-        AddToCanvas(compassBackground);
 
-        // etwas unterhalb der anderen Elemente
+        // Hintergrund soll knapp hinter den Labels und Pfeilen liegen
         Panel.SetZIndex(compassBackground, OverlayZIndex - 2);
     }
 
     /// <summary>
-    /// Creates or updates a TextBlock for a compass label.
+    /// Hilfsmethode zur trigonometrischen Positionierung der Himmelsrichtungs-Labels.
     /// </summary>
+    /// <param name="existing">Ein bereits existierender TextBlock oder null.</param>
+    /// <param name="text">Der anzuzeigende Text (N, O, S, W).</param>
+    /// <param name="centerX">X-Koordinate des Zentrums.</param>
+    /// <param name="centerY">Y-Koordinate des Zentrums.</param>
+    /// <param name="radius">Radius des Kompasses.</param>
+    /// <param name="angleDegrees">Winkel der Position in Grad.</param>
+    /// <returns>Ein konfigurierter TextBlock.</returns>
     private TextBlock CreateOrUpdateText(TextBlock existing, string text, double centerX, double centerY, double radius, double angleDegrees)
     {
         if (existing == null)
@@ -219,14 +231,16 @@ public sealed class WindCompassVisualizer
             existing.Text = text;
         }
 
+        // Trigonometrische Berechnung: Polar zu Kartesisch
         var angleRad = angleDegrees * Math.PI / 180;
         var adjustedRadius = radius - LabelInset;
         var x = centerX + adjustedRadius * Math.Cos(angleRad);
         var y = centerY + adjustedRadius * Math.Sin(angleRad);
 
-        existing.Measure(new(double.PositiveInfinity, double.PositiveInfinity));
+        existing.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         var size = existing.DesiredSize;
 
+        // Zentrierung des Textes auf dem berechneten Punkt
         Canvas.SetLeft(existing, x - size.Width / 2);
         Canvas.SetTop(existing, y - size.Height / 2);
 
