@@ -345,8 +345,10 @@ It only adds long-range spot fires.
 				<StackPanel>
 					<StackPanel Orientation="Horizontal">
 						<CheckBox x:Name="GrowForestCheckBox" 
-                              Content="Grow forest" 
-                              IsChecked="True" Margin="5,0,0,0"/>
+							Content="Grow forest" 
+							IsChecked="True" Margin="5,0,0,0"
+							Checked="GrowForestCheckBox_Changed" 
+							Unchecked="GrowForestCheckBox_Changed"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
                             Margin="5,0,0,0" VerticalAlignment="Center"
 							ToolTip="{Binding Source={StaticResource GrowForestTooltip}}"/>

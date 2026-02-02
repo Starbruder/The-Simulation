@@ -198,11 +198,25 @@ public sealed partial class MainWindow : Window
         PauseFireCheckBox.IsEnabled = false;
     }
 
-    private void GrowForestCheckBox_Checked(object s, RoutedEventArgs e)
+    /// <summary>
+    /// Steuert die Verfügbarkeit der Feuer-Pause-Option basierend auf dem Waldwachstum.
+    /// </summary>
+    private void GrowForestCheckBox_Changed(object sender, RoutedEventArgs e)
     {
-        if (PauseFireCheckBox is not null)
+        if (PauseFireCheckBox is null)
         {
-            PauseFireCheckBox.IsEnabled = true;
+            return;
+        }
+
+        var isForestRegrowEnabled = GrowForestCheckBox.IsChecked ?? true;
+
+        // Deaktiviere die Pause-Option, wenn kein Wald nachwachsen kann
+        PauseFireCheckBox.IsEnabled = isForestRegrowEnabled;
+
+        // Wenn Waldwachstum aus ist, setzen wir die Pause automatisch auf "An"
+        if (!isForestRegrowEnabled)
+        {
+            PauseFireCheckBox.IsChecked = true;
         }
     }
 
@@ -238,18 +252,5 @@ public sealed partial class MainWindow : Window
 
         WindStrengthText.Text =
             $"Wind Strengh: {windStrengthReadablePercent:F0}% ({beaufortScale} Bft)";
-    }
-
-    /// <summary>
-    /// Prüft, dass mindestens eine Option aktiviert bleibt.
-    /// Wird ausgelöst, wenn GrowForestCheckBox geändert wird.
-    /// </summary>
-    private void GrowForestCheckBox_Changed(object s, RoutedEventArgs e)
-    {
-        // Optional: PauseFireCheckBox nur aktiv, wenn GrowForest an ist
-        if (PauseFireCheckBox is not null)
-        {
-            PauseFireCheckBox.IsEnabled = GrowForestCheckBox.IsChecked ?? true;
-        }
     }
 }
