@@ -4,13 +4,24 @@ using System.Windows.Input;
 namespace TheSimulation;
 
 /// <summary>
-/// Interaction logic for MainWindow.xaml
+/// Stellt das Hauptfenster der Anwendung dar, welches als Konfigurationsmenü dient.
+/// Ermöglicht die Einstellung sämtlicher Simulationsparameter vor dem Start.
 /// </summary>
 public sealed partial class MainWindow : Window
 {
+    /// <summary>
+    /// Die aktuell konfigurierten Grafikeinstellungen.
+    /// </summary>
     private readonly GraphicsSettings graphicsSettings = new();
+
+    /// <summary>
+    /// Hilfsklasse für die Erzeugung von Zufallswerten innerhalb der Benutzeroberfläche.
+    /// </summary>
     private readonly RandomHelper random = new();
 
+    /// <summary>
+    /// Initialisiert eine neue Instanz der <see cref="MainWindow"/> Klasse.
+    /// </summary>
     public MainWindow()
     {
         InitializeComponent();
@@ -18,6 +29,9 @@ public sealed partial class MainWindow : Window
         InitailizeWindDirectionDropdown();
     }
 
+    /// <summary>
+    /// Verarbeitet Tastatureingaben auf Fensterebene, wie z.B. das Zurücksetzen der Einstellungen.
+    /// </summary>
     private void Window_KeyDown(object s, KeyEventArgs e)
     {
         if (e.Key == Key.R)
@@ -27,18 +41,28 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// Initialisiert die Auswahlbox für die Windrichtung mit den Werten des <see cref="WindDirection"/> Enums.
+    /// </summary>
     private void InitailizeWindDirectionDropdown()
     {
         WindDirectionBox.ItemsSource = Enum.GetValues<WindDirection>();
         WindDirectionBox.SelectedItem = SimulationDefaultsData.DefaultWindDirection;
     }
 
+    /// <summary>
+    /// Startet eine neue Simulationsinstanz in einem separaten Fenster basierend auf der aktuellen UI-Konfiguration.
+    /// </summary>
     private void StartSimulation_Click(object s, RoutedEventArgs e)
     {
         var config = GetSimulationConfigFromUI();
         new SimulationWindow(config, random).Show();
     }
 
+    /// <summary>
+    /// Sammelt alle Parameter aus der Benutzeroberfläche und erstellt daraus ein zentrales Konfigurationsobjekt.
+    /// </summary>
+    /// <returns>Ein vollständig initialisiertes <see cref="SimulationConfig"/> Objekt.</returns>
     private SimulationConfig GetSimulationConfigFromUI()
     {
         return new
@@ -52,6 +76,9 @@ public sealed partial class MainWindow : Window
         );
     }
 
+    /// <summary>
+    /// Erstellt die Konfiguration für die Bäume im Wald.
+    /// </summary>
     private TreeConfig CreateTreeConfig()
     {
         var regrowForest = GrowForestCheckBox.IsChecked ?? true;
@@ -65,10 +92,13 @@ public sealed partial class MainWindow : Window
         );
     }
 
+    /// <summary>
+    /// Erstellt die Konfiguration für das Brandverhalten und Blitzschläge.
+    /// </summary>
     private FireConfig CreateFireConfig()
     {
         var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
-        var fireChance = FireSpreadChanceSlider.Value; // (Additional fire spread chance)
+        var fireChance = FireSpreadChanceSlider.Value;
         var lightningStrikeChance = LightningChanceSlider.Value;
         var enableLightningStrikes =
             graphicsSettings.ShowLightning && lightningStrikeChance != 0;
@@ -82,6 +112,9 @@ public sealed partial class MainWindow : Window
         );
     }
 
+    /// <summary>
+    /// Erstellt die Konfiguration für visuelle Effekte basierend auf den Grafik-Einstellungen.
+    /// </summary>
     private VisualEffectsConfig CreateVisualEffectsConfigFromUI()
     {
         return new
@@ -91,11 +124,14 @@ public sealed partial class MainWindow : Window
             graphicsSettings.ShowFireParticles,
             graphicsSettings.ShowSmokeParticles,
             graphicsSettings.ShowFlamesOnTrees,
-            graphicsSettings.ShowBurnedDownTrees, // TODO : Nach der Zeit verbrannter Baum wieder verschwinden lassen oder auch andere Farben nutzen als standard grau
+            graphicsSettings.ShowBurnedDownTrees,
             graphicsSettings.TreeShape
         );
     }
 
+    /// <summary>
+    /// Erstellt die Konfiguration für die Geländegenerierung.
+    /// </summary>
     private TerrainConfig CreateTerrainConfig()
     {
         var useTerrainGeneration = TerrainGenerationCheckBox.IsChecked ?? true;
@@ -108,6 +144,9 @@ public sealed partial class MainWindow : Window
         );
     }
 
+    /// <summary>
+    /// Sammelt atmosphärische Umgebungsdaten wie Luftfeuchtigkeit und Temperatur.
+    /// </summary>
     private EnvironmentConfig GetEnvironmentConfigFromUI()
     {
         var airHumidityPercentage = AirHumiditySlider.Value / 100;
@@ -115,9 +154,7 @@ public sealed partial class MainWindow : Window
 
         var atmosphereConfig = new AtmosphereConfig
         (
-            // Air Humidity Percentage: 0.3 = trocken, 0.7 = feucht ( % )
             (float)airHumidityPercentage,
-            // Air Temperature Celsius ( °C )
             (float)airTemperatureCelsius
         );
 
@@ -130,6 +167,9 @@ public sealed partial class MainWindow : Window
         );
     }
 
+    /// <summary>
+    /// Sammelt die Winddaten unter Berücksichtigung von Zufallsoptionen.
+    /// </summary>
     private WindConfig GetWindConfigFromUI()
     {
         var randomWindDirection = RandomWindDirectionCheckBox.IsChecked ?? false;
@@ -146,17 +186,23 @@ public sealed partial class MainWindow : Window
         );
     }
 
+    /// <summary>
+    /// Erstellt die Konfiguration für die initiale Waldbefüllung.
+    /// </summary>
     private PrefillConfig GetPrefillConfigFromUI()
     {
-        var prefillDensity = PrefillDensitySlider.Value / 100; // 0..1
+        var prefillDensity = PrefillDensitySlider.Value / 100;
 
         return new
         (
             prefillDensity >= 0,
-            prefillDensity // Z.b: 0.5 = 50 %
+            prefillDensity
         );
     }
 
+    /// <summary>
+    /// Ermittelt die Windrichtung, entweder fest aus der UI oder zufällig bestimmt.
+    /// </summary>
     private WindDirection GetWindDirection()
     {
         if (RandomWindDirectionCheckBox.IsChecked == true)
@@ -167,6 +213,9 @@ public sealed partial class MainWindow : Window
         return GetParsedWindDirectionFromUI();
     }
 
+    /// <summary>
+    /// Extrahiert die gewählte Windrichtung aus der Auswahlbox.
+    /// </summary>
     private WindDirection GetParsedWindDirectionFromUI()
     {
         return WindDirectionBox.SelectedItem is WindDirection direction
@@ -174,6 +223,9 @@ public sealed partial class MainWindow : Window
             : SimulationDefaultsData.DefaultWindDirection;
     }
 
+    /// <summary>
+    /// Erzeugt eine zufällige Windrichtung aus allen verfügbaren Enum-Werten.
+    /// </summary>
     private WindDirection GetRandomWindDirection()
     {
         var values = Enum.GetValues<WindDirection>();
@@ -181,6 +233,9 @@ public sealed partial class MainWindow : Window
         return values[randomIndex];
     }
 
+    /// <summary>
+    /// Reagiert auf Änderungen an der Checkbox für zufällige Windrichtung und aktiviert/deaktiviert die manuelle Auswahl.
+    /// </summary>
     private void RandomWindDirectionCheckBox_Changed(object s, RoutedEventArgs e)
     {
         var isRandom = RandomWindDirectionCheckBox.IsChecked ?? false;
@@ -194,12 +249,18 @@ public sealed partial class MainWindow : Window
         WindDirectionBox.SelectedItem = GetRandomWindDirection();
     }
 
+    /// <summary>
+    /// Öffnet das Fenster für detaillierte Grafikeinstellungen als modalen Dialog.
+    /// </summary>
     private void OpenGraphicsSettingsWindow(object s, RoutedEventArgs e)
     {
         var graphicsSettingsWindow = new GraphicsWindow(graphicsSettings);
         graphicsSettingsWindow.ShowDialog();
     }
 
+    /// <summary>
+    /// Setzt die UI-Elemente in einen konsistenten Zustand, wenn das Nachwachsen deaktiviert wird.
+    /// </summary>
     private void GrowForestCheckBox_Unchecked(object s, RoutedEventArgs e)
     {
         PauseFireCheckBox.IsChecked = true;
@@ -208,6 +269,7 @@ public sealed partial class MainWindow : Window
 
     /// <summary>
     /// Steuert die Verfügbarkeit der Feuer-Pause-Option basierend auf dem Waldwachstum.
+    /// Deaktiviert die Option, wenn kein Wald nachwachsen kann, um einen dauerhaften Stillstand zu vermeiden.
     /// </summary>
     private void GrowForestCheckBox_Changed(object sender, RoutedEventArgs e)
     {
@@ -228,6 +290,9 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// Setzt alle Schieberegler und Optionen im Menü auf die Standardwerte zurück.
+    /// </summary>
     private void ResetAllSettings_Click(object s, RoutedEventArgs e)
     {
         // Terrain zurücksetzen
@@ -251,10 +316,12 @@ public sealed partial class MainWindow : Window
         WindStrengthSlider.Value = 0.75;
     }
 
+    /// <summary>
+    /// Aktualisiert die Textanzeige für die Windstärke inklusive Umrechnung in die Beaufort-Skala bei Schieberegler-Änderung.
+    /// </summary>
     private void WindStrengthSlider_ValueChanged(object s, RoutedPropertyChangedEventArgs<double> e)
     {
         var windStrength = WindStrengthSlider.Value;
-
         var windStrengthReadablePercent = windStrength * 100;
         var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
 
