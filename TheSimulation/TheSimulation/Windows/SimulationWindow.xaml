@@ -59,25 +59,25 @@
 			<Button x:Name="SpeedSlowButton"
                 ToolTip="Sets the simulation speed to half the normal speed (0,5x)"
                 Content="0,5"
-                Click="SpeedSlow_Click"
+                Click="SpeedButton_Click" Tag="Slow"
                 Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedNormalButton"
                 ToolTip="Sets the simulation speed to normal speed (1x)"
                 Content="×1"
-                Click="SpeedNormal_Click"
+                Click="SpeedButton_Click" Tag="Normal"
                 Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedFastButton"
                 ToolTip="Sets the simulation speed to double the normal speed (2x)"
                 Content="×2"
-                Click="SpeedFast_Click"
+                Click="SpeedButton_Click" Tag="Fast"
                 Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<Button x:Name="SpeedUltraButton"
                 ToolTip="Sets the simulation speed to ultra speed (40x the normal speed)"
                 Content="×40"
-                Click="SpeedUltra_Click"
+                Click="SpeedButton_Click" Tag="Ultra"
                 Margin="2" Style="{StaticResource CustomButtonStyle}"/>
 
 			<!-- Abstand -->

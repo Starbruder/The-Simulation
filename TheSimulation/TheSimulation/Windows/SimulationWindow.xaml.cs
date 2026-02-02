@@ -29,16 +29,17 @@ public sealed partial class SimulationWindow : Window
 
     private void Window_KeyDown(object s, KeyEventArgs e)
     {
-        if (e.Key == Key.Space)
+        switch (e.Key)
         {
-            PauseResume_Click(s, e);
-            e.Handled = true;
-        }
+            case Key.Space:
+                PauseResume_Click(s, e);
+                e.Handled = true;
+                break;
 
-        if (e.Key == Key.Escape)
-        {
-            HideOverlaySmooth();
-            e.Handled = true;
+            case Key.Escape:
+                HideOverlaySmooth();
+                e.Handled = true;
+                break;
         }
     }
 
@@ -61,17 +62,16 @@ public sealed partial class SimulationWindow : Window
         PauseSimulation();
     }
 
-    private void SpeedSlow_Click(object s, RoutedEventArgs e)
-        => UpdateSpeedUI(SimulationSpeed.Slow);
-
-    private void SpeedNormal_Click(object s, RoutedEventArgs e)
-        => UpdateSpeedUI(SimulationSpeed.Normal);
-
-    private void SpeedFast_Click(object s, RoutedEventArgs e)
-        => UpdateSpeedUI(SimulationSpeed.Fast);
-
-    private void SpeedUltra_Click(object s, RoutedEventArgs e)
-        => UpdateSpeedUI(SimulationSpeed.Ultra);
+    private void SpeedButton_Click(object s, RoutedEventArgs e)
+    {
+        if (s is FrameworkElement element && element.Tag is string speedString)
+        {
+            if (Enum.TryParse<SimulationSpeed>(speedString, out var speed))
+            {
+                UpdateSpeedUI(speed);
+            }
+        }
+    }
 
     private void UpdateSpeedUI(SimulationSpeed speed)
     {
@@ -87,11 +87,11 @@ public sealed partial class SimulationWindow : Window
     private void ShowEvaluation_Click(object s, RoutedEventArgs e)
         => simulation.OpenEvalualtionWindow();
 
-    // Stop timers when window is closed protection against memory leaks
+    // Dispose simulation when window is closed protection against memory leaks
     protected override void OnClosed(EventArgs e)
     {
         base.OnClosed(e);
-        simulation.StopOrPauseSimulation();
+        simulation.Dispose();
     }
 
     private void CloseOverlay_Click(object s, RoutedEventArgs e)

@@ -9,7 +9,7 @@ namespace TheSimulation;
 /// <summary>
 /// Repräsentiert den gesamten Simulationsprozess einer Waldbrand-Simulation.
 /// </summary>
-public sealed class ForestFireSimulation
+public sealed class ForestFireSimulation : IDisposable
 {
     private Canvas ForestCanvas { get; }
 
@@ -1103,4 +1103,22 @@ public sealed class ForestFireSimulation
 
     private void UpdateWindUI()
         => SimulationLiveStats.WindStrength = windHelper.CurrentWindStrength;
+
+    public void Dispose()
+    {
+        ForestCanvas?.Children.Clear();
+
+        StopOrPauseSimulation();
+
+        foreach (var fire in fireAnimations.Values)
+        {
+            fire.Stop();
+        }
+        fireAnimations.Clear();
+
+        treeElements.Clear();
+        activeTrees.Clear();
+        burningTrees.Clear();
+        growableCells.Clear();
+    }
 }
