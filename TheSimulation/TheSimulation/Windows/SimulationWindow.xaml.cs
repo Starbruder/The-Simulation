@@ -164,4 +164,7 @@ public sealed partial class SimulationWindow : Window
     /// </summary>
     private void OverlayCanvas_MouseDown(object s, MouseButtonEventArgs e)
         => HideOverlaySmooth();
+
+    private void CloseOverlay_Click(object sender, RoutedEventArgs e)
+        => HideOverlaySmooth();
 }

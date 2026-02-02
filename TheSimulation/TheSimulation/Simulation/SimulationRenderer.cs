@@ -29,7 +29,7 @@ public sealed class SimulationRenderer
     private readonly Dictionary<Cell, FireAnimation> fireAnimations = [];
 
     /// <summary>Ein Rechteck, das den gesamten Canvas abdeckt, um Blitzeffekte (Screen Flash) zu simulieren.</summary>
-    private readonly Rectangle screenFlash;
+    private readonly Rectangle screenFlash = new();
 
     /// <summary>
     /// Initialisiert eine neue Instanz des Renderers und bereitet Hilfssysteme wie Partikel und Wind vor.
@@ -54,8 +54,25 @@ public sealed class SimulationRenderer
 
         if (simulationConfig.VisualEffectsConfig.ShowBoltScreenFlash)
         {
-            InitializeScreenFlash();
+            if (forestCanvas.IsLoaded)
+            {
+                InitializeScreenFlash();
+            }
+            else
+            {
+                forestCanvas.Loaded += OnCanvasLoaded;
+            }
         }
+    }
+
+    /// <summary>
+    /// Event-Handler, der aufgerufen wird, sobald der Canvas im UI-Tree geladen wurde.
+    /// </summary>
+    private void OnCanvasLoaded(object sender, RoutedEventArgs e)
+    {
+        // Event sofort wieder abhängen (Clean-up)
+        forestCanvas.Loaded -= OnCanvasLoaded;
+        InitializeScreenFlash();
     }
 
     /// <summary>
@@ -63,14 +80,22 @@ public sealed class SimulationRenderer
     /// </summary>
     private void InitializeScreenFlash()
     {
+        // Jetzt hat ActualWidth/Height garantiert den richtigen Wert (> 0)
         screenFlash.Width = forestCanvas.ActualWidth;
         screenFlash.Height = forestCanvas.ActualHeight;
         screenFlash.Fill = ColorsData.FlashColor;
         screenFlash.Opacity = 0;
 
-        // Sicherstellen, dass der Blitz immer über allen Bäumen und Partikeln liegt
+        // Verhindert, dass der Blitz Mausklicks abfängt
+        screenFlash.IsHitTestVisible = false;
+
         Panel.SetZIndex(screenFlash, int.MaxValue);
-        forestCanvas.Children.Add(screenFlash);
+
+        // Wir prüfen, ob es schon im Visual Tree ist, um doppeltes Hinzufügen zu vermeiden
+        if (!forestCanvas.Children.Contains(screenFlash))
+        {
+            forestCanvas.Children.Add(screenFlash);
+        }
     }
 
     /// <summary>
