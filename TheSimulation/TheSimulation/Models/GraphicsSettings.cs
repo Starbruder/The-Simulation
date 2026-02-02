@@ -1,12 +1,12 @@
 ﻿namespace TheSimulation;
 
 /// <summary>
-/// <see langword="new"/> <see langword="class"/> representing graphics settings for the simulation.
+/// <see langword="new"/> <see langword="record"/> <see langword="class"/> representing graphics settings for the simulation.
 /// Used to configure visual effects such as lightning, fire particles, and smoke particles.
 /// Interfaces with the <see cref="MainWindow"/> and <see cref="GraphicsWindow"/> to visually apply user preferences.
 /// By setting the settings here, the default settings are set for GraphicsWindow when it is first created.
 /// </summary>
-public sealed class GraphicsSettings
+public sealed record GraphicsSettings
 {
     public bool ShowLightning { get; set; } = true;
     public bool ShowBoltFlashes { get; set; } = false;
@@ -18,23 +18,30 @@ public sealed class GraphicsSettings
 
     public GraphicsSettings() { }
 
-    public GraphicsSettings
-    (
-        bool showLightning,
-        bool showBoltFlashes,
-        bool showFireParticles,
-        bool showSmokeParticles,
-        bool showFlamesOnTrees,
-        bool showBurnedDownTrees,
-        TreeShapeType treeShape
-    )
+    /// <summary>
+    /// Resets all values to their initial defaults.
+    /// Useful for the "Reset" button in the UI.
+    /// </summary>
+    public void ResetToDefaults()
     {
-        ShowLightning = showLightning;
-        ShowBoltFlashes = showBoltFlashes;
-        ShowFireParticles = showFireParticles;
-        ShowSmokeParticles = showSmokeParticles;
-        ShowFlamesOnTrees = showFlamesOnTrees;
-        ShowBurnedDownTrees = showBurnedDownTrees;
-        TreeShape = treeShape;
+        // Weather effcts zurücksetzen
+        ShowLightning = true;
+        ShowBoltFlashes = false;
+
+        // Fire zurücksetzen
+        ShowFireParticles = true;
+
+        // Particle effects zurücksetzen
+        ShowSmokeParticles = true;
+        ShowFlamesOnTrees = true;
+
+        // Trees zurücksetzen
+        ShowBurnedDownTrees = false;
+        TreeShape = SimulationDefaultsData.DefaultTreeShapeType;
     }
+
+    /// <summary>
+    /// Creates a deep copy of the current settings.
+    /// </summary>
+    public GraphicsSettings Duplicate() => this with { };
 }
