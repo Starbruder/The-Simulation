@@ -17,18 +17,15 @@ public sealed partial class GraphicsWindow : Window
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
 
+        TreeShapeComboBox.ItemsSource = Enum.GetValues<TreeShapeType>();
+
         LightningCheckBox.IsChecked = settings.ShowLightning;
         BoltFlashCheckBox.IsChecked = settings.ShowBoltFlashes;
         FireSparksCheckBox.IsChecked = settings.ShowFireParticles;
         SmokeCheckBox.IsChecked = settings.ShowSmokeParticles;
         FlameAnimationsCheckBox.IsChecked = settings.ShowFlamesOnTrees;
         BurnedTreeCheckBox.IsChecked = settings.ShowBurnedDownTrees;
-        TreeShapeComboBox.SelectedIndex = settings.TreeShape switch
-        {
-            TreeShapeType.Ellipse => 0,
-            TreeShapeType.Rectangle => 1,
-            _ => 0
-        };
+        TreeShapeComboBox.SelectedItem = settings.TreeShape;
     }
 
     private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -48,7 +45,7 @@ public sealed partial class GraphicsWindow : Window
         var smokeEnabled = SmokeCheckBox.IsChecked ?? true;
         var flameAnimationsEnabled = FlameAnimationsCheckBox.IsChecked ?? true;
         var showBurnedDownTrees = BurnedTreeCheckBox.IsChecked ?? false;
-        var selectedTreeShapeIndex = TreeShapeComboBox.SelectedIndex;
+        var selectedTreeShape = TreeShapeComboBox.SelectedItem;
 
         settings.ShowLightning = lightningEnabled;
         settings.ShowBoltFlashes = boltFlashesEnabled;
@@ -56,12 +53,10 @@ public sealed partial class GraphicsWindow : Window
         settings.ShowSmokeParticles = smokeEnabled;
         settings.ShowFlamesOnTrees = flameAnimationsEnabled;
         settings.ShowBurnedDownTrees = showBurnedDownTrees;
-        settings.TreeShape = selectedTreeShapeIndex switch
+        if (selectedTreeShape is TreeShapeType selectedShape)
         {
-            0 => TreeShapeType.Ellipse,
-            1 => TreeShapeType.Rectangle,
-            _ => SimulationDefaultsData.DefaultTreeShapeType
-        };
+            settings.TreeShape = selectedShape;
+        }
 
         Close();
     }
