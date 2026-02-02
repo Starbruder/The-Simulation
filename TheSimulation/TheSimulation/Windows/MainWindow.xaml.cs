@@ -18,11 +18,11 @@ public sealed partial class MainWindow : Window
         InitailizeWindDirectionDropdown();
     }
 
-    private void Window_KeyDown(object sender, KeyEventArgs e)
+    private void Window_KeyDown(object s, KeyEventArgs e)
     {
         if (e.Key == Key.R)
         {
-            ResetAllSettings_Click(sender, e);
+            ResetAllSettings_Click(s, e);
             e.Handled = true;
         }
     }
@@ -33,7 +33,7 @@ public sealed partial class MainWindow : Window
         WindDirectionBox.SelectedItem = SimulationDefaultsData.DefaultWindDirection;
     }
 
-    private void StartSimulation_Click(object sender, RoutedEventArgs e)
+    private void StartSimulation_Click(object s, RoutedEventArgs e)
     {
         var config = GetSimulationConfigFromUI();
         new SimulationWindow(config, random).Show();
@@ -173,7 +173,7 @@ public sealed partial class MainWindow : Window
         return values[randomIndex];
     }
 
-    private void RandomWindDirectionCheckBox_Changed(object sender, RoutedEventArgs e)
+    private void RandomWindDirectionCheckBox_Changed(object s, RoutedEventArgs e)
     {
         var isRandom = RandomWindDirectionCheckBox.IsChecked ?? false;
         WindDirectionBox.IsEnabled = !isRandom;
@@ -186,19 +186,19 @@ public sealed partial class MainWindow : Window
         WindDirectionBox.SelectedItem = GetRandomWindDirection();
     }
 
-    private void OpenGraphicsSettingsWindow(object sender, RoutedEventArgs e)
+    private void OpenGraphicsSettingsWindow(object s, RoutedEventArgs e)
     {
         var graphicsSettingsWindow = new GraphicsWindow(graphicsSettings);
         graphicsSettingsWindow.ShowDialog();
     }
 
-    private void GrowForestCheckBox_Unchecked(object sender, RoutedEventArgs e)
+    private void GrowForestCheckBox_Unchecked(object s, RoutedEventArgs e)
     {
         PauseFireCheckBox.IsChecked = true;
         PauseFireCheckBox.IsEnabled = false;
     }
 
-    private void GrowForestCheckBox_Checked(object sender, RoutedEventArgs e)
+    private void GrowForestCheckBox_Checked(object s, RoutedEventArgs e)
     {
         if (PauseFireCheckBox is not null)
         {
@@ -206,9 +206,7 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void ResetAllSettings_Click(object sender, RoutedEventArgs e) => SetDefaultSettings();
-
-    private void SetDefaultSettings()
+    private void ResetAllSettings_Click(object s, RoutedEventArgs e)
     {
         // Terrain zurücksetzen
         TerrainGenerationCheckBox.IsChecked = true;
@@ -231,7 +229,7 @@ public sealed partial class MainWindow : Window
         WindStrengthSlider.Value = 0.75;
     }
 
-    private void WindStrengthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    private void WindStrengthSlider_ValueChanged(object s, RoutedPropertyChangedEventArgs<double> e)
     {
         var windStrength = WindStrengthSlider.Value;
 
@@ -246,7 +244,7 @@ public sealed partial class MainWindow : Window
     /// Prüft, dass mindestens eine Option aktiviert bleibt.
     /// Wird ausgelöst, wenn GrowForestCheckBox geändert wird.
     /// </summary>
-    private void GrowForestCheckBox_Changed(object sender, RoutedEventArgs e)
+    private void GrowForestCheckBox_Changed(object s, RoutedEventArgs e)
     {
         // Optional: PauseFireCheckBox nur aktiv, wenn GrowForest an ist
         if (PauseFireCheckBox is not null)
