@@ -444,24 +444,89 @@ public sealed class ForestFireSimulation : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     private async Task LoadTreesInBatches(int maxTrees, List<Cell> allCells, int treesBatchSize)
     {
-        var loaded = 0;
+        var loadedCount = 0;
+        var size = simulationConfig.TreeConfig.Size;
+        var shapeType = simulationConfig.VisualEffectsConfig.TreeShape;
 
-        while (loaded < maxTrees)
+        // Task-Tracking für die Pipeline
+        Task currentDrawTask = Task.CompletedTask;
+
+        while (loadedCount < maxTrees)
         {
-            var count = Math.Min(treesBatchSize, maxTrees - loaded);
-            var batch = allCells.GetRange(loaded, count);
-            loaded += count;
+            // Wir warten, bis der VORHERIGE Zeichenvorgang fertig ist, 
+            // bevor wir den nächsten Batch zum UI-Thread schicken.
+            // Die Berechnung des aktuellen Batches passiert aber parallel dazu.
+            await currentDrawTask;
 
-            // UI-Thread zum Hinzufügen der TreeShapes nutzen
-            await ForestCanvas.Dispatcher.InvokeAsync(() =>
+            var count = Math.Min(treesBatchSize, maxTrees - loadedCount);
+
+            // Optimierung: Wir holen uns die Daten direkt per Index, ohne .GetRange (keine Listen-Kopie!)
+            var batchStartIndex = loadedCount;
+
+            // Daten für diesen Batch vorbereiten (Logik läuft noch im Hintergrund-Kontext)
+            var renderData = new (Cell, Brush)[count];
+
+            // ⚠️ Thread-Safety Hinweis: Wenn randomHelper nicht Thread-Safe ist, 
+            // muss das hier sequentiell laufen oder randomHelper gelocked werden.
+            // Wir gehen hier von sequentieller Logik im Background-Task aus.
+            await Task.Run(() =>
             {
-                foreach (var cell in batch)
+                for (int i = 0; i < count; i++)
                 {
-                    AddInitialTreePlacement(cell);
+                    var cell = allCells[batchStartIndex + i];
+
+                    // Logik update (Thread-Safe Teile)
+                    // Achtung: grid und activeTrees Zugriff muss synchronisiert sein,
+                    // da wir hier aber im "Loading Screen" sind und keine Ticks laufen, ist es okay.
+                    grid.SetTree(cell);
+
+                    // Farbe berechnen (Teuer!)
+                    renderData[i] = (cell, GetTreeColor(cell));
                 }
             });
+
+            // UI-Update anstoßen (Feuer & Vergessen für die Berechnung, aber wir halten den Task fest)
+            currentDrawTask = ForestCanvas.Dispatcher.InvokeAsync(() =>
+            {
+                // Hier rufen wir den optimierten Batch-Renderer auf, den wir vorhin besprochen haben
+                // Falls du den noch nicht hast, hier die Inline-Variante:
+                var children = ForestCanvas.Children;
+
+                // Factory einmalig erzeugen
+                Func<Shape> factory = shapeType switch
+                {
+                    TreeShapeType.Ellipse => () => new Ellipse(),
+                    _ => () => new Rectangle()
+                };
+
+                for (int i = 0; i < renderData.Length; i++)
+                {
+                    var (cell, color) = renderData[i];
+                    var shape = factory();
+                    shape.Width = size;
+                    shape.Height = size;
+                    shape.Fill = color;
+                    Canvas.SetLeft(shape, cell.X * size);
+                    Canvas.SetTop(shape, cell.Y * size);
+                    shape.Tag = cell; // Wichtig für Klicks
+
+                    children.Add(shape);
+
+                    // Die HashSets müssen im UI Thread oder synchronisiert gefüllt werden, 
+                    // da sie nicht Thread-Safe sind.
+                    activeTrees.Add(cell);
+                    // Entfernen aus growableCells ist hier nicht nötig, da allCells eh geshuffelt war
+                }
+
+                totalGrownTrees += (uint)count;
+
+            }, System.Windows.Threading.DispatcherPriority.Background).Task;
+
+            loadedCount += count;
         }
 
+        // Auf den allerletzten Draw warten
+        await currentDrawTask;
         UpdateTreeUI();
     }
 
