@@ -11,6 +11,6 @@ public enum FireEventType
     // TODO: In future versions map editor can place controlled burns
     //PlannedControlledBurn,
     //SelfIgnition,
-    Lightning,
+    Lightning, // via natural (weather) causes
     ManualIgnition // via user interaction
 }
