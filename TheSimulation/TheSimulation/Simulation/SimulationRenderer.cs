@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -157,7 +156,7 @@ public sealed class SimulationRenderer
         var boltEffect = CreateLightningBolt(target);
         forestCanvas.Children.Add(boltEffect);
 
-        if (simulationConfig.VisualEffectsConfig.ShowLightning)
+        if (simulationConfig.VisualEffectsConfig.ShowBoltScreenFlash)
         {
             await FlashScreen();
         }
