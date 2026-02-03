@@ -9,7 +9,11 @@ namespace TheSimulation;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
+    /// <summary>
+    /// Das ViewModel für die Datenbindung der Konfigurationseinstellungen.
+    /// </summary>
     private readonly ConfigurationViewModel viewModel = new();
+
     /// <summary>
     /// Die aktuell konfigurierten Grafikeinstellungen.
     /// </summary>
@@ -32,7 +36,7 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Initialisiert die Auswahlbox für die Windrichtung mit den Werten des <see cref="WindDirection"/> Enums.
+    /// Initialisiert die Auswahlbox für die Windrichtung mit den Standardwerten.
     /// </summary>
     private void InitializeWindDirectionDropdown()
     {
@@ -40,8 +44,11 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Verarbeitet Tastatureingaben auf Fensterebene, wie z.B. das Zurücksetzen der Einstellungen.
+    /// Verarbeitet Tastatureingaben auf Fensterebene. 
+    /// Bei Druck auf 'R' werden die Einstellungen zurückgesetzt.
     /// </summary>
+    /// <param name="s">Die Quelle des Ereignisses.</param>
+    /// <param name="e">Die Ereignisargumente mit den Tastaturinformationen.</param>
     private void Window_KeyDown(object s, KeyEventArgs e)
     {
         if (e.Key == Key.R)
@@ -54,6 +61,8 @@ public sealed partial class MainWindow : Window
     /// <summary>
     /// Startet eine neue Simulationsinstanz in einem separaten Fenster basierend auf der aktuellen UI-Konfiguration.
     /// </summary>
+    /// <param name="s">Die Quelle des Ereignisses.</param>
+    /// <param name="e">Die Ereignisargumente.</param>
     private void StartSimulation_Click(object s, RoutedEventArgs e)
     {
         var config = GetSimulationConfigFromUI();
@@ -80,6 +89,7 @@ public sealed partial class MainWindow : Window
     /// <summary>
     /// Erstellt die Konfiguration für die Bäume im Wald.
     /// </summary>
+    /// <returns>Die Baum-Konfigurationseinstellungen.</returns>
     private TreeConfig CreateTreeConfig()
     {
         return new
@@ -87,13 +97,14 @@ public sealed partial class MainWindow : Window
             MaxCount: 50_000,
             ForestDensity: 0.7f,
             Size: 9,
-            viewModel.GrowForest // Nutzt ViewModel Property
+            viewModel.GrowForest
         );
     }
 
     /// <summary>
     /// Erstellt die Konfiguration für das Brandverhalten und Blitzschläge.
     /// </summary>
+    /// <returns>Die Feuer-Konfigurationseinstellungen.</returns>
     private FireConfig CreateFireConfig()
     {
         return new
@@ -108,6 +119,7 @@ public sealed partial class MainWindow : Window
     /// <summary>
     /// Erstellt die Konfiguration für visuelle Effekte basierend auf den Grafik-Einstellungen.
     /// </summary>
+    /// <returns>Die Visualisierungs-Einstellungen.</returns>
     private VisualEffectsConfig CreateVisualEffectsConfigFromUI()
     {
         return new
@@ -125,6 +137,7 @@ public sealed partial class MainWindow : Window
     /// <summary>
     /// Erstellt die Konfiguration für die Geländegenerierung.
     /// </summary>
+    /// <returns>Die Gelände-Einstellungen.</returns>
     private TerrainConfig CreateTerrainConfig()
     {
         return new
@@ -138,6 +151,7 @@ public sealed partial class MainWindow : Window
     /// <summary>
     /// Sammelt atmosphärische Umgebungsdaten wie Luftfeuchtigkeit und Temperatur.
     /// </summary>
+    /// <returns>Die Umgebungs-Konfiguration.</returns>
     private EnvironmentConfig GetEnvironmentConfigFromUI()
     {
         var airHumidityPercentage = viewModel.AirHumidity / 100;
@@ -159,6 +173,7 @@ public sealed partial class MainWindow : Window
     /// <summary>
     /// Sammelt die Winddaten unter Berücksichtigung von Zufallsoptionen.
     /// </summary>
+    /// <returns>Die Wind-Konfiguration.</returns>
     private WindConfig GetWindConfigFromUI()
     {
         return new
@@ -173,6 +188,7 @@ public sealed partial class MainWindow : Window
     /// <summary>
     /// Erstellt die Konfiguration für die initiale Waldbefüllung.
     /// </summary>
+    /// <returns>Die Prefill-Konfiguration.</returns>
     private PrefillConfig GetPrefillConfigFromUI()
     {
         var prefillDensity = viewModel.PrefillDensity / 100;
@@ -187,6 +203,7 @@ public sealed partial class MainWindow : Window
     /// <summary>
     /// Erzeugt eine zufällige Windrichtung aus allen verfügbaren Enum-Werten.
     /// </summary>
+    /// <returns>Ein zufälliger <see cref="WindDirection"/> Wert.</returns>
     private WindDirection GetRandomWindDirection()
     {
         var values = Enum.GetValues<WindDirection>();
@@ -195,7 +212,8 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Reagiert auf Änderungen an der Checkbox für zufällige Windrichtung und aktiviert/deaktiviert die manuelle Auswahl.
+    /// Reagiert auf Änderungen an der Checkbox für zufällige Windrichtung.
+    /// Aktiviert oder deaktiviert die manuelle Auswahlbox.
     /// </summary>
     private void RandomWindDirectionCheckBox_Changed(object s, RoutedEventArgs e)
     {
@@ -230,17 +248,14 @@ public sealed partial class MainWindow : Window
 
     /// <summary>
     /// Steuert die Verfügbarkeit der Feuer-Pause-Option basierend auf dem Waldwachstum.
-    /// Deaktiviert die Option, wenn kein Wald nachwachsen kann.
     /// </summary>
     private void GrowForestCheckBox_Changed(object sender, RoutedEventArgs e)
     {
         var isForestRegrowEnabled = viewModel.GrowForest;
-
         viewModel.IsPauseFireEnabled = isForestRegrowEnabled;
 
         if (!isForestRegrowEnabled)
         {
-            // Setze den Wert auf false (Haken entfernen)
             viewModel.PauseGrowingDuringFire = false;
         }
     }
@@ -252,7 +267,7 @@ public sealed partial class MainWindow : Window
         => viewModel.ResetToDefaults();
 
     /// <summary>
-    /// Aktualisiert die Textanzeige für die Windstärke inklusive Umrechnung in die Beaufort-Skala bei Schieberegler-Änderung.
+    /// Aktualisiert die Windstärke im ViewModel, wenn der Schieberegler bewegt wird.
     /// </summary>
     private void WindStrengthSlider_ValueChanged(object s, RoutedPropertyChangedEventArgs<double> e)
     {
