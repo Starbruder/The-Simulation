@@ -9,35 +9,35 @@ namespace TheSimulation;
 /// </summary>
 public sealed class LiveStatsViewModel : INotifyPropertyChanged
 {
-    private int _activeTrees;
-    private int _maxTrees;
-    private uint _totalGrown;
-    private uint _totalBurned;
-    private double _windStrength;
-    private string _simulationTime = "00:00:00";
+    private int activeTrees;
+    private int maxTrees;
+    private uint totalGrown;
+    private uint totalBurned;
+    private double windStrength;
+    private string simulationTime = "00:00:00";
 
     /// <summary>Die Anzahl der aktuell im Wald befindlichen (lebenden) Bäume.</summary>
-    public int ActiveTrees { get => _activeTrees; set => SetField(ref _activeTrees, value, [nameof(TreeDensityDisplay)]); }
+    public int ActiveTrees { get => activeTrees; set => SetField(ref activeTrees, value, [nameof(TreeDensityDisplay)]); }
 
     /// <summary>Die maximale Kapazität an Bäumen, die das Gelände fassen kann.</summary>
-    public int MaxTrees { get => _maxTrees; set => SetField(ref _maxTrees, value, [nameof(TreeDensityDisplay)]); }
+    public int MaxTrees { get => maxTrees; set => SetField(ref maxTrees, value, [nameof(TreeDensityDisplay)]); }
 
     /// <summary>Die kumulierte Anzahl aller jemals gewachsenen Bäume.</summary>
-    public uint TotalGrown { get => _totalGrown; set => SetField(ref _totalGrown, value, [nameof(TotalGrownDisplay)]); }
+    public uint TotalGrown { get => totalGrown; set => SetField(ref totalGrown, value, [nameof(TotalGrownDisplay)]); }
 
     /// <summary>Die kumulierte Anzahl aller jemals verbrannten Bäume.</summary>
-    public uint TotalBurned { get => _totalBurned; set => SetField(ref _totalBurned, value, [nameof(TotalBurnedDisplay)]); }
+    public uint TotalBurned { get => totalBurned; set => SetField(ref totalBurned, value, [nameof(TotalBurnedDisplay)]); }
 
     /// <summary>Die aktuelle Windstärke als Normalwert (0.0 bis 1.0).</summary>
-    public double WindStrength { get => _windStrength; set => SetField(ref _windStrength, value, [nameof(WindDisplay)]); }
+    public double WindStrength { get => windStrength; set => SetField(ref windStrength, value, [nameof(WindDisplay)]); }
 
     /// <summary>Die formatierte Laufzeit der aktuellen Simulationsinstanz.</summary>
     public string SimulationTime
     {
-        get => _simulationTime;
+        get => simulationTime;
         set
         {
-            _simulationTime = value;
+            simulationTime = value;
             OnPropertyChanged(nameof(SimulationTime));
         }
     }
@@ -46,13 +46,13 @@ public sealed class LiveStatsViewModel : INotifyPropertyChanged
     /// Gibt eine formatierte Zeichenfolge der aktuellen Baumdichte zurück (z. B. "450 / 1000 (45%)").
     /// </summary>
     public string TreeDensityDisplay =>
-        $"{_activeTrees} / {_maxTrees} ({CalculatePercent(_activeTrees, _maxTrees):F0}%)";
+        $"{activeTrees} / {maxTrees} ({CalculatePercent(activeTrees, maxTrees):F0}%)";
 
     /// <summary>Gibt die Gesamtzahl der gewachsenen Bäume als Text zurück.</summary>
-    public string TotalGrownDisplay => _totalGrown.ToString();
+    public string TotalGrownDisplay => totalGrown.ToString();
 
     /// <summary>Gibt die Gesamtzahl der verbrannten Bäume als Text zurück.</summary>
-    public string TotalBurnedDisplay => _totalBurned.ToString();
+    public string TotalBurnedDisplay => totalBurned.ToString();
 
     /// <summary>
     /// Bereitet die Windstärke für die Anzeige auf, inklusive Umrechnung in Prozent und Beaufort.
@@ -61,8 +61,8 @@ public sealed class LiveStatsViewModel : INotifyPropertyChanged
     {
         get
         {
-            var percent = _windStrength * 100;
-            var beaufort = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(_windStrength);
+            var percent = windStrength * 100;
+            var beaufort = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
             return $"{percent:F0}% ({beaufort} Bft)";
         }
     }
@@ -83,7 +83,7 @@ public sealed class LiveStatsViewModel : INotifyPropertyChanged
     /// <summary>Löst das <see cref="PropertyChanged"/>-Ereignis aus.</summary>
     /// <param name="propertyName">Name der geänderten Eigenschaft.</param>
     protected void OnPropertyChanged(string propertyName)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        => PropertyChanged?.Invoke(this, new(propertyName));
 
     /// <summary>
     /// Setzt ein Feld und benachrichtigt die UI über Änderungen. 
@@ -97,15 +97,21 @@ public sealed class LiveStatsViewModel : INotifyPropertyChanged
     /// <returns>True, wenn der Wert geändert wurde, sonst false.</returns>
     protected bool SetField<T>(ref T field, T value, string[] affectedProperties = null, [CallerMemberName] string name = null)
     {
-        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        if (EqualityComparer<T>.Default.Equals(field, value))
+        {
+            return false;
+        }
+
         field = value;
         OnPropertyChanged(name!);
 
         // Automatische Aktualisierung abhängiger UI-Strings (Magic)
-        if (affectedProperties != null)
+        if (affectedProperties is not null)
         {
             foreach (var prop in affectedProperties)
+            {
                 OnPropertyChanged(prop);
+            }
         }
 
         return true;
