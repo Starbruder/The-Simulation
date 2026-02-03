@@ -9,6 +9,7 @@ namespace TheSimulation;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
+    private readonly ConfigurationViewModel viewModel = new();
     /// <summary>
     /// Die aktuell konfigurierten Grafikeinstellungen.
     /// </summary>
@@ -26,7 +27,16 @@ public sealed partial class MainWindow : Window
     {
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
-        InitailizeWindDirectionDropdown();
+        InitializeWindDirectionDropdown();
+        DataContext = viewModel;
+    }
+
+    /// <summary>
+    /// Initialisiert die Auswahlbox für die Windrichtung mit den Werten des <see cref="WindDirection"/> Enums.
+    /// </summary>
+    private void InitializeWindDirectionDropdown()
+    {
+        viewModel.SelectedWindDirection = SimulationDefaultsData.DefaultWindDirection;
     }
 
     /// <summary>
@@ -36,18 +46,9 @@ public sealed partial class MainWindow : Window
     {
         if (e.Key == Key.R)
         {
-            ResetAllSettings_Click(s, e);
+            viewModel.ResetToDefaults();
             e.Handled = true;
         }
-    }
-
-    /// <summary>
-    /// Initialisiert die Auswahlbox für die Windrichtung mit den Werten des <see cref="WindDirection"/> Enums.
-    /// </summary>
-    private void InitailizeWindDirectionDropdown()
-    {
-        WindDirectionBox.ItemsSource = Enum.GetValues<WindDirection>();
-        WindDirectionBox.SelectedItem = SimulationDefaultsData.DefaultWindDirection;
     }
 
     /// <summary>
@@ -81,14 +82,12 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private TreeConfig CreateTreeConfig()
     {
-        var regrowForest = GrowForestCheckBox.IsChecked ?? true;
-
         return new
         (
             MaxCount: 50_000,
             ForestDensity: 0.7f,
             Size: 9,
-            regrowForest
+            viewModel.GrowForest // Nutzt ViewModel Property
         );
     }
 
@@ -97,18 +96,12 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private FireConfig CreateFireConfig()
     {
-        var pauseDuringFire = PauseFireCheckBox.IsChecked ?? true;
-        var fireChance = FireSpreadChanceSlider.Value;
-        var lightningStrikeChance = LightningChanceSlider.Value;
-        var enableLightningStrikes =
-            graphicsSettings.ShowLightning && lightningStrikeChance != 0;
-
         return new
         (
-            fireChance,
-            pauseDuringFire,
-            lightningStrikeChance,
-            enableLightningStrikes
+            viewModel.FireSpreadChance,
+            viewModel.PauseGrowingDuringFire,
+            viewModel.LightningChance,
+            graphicsSettings.ShowLightning && viewModel.LightningChance != 0
         );
     }
 
@@ -134,11 +127,9 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private TerrainConfig CreateTerrainConfig()
     {
-        var useTerrainGeneration = TerrainGenerationCheckBox.IsChecked ?? true;
-
         return new
         (
-            useTerrainGeneration,
+            viewModel.UseTerrainGeneration,
             EnableWaterBodies: false,
             EnableRocks: false
         );
@@ -149,8 +140,8 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private EnvironmentConfig GetEnvironmentConfigFromUI()
     {
-        var airHumidityPercentage = AirHumiditySlider.Value / 100;
-        var airTemperatureCelsius = AirTemperatureSlider.Value;
+        var airHumidityPercentage = viewModel.AirHumidity / 100;
+        var airTemperatureCelsius = viewModel.AirTemperature;
 
         var atmosphereConfig = new AtmosphereConfig
         (
@@ -158,12 +149,10 @@ public sealed partial class MainWindow : Window
             (float)airTemperatureCelsius
         );
 
-        var windConfig = GetWindConfigFromUI();
-
         return new
         (
             atmosphereConfig,
-            windConfig
+            GetWindConfigFromUI()
         );
     }
 
@@ -172,17 +161,12 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private WindConfig GetWindConfigFromUI()
     {
-        var randomWindDirection = RandomWindDirectionCheckBox.IsChecked ?? false;
-        var windDirection = GetWindDirection();
-        var randomStrength = RandomWindStrengthCheckBox.IsChecked ?? false;
-        var windStrength = WindStrengthSlider.Value;
-
         return new
         (
-            randomWindDirection,
-            windDirection,
-            randomStrength,
-            windStrength
+            viewModel.RandomWindDirection,
+            viewModel.SelectedWindDirection,
+            viewModel.RandomWindStrength,
+            viewModel.WindStrength
         );
     }
 
@@ -191,36 +175,13 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private PrefillConfig GetPrefillConfigFromUI()
     {
-        var prefillDensity = PrefillDensitySlider.Value / 100;
+        var prefillDensity = viewModel.PrefillDensity / 100;
 
         return new
         (
-            prefillDensity >= 0,
+            viewModel.PrefillDensity >= 0,
             prefillDensity
         );
-    }
-
-    /// <summary>
-    /// Ermittelt die Windrichtung, entweder fest aus der UI oder zufällig bestimmt.
-    /// </summary>
-    private WindDirection GetWindDirection()
-    {
-        if (RandomWindDirectionCheckBox.IsChecked == true)
-        {
-            return GetRandomWindDirection();
-        }
-
-        return GetParsedWindDirectionFromUI();
-    }
-
-    /// <summary>
-    /// Extrahiert die gewählte Windrichtung aus der Auswahlbox.
-    /// </summary>
-    private WindDirection GetParsedWindDirectionFromUI()
-    {
-        return WindDirectionBox.SelectedItem is WindDirection direction
-            ? direction
-            : SimulationDefaultsData.DefaultWindDirection;
     }
 
     /// <summary>
@@ -238,15 +199,15 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private void RandomWindDirectionCheckBox_Changed(object s, RoutedEventArgs e)
     {
-        var isRandom = RandomWindDirectionCheckBox.IsChecked ?? false;
-        WindDirectionBox.IsEnabled = !isRandom;
+        var isStaticWindDirection = !viewModel.RandomWindDirection;
+        viewModel.IsWindDirectionBoxEnabled = isStaticWindDirection;
 
-        if (!isRandom)
+        if (isStaticWindDirection)
         {
             return;
         }
 
-        WindDirectionBox.SelectedItem = GetRandomWindDirection();
+        viewModel.SelectedWindDirection = GetRandomWindDirection();
     }
 
     /// <summary>
@@ -263,30 +224,24 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private void GrowForestCheckBox_Unchecked(object s, RoutedEventArgs e)
     {
-        PauseFireCheckBox.IsChecked = true;
-        PauseFireCheckBox.IsEnabled = false;
+        viewModel.IsPauseFireEnabled = false;
+        viewModel.PauseGrowingDuringFire = true;
     }
 
     /// <summary>
     /// Steuert die Verfügbarkeit der Feuer-Pause-Option basierend auf dem Waldwachstum.
-    /// Deaktiviert die Option, wenn kein Wald nachwachsen kann, um einen dauerhaften Stillstand zu vermeiden.
+    /// Deaktiviert die Option, wenn kein Wald nachwachsen kann.
     /// </summary>
     private void GrowForestCheckBox_Changed(object sender, RoutedEventArgs e)
     {
-        if (PauseFireCheckBox is null)
-        {
-            return;
-        }
+        var isForestRegrowEnabled = viewModel.GrowForest;
 
-        var isForestRegrowEnabled = GrowForestCheckBox.IsChecked ?? true;
+        viewModel.IsPauseFireEnabled = isForestRegrowEnabled;
 
-        // Deaktiviere die Pause-Option, wenn kein Wald nachwachsen kann
-        PauseFireCheckBox.IsEnabled = isForestRegrowEnabled;
-
-        // Wenn Waldwachstum aus ist, setzen wir die Pause automatisch auf "An"
         if (!isForestRegrowEnabled)
         {
-            PauseFireCheckBox.IsChecked = true;
+            // Setze den Wert auf false (Haken entfernen)
+            viewModel.PauseGrowingDuringFire = false;
         }
     }
 
@@ -294,38 +249,16 @@ public sealed partial class MainWindow : Window
     /// Setzt alle Schieberegler und Optionen im Menü auf die Standardwerte zurück.
     /// </summary>
     private void ResetAllSettings_Click(object s, RoutedEventArgs e)
-    {
-        // Terrain zurücksetzen
-        TerrainGenerationCheckBox.IsChecked = true;
-
-        // Bäume zurücksetzen
-        GrowForestCheckBox.IsChecked = true;
-        PrefillDensitySlider.Value = 80;
-        LightningChanceSlider.Value = 15;
-
-        // Feuer zurücksetzen
-        PauseFireCheckBox.IsChecked = true;
-        FireSpreadChanceSlider.Value = 40;
-
-        // Umwelt zurücksetzen
-        AirHumiditySlider.Value = 50;
-        AirTemperatureSlider.Value = 30;
-        RandomWindDirectionCheckBox.IsChecked = false;
-        WindDirectionBox.SelectedItem = SimulationDefaultsData.DefaultWindDirection;
-        RandomWindStrengthCheckBox.IsChecked = false;
-        WindStrengthSlider.Value = 0.75;
-    }
+        => viewModel.ResetToDefaults();
 
     /// <summary>
     /// Aktualisiert die Textanzeige für die Windstärke inklusive Umrechnung in die Beaufort-Skala bei Schieberegler-Änderung.
     /// </summary>
     private void WindStrengthSlider_ValueChanged(object s, RoutedPropertyChangedEventArgs<double> e)
     {
-        var windStrength = WindStrengthSlider.Value;
-        var windStrengthReadablePercent = windStrength * 100;
-        var beaufortScale = (int)WindMapper.ConvertWindPercentStrenghToBeaufort(windStrength);
-
-        WindStrengthText.Text =
-            $"Wind Strengh: {windStrengthReadablePercent:F0}% ({beaufortScale} Bft)";
+        if (viewModel is not null)
+        {
+            viewModel.WindStrength = e.NewValue;
+        }
     }
 }

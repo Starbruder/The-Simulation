@@ -332,8 +332,8 @@ It only adds long-range spot fires.
 			<!-- Terrain -->
 			<GroupBox Header="Terrain" Style="{StaticResource CustomGroupBoxStyle}" Margin="0,8,0,0">
 				<StackPanel Orientation="Horizontal">
-					<CheckBox x:Name="TerrainGenerationCheckBox"
-						Content="Enable terrain generation" IsChecked="True" Margin="5,0,0,0"/>
+					<CheckBox IsChecked="{Binding UseTerrainGeneration}"
+						Content="Enable terrain generation" Margin="5,0,0,0"/>
 					<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
 						Margin="5,0,0,0" VerticalAlignment="Center"
 						ToolTip="{Binding Source={StaticResource TerrainGenerationTooltip}}"/>
@@ -344,9 +344,8 @@ It only adds long-range spot fires.
 			<GroupBox Header="Trees" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<CheckBox x:Name="GrowForestCheckBox" 
-							Content="Grow forest" 
-							IsChecked="True" Margin="5,0,0,0"
+						<CheckBox IsChecked="{Binding GrowForest}"
+							Content="Grow forest" Margin="5,0,0,0"
 							Checked="GrowForestCheckBox_Changed" 
 							Unchecked="GrowForestCheckBox_Changed"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
@@ -359,13 +358,13 @@ It only adds long-range spot fires.
 					<!-- TextBlock für Prefill density Wert -->
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Margin="10,0,0,0" FontSize="14"
-							Text="{Binding ElementName=PrefillDensitySlider, Path=Value, StringFormat=Prefill density: {0:F0}%}"/>
+							Text="{Binding PrefillDensity, StringFormat='Prefill density: {0:F0}%'}"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
 							Margin="5,0,0,0"
 							ToolTip="{Binding Source={StaticResource PrefillTooltip}}"/>
 					</StackPanel>
-					<Slider x:Name="PrefillDensitySlider" Maximum="100"
-						Value="80" TickFrequency="5" IsSnapToTickEnabled="True"/>
+					<Slider Value="{Binding PrefillDensity}" Maximum="100"
+						TickFrequency="5" IsSnapToTickEnabled="True"/>
 				</StackPanel>
 			</GroupBox>
 
@@ -373,8 +372,9 @@ It only adds long-range spot fires.
 			<GroupBox Header="Fire" Margin="0,8,0,0" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Red">
 				<StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<CheckBox x:Name="PauseFireCheckBox" IsChecked="True"
-							Content="Pause growing during fire" Margin="5,0,0,0"/>
+						<CheckBox Content="Pause growing during fire"
+							IsChecked="{Binding PauseGrowingDuringFire}" 
+							IsEnabled="{Binding IsPauseFireEnabled}" Margin="5,0,0,0"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
 							Margin="5,0,0,0" VerticalAlignment="Center"
 							ToolTip="{Binding Source={StaticResource PauseFireTooltip}}"/>
@@ -385,23 +385,23 @@ It only adds long-range spot fires.
 
 					<StackPanel Orientation="Horizontal">
 						<TextBlock FontSize="14" Margin="10,0,0,0"
-							Text="{Binding ElementName=FireSpreadChanceSlider, Path=Value, StringFormat=Additional fire spread chance: {0:F0}%}"
+							Text="{Binding FireSpreadChance, StringFormat='Additional fire spread chance: {0:F0}%'}"
 							ToolTip="{StaticResource FireSpreadChanceTooltip}"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
 							Margin="5,0,0,0" VerticalAlignment="Center"
 							ToolTip="{Binding Source={StaticResource RandomWindDirectionTooltip}}"/>
 					</StackPanel>
-					<Slider x:Name="FireSpreadChanceSlider" Maximum="100" Value="40"
+					<Slider Value="{Binding FireSpreadChance}" Maximum="100"
 						IsSnapToTickEnabled="True" TickFrequency="5" Margin="0,0,0,5"/>
 
 					<StackPanel Orientation="Horizontal">
 						<TextBlock FontSize="14" Margin="10,0,0,0"
-							Text="{Binding ElementName=LightningChanceSlider, Path=Value, StringFormat=Lightning strike chance: {0:F0}%}"/>
+							Text="{Binding LightningChance, StringFormat='Lightning strike chance: {0:F0}%'}"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12"
 							Margin="5,0,0,0" VerticalAlignment="Center" Foreground="Gray"
 							ToolTip="{Binding Source={StaticResource LightningChanceTooltip}}"/>
 					</StackPanel>
-					<Slider x:Name="LightningChanceSlider" Maximum="100" Value="15"
+					<Slider Value="{Binding LightningChance}" Maximum="100"
 						IsSnapToTickEnabled="True" TickFrequency="5"/>
 				</StackPanel>
 			</GroupBox>
@@ -412,28 +412,28 @@ It only adds long-range spot fires.
 					<!-- Air Humidity -->
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Margin="10,0,0,0" FontSize="14"
-							Text="{Binding ElementName=AirHumiditySlider, Path=Value, StringFormat=Air humidity: {0:F0}%}"/>
+							Text="{Binding AirHumidity, StringFormat='Air humidity: {0:F0}%'}"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
 							Margin="5,0,0,0" VerticalAlignment="Center"
 							ToolTip="{Binding Source={StaticResource AirHumidityTooltip}}"/>
 					</StackPanel>
 
-					<Slider x:Name="AirHumiditySlider"
-						Maximum="100" Value="50" IsSnapToTickEnabled="True"
+					<Slider Value="{Binding AirHumidity}"
+						Maximum="100" IsSnapToTickEnabled="True"
 						TickFrequency="5" Margin="0,0,0,5"/>
 					<!-- Air Temperature -->
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Margin="10,0,0,0" FontSize="14"
-							Text="{Binding ElementName=AirTemperatureSlider, Path=Value, StringFormat=Air temperature: {0:F0} °C}"/>
+							Text="{Binding AirTemperature, StringFormat='Air temperature: {0:F0} °C'}"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
 							Margin="5,0,0,0" VerticalAlignment="Center"
 							ToolTip="{Binding Source={StaticResource AirTemperatureTooltip}}"/>
 					</StackPanel>
 
-					<Slider x:Name="AirTemperatureSlider" Minimum="-10" Maximum="50" Value="30" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,0,0,5"/>
+					<Slider Value="{Binding AirTemperature}" Minimum="-10" Maximum="50" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,0,0,5"/>
 					<!-- Random Wind Direction -->
 					<StackPanel Orientation="Horizontal">
-						<CheckBox x:Name="RandomWindDirectionCheckBox" IsChecked="False"
+						<CheckBox IsChecked="{Binding RandomWindDirection}"
 							Content="Random wind direction" Margin="5,0,0,0"
 							Checked="RandomWindDirectionCheckBox_Changed"
 							Unchecked="RandomWindDirectionCheckBox_Changed"/>
@@ -453,12 +453,14 @@ It only adds long-range spot fires.
 							ToolTip="{Binding Source={StaticResource WindDirectionTooltip}}"/>
 					</StackPanel>
 
-					<ComboBox x:Name="WindDirectionBox"
-						SelectedIndex="0" MinWidth="150" Margin="4,5,4,5"/>
+					<ComboBox ItemsSource="{Binding WindDirections}" 
+							  SelectedItem="{Binding SelectedWindDirection}"
+							  IsEnabled="{Binding IsWindDirectionBoxEnabled}"
+							  MinWidth="150" Margin="4,5,4,5"/>
 
 					<!-- Random Wind Strength -->
 					<StackPanel Orientation="Horizontal">
-						<CheckBox x:Name="RandomWindStrengthCheckBox" IsChecked="False"
+						<CheckBox IsChecked="{Binding RandomWindStrength}"
 							Content="Random wind strength" Margin="5,0,0,0"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
 							Margin="5,0,0,0" VerticalAlignment="Center"
@@ -469,13 +471,12 @@ It only adds long-range spot fires.
 					<Rectangle Height="5"/>
 
 					<StackPanel Orientation="Horizontal">
-						<TextBlock x:Name="WindStrengthText" Margin="10,0,0,0" FontSize="14"
-							Text="Wind strength: 0% (0 Bft)"/>
+						<TextBlock Text="{Binding WindStrengthDescription}" Margin="10,0,0,0" FontSize="14"/>
 						<fa:ImageAwesome Icon="InfoCircle" Width="12" Height="12" Foreground="Gray"
 							Margin="5,0,0,0" VerticalAlignment="Center"
 							ToolTip="{Binding Source={StaticResource WindStrengthTooltip}}"/>
 					</StackPanel>
-					<Slider x:Name="WindStrengthSlider" Maximum="1" Value="0.25"
+					<Slider Value="{Binding WindStrength}" Maximum="1"
 						TickFrequency="0.05" IsSnapToTickEnabled="True"
 						ValueChanged="WindStrengthSlider_ValueChanged"/>
 				</StackPanel>
