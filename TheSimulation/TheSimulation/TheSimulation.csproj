@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 <PropertyGroup>
   <OutputType>WinExe</OutputType>
@@ -16,7 +16,7 @@
   <BundleReadyToRun>true</BundleReadyToRun>
   <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 
-  <ApplicationIcon>Assets\Icons\burning-tree.ico</ApplicationIcon>
+  <ApplicationIcon>Assets\Icons\burning-tree-in-circle.ico</ApplicationIcon>
 </PropertyGroup>
 
   <ItemGroup>
