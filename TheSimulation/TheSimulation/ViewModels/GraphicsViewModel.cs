@@ -61,5 +61,5 @@ public sealed class GraphicsViewModel : INotifyPropertyChanged
     /// </summary>
     /// <param name="propertyName">Name der Eigenschaft. Wird automatisch durch <see cref="CallerMemberNameAttribute"/> gefüllt.</param>
     protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        => PropertyChanged.Invoke(this, new(propertyName));
+        => PropertyChanged?.Invoke(this, new(propertyName));
 }
