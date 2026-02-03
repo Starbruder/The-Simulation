@@ -49,7 +49,12 @@ public sealed partial class EvaluationWindow : Window
             return;
         }
 
-        var dialog = new SaveFileDialog { /* ... Einstellungen ... */ };
+        var dialog = new SaveFileDialog
+        {
+            Title = "Export simulation evaluation",
+            Filter = "CSV files (*.csv)|*.csv",
+            FileName = $"ForestFireEvaluation_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+        };
 
         if (dialog.ShowDialog() == true)
         {
