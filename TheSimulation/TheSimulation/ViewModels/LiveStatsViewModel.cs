@@ -7,7 +7,7 @@ namespace TheSimulation;
 /// Hält und verwaltet die Echtzeit-Statistiken der laufenden Simulation für die Datenbindung an die Benutzeroberfläche.
 /// Implementiert <see cref="INotifyPropertyChanged"/>, um die UI automatisch bei Wertänderungen zu aktualisieren.
 /// </summary>
-public sealed class SimulationLiveStats : INotifyPropertyChanged
+public sealed class LiveStatsViewModel : INotifyPropertyChanged
 {
     private int _activeTrees;
     private int _maxTrees;

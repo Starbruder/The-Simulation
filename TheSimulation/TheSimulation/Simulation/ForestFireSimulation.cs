@@ -22,7 +22,7 @@ public sealed class ForestFireSimulation : IDisposable
     private readonly SimulationConfig simulationConfig;
     private readonly RandomHelper randomHelper;
 
-    public SimulationLiveStats SimulationLiveStats { get; } = new();
+    public LiveStatsViewModel SimulationLiveStats { get; } = new();
 
     private readonly WindHelper windHelper;
     private readonly SimulationRenderer renderer;

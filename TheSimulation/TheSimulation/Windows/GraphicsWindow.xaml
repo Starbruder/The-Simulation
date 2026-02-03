@@ -52,32 +52,38 @@
 			<!-- Wettereffekte GroupBox -->
 			<GroupBox Header="Weather Effects" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Blue" Margin="0,8,0,0">
 				<StackPanel>
-					<CheckBox x:Name="LightningCheckBox" Content="Show lightning" Margin="10"/>
-					<CheckBox x:Name="BoltFlashCheckBox" Content="Show bolt flashes" Margin="10"/>
+					<CheckBox IsChecked="{Binding WorkingSettings.ShowLightning}"
+						Content="Show lightning" Margin="10"/>
+					<CheckBox IsChecked="{Binding WorkingSettings.ShowBoltFlashes}"
+						Content="Show bolt flashes" Margin="10"/>
 				</StackPanel>
 			</GroupBox>
 
 			<!-- Fire -->
 			<GroupBox Header="Fire" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Red" Margin="0,8,0,0">
 				<StackPanel>
-					<CheckBox Margin="10" x:Name="FlameAnimationsCheckBox" Content="Show flame animations"/>
+					<CheckBox IsChecked="{Binding WorkingSettings.ShowFlamesOnTrees}"
+						Content="Show flame animations" Margin="10"/>
 				</StackPanel>
 			</GroupBox>
 
 			<!-- Partikeleffekte GroupBox -->
 			<GroupBox Header="Particle Effects" Style="{StaticResource CustomGroupBoxStyle}" Margin="0,8,0,0">
 				<StackPanel>
-					<CheckBox x:Name="FireSparksCheckBox" Content="Show sparks" Margin="10"/>
-					<CheckBox x:Name="SmokeCheckBox" Content="Show smoke" Margin="10"/>
+					<CheckBox IsChecked="{Binding WorkingSettings.ShowFireParticles}"
+						Content="Show sparks" Margin="10"/>
+					<CheckBox IsChecked="{Binding WorkingSettings.ShowSmokeParticles}"
+						Content="Show smoke" Margin="10"/>
 				</StackPanel>
 			</GroupBox>
 
 			<!-- Baumeffekte GroupBox -->
 			<GroupBox Header="Tree Effects" Style="{StaticResource CustomGroupBoxStyle}" BorderBrush="Green" Margin="0,8,0,0">
 				<StackPanel>
-					<CheckBox x:Name="BurnedTreeCheckBox"
-					Content="Show burned trees" Margin="10"/>
-					<ComboBox x:Name="TreeShapeComboBox" Margin="10">
+					<CheckBox IsChecked="{Binding WorkingSettings.ShowBurnedDownTrees}"
+						Content="Show burned trees" Margin="10"/>
+					<ComboBox ItemsSource="{Binding AvailableTreeShapes}"
+						SelectedItem="{Binding WorkingSettings.TreeShape}" Margin="10">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<TextBlock Text="{Binding}" VerticalAlignment="Center"/>

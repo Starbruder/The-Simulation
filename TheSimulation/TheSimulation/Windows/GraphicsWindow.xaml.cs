@@ -4,107 +4,68 @@ using System.Windows.Input;
 namespace TheSimulation;
 
 /// <summary>
-/// Das Einstellungsfenster für die grafische Darstellung der Simulation.
-/// Ermöglicht dem Benutzer, visuelle Effekte wie Partikel, Blitze und Baumformen zu konfigurieren.
+/// Interaktionslogik für das Grafikeinstellungen-Fenster.
+/// Ermöglicht dem Benutzer das Anpassen visueller Parameter der Simulation.
 /// </summary>
-/// <remarks>
-/// Änderungen werden erst beim Bestätigen via <see cref="ApplyGraphicsSettings"/> dauerhaft in das <see cref="GraphicsSettings"/>-Objekt übernommen.
-/// </remarks>
 public sealed partial class GraphicsWindow : Window
 {
-    /// <summary>
-    /// Das aktuelle Einstellungsobjekt, das die Konfiguration hält.
-    /// </summary>
-    private readonly GraphicsSettings settings;
+    private readonly GraphicsViewModel viewModel;
+    private readonly GraphicsSettings originalSettings;
 
     /// <summary>
-    /// Initialisiert eine neue Instanz des Grafik-Einstellungsfensters.
+    /// Initialisiert eine neue Instanz der <see cref="GraphicsWindow"/> Klasse.
     /// </summary>
-    /// <param name="settings">Die aktuell aktiven Grafikeinstellungen der Simulation.</param>
+    /// <param name="settings">Die aktuellen Grafikeinstellungen, die bearbeitet werden sollen.</param>
     public GraphicsWindow(GraphicsSettings settings)
     {
-        this.settings = settings;
-
         InitializeComponent();
         IconVisualizer.InitializeWindowIcon(this);
 
-        // Füllt die ComboBox automatisch mit allen verfügbaren Baumformen aus dem Enum
-        TreeShapeComboBox.ItemsSource = Enum.GetValues<TreeShapeType>();
+        originalSettings = settings;
+        viewModel = new(settings);
 
-        LoadGraphicsSettingsIntoUI();
+        // Das Bindeglied zwischen XAML und Code
+        DataContext = viewModel;
     }
 
     /// <summary>
-    /// Überträgt die Werte aus dem <see cref="settings"/>-Objekt in die entsprechenden UI-Steuerelemente (CheckBoxen, ComboBox).
+    /// Behandelt Tastatureingaben innerhalb des Fensters.
+    /// Drücken der Taste 'R' setzt das ViewModel auf Standardwerte zurück.
     /// </summary>
-    private void LoadGraphicsSettingsIntoUI()
-    {
-        LightningCheckBox.IsChecked = settings.ShowLightning;
-        BoltFlashCheckBox.IsChecked = settings.ShowBoltFlashes;
-        FireSparksCheckBox.IsChecked = settings.ShowFireParticles;
-        SmokeCheckBox.IsChecked = settings.ShowSmokeParticles;
-        FlameAnimationsCheckBox.IsChecked = settings.ShowFlamesOnTrees;
-        BurnedTreeCheckBox.IsChecked = settings.ShowBurnedDownTrees;
-        TreeShapeComboBox.SelectedItem = settings.TreeShape;
-    }
-
-    /// <summary>
-    /// Verarbeitet Tastatureingaben innerhalb des Einstellungsfensters.
-    /// </summary>
-    /// <remarks>
-    /// Die Taste <c>R</c> dient als Shortcut zum Zurücksetzen aller Einstellungen auf Standardwerte.
-    /// </remarks>
     private void Window_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.R)
         {
-            ResetAllSettings_Click(sender, e);
+            viewModel.Reset();
             e.Handled = true;
         }
     }
 
     /// <summary>
-    /// Liest die Zustände der UI-Elemente aus, speichert sie im <see cref="settings"/>-Objekt und schließt das Fenster.
+    /// Übernimmt die im ViewModel geänderten Arbeitseinstellungen in das Original-Objekt 
+    /// und schließt das Fenster mit einem positiven Ergebnis.
     /// </summary>
     private void ApplyGraphicsSettings(object sender, RoutedEventArgs e)
     {
-        // Null-Coalescing (??) wird genutzt, um bei unbestimmten CheckBox-Zuständen Standardwerte zu setzen
-        settings.ShowLightning = LightningCheckBox.IsChecked ?? true;
-        settings.ShowBoltFlashes = BoltFlashCheckBox.IsChecked ?? false;
-        settings.ShowFireParticles = FireSparksCheckBox.IsChecked ?? true;
-        settings.ShowSmokeParticles = SmokeCheckBox.IsChecked ?? true;
-        settings.ShowFlamesOnTrees = FlameAnimationsCheckBox.IsChecked ?? true;
-        settings.ShowBurnedDownTrees = BurnedTreeCheckBox.IsChecked ?? false;
+        // Hier übertragen wir die Werte der Arbeitskopie zurück in das Original
+        var updated = viewModel.WorkingSettings;
 
-        if (TreeShapeComboBox.SelectedItem is TreeShapeType selectedShape)
-        {
-            settings.TreeShape = selectedShape;
-        }
+        originalSettings.ShowLightning = updated.ShowLightning;
+        originalSettings.ShowBoltFlashes = updated.ShowBoltFlashes;
+        originalSettings.ShowFireParticles = updated.ShowFireParticles;
+        originalSettings.ShowSmokeParticles = updated.ShowSmokeParticles;
+        originalSettings.ShowFlamesOnTrees = updated.ShowFlamesOnTrees;
+        originalSettings.ShowBurnedDownTrees = updated.ShowBurnedDownTrees;
+        originalSettings.TreeShape = updated.TreeShape;
 
+        DialogResult = true; // Signalisiert Erfolg
         Close();
     }
 
     /// <summary>
-    /// Setzt alle UI-Steuerelemente auf die in <see cref="SimulationDefaultsData"/> definierten Standardwerte zurück.
+    /// Ereignishandler für den Reset-Button, um alle Einstellungen 
+    /// im ViewModel auf die Standardwerte zurückzusetzen.
     /// </summary>
-    /// <remarks>
-    /// Die Werte werden hier nur in der UI zurückgesetzt. Um sie dauerhaft zu speichern, muss der Benutzer dennoch auf "Apply" klicken.
-    /// </remarks>
     private void ResetAllSettings_Click(object sender, RoutedEventArgs e)
-    {
-        // Wetter-Effekte zurücksetzen
-        LightningCheckBox.IsChecked = true;
-        BoltFlashCheckBox.IsChecked = false;
-
-        // Feuer zurücksetzen
-        FlameAnimationsCheckBox.IsChecked = true;
-
-        // Partikeleffekte zurücksetzen
-        FireSparksCheckBox.IsChecked = true;
-        SmokeCheckBox.IsChecked = true;
-
-        // Bäume zurücksetzen
-        BurnedTreeCheckBox.IsChecked = false;
-        TreeShapeComboBox.SelectedItem = SimulationDefaultsData.DefaultTreeShapeType;
-    }
+        => viewModel.Reset();
 }
