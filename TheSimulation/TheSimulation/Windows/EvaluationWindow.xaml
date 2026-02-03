@@ -16,14 +16,14 @@
 		<StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,20">
 			<TextBlock Text="Simulation Evalualtion" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
 
-			<TextBlock x:Name="EvalHumidity" FontSize="16" Text="Air humidity: 0%"/>
-			<TextBlock x:Name="EvalTemperature" FontSize="16" Text="Air temperature: 0 °C"/>
+			<TextBlock Text="{Binding HumidityText}" FontSize="16"/>
+			<TextBlock Text="{Binding TemperatureText}" FontSize="16"/>
 			<!-- Abstand -->
 			<Rectangle Height="5"/>
-			<TextBlock x:Name="EvalAverageWindSpeed" FontSize="16" Text="Average Wind Speed: 0% (0 Bft)"/>
+			<TextBlock Text="{Binding WindSpeedText}" FontSize="16"/>
 			<!-- Abstand -->
 			<Rectangle Height="5"/>
-			<TextBlock x:Name="EvalRuntime" FontSize="16" Text="Runtime: 00:00:00"/>
+			<TextBlock Text="{Binding RuntimeText}" FontSize="16"/>
 		</StackPanel>
 
 		<Button Grid.Row="0"
