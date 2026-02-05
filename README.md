@@ -61,7 +61,7 @@ The Beaufort scale is a standardized system to estimate wind force. Each level c
 
 ### Simulation
 - Real-time grid-based visualization
-- Adjustable simulation speed via slider
+- Adjustable simulation speed via 0,5x, 1x, 2x and 40x
 - Live statistics:
   - Total grown trees
   - Total burned trees
